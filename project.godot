@@ -11,8 +11,15 @@ config_version=5
 [application]
 
 config/name="Godeck"
-config/features=PackedStringArray("4.1", "Mobile")
+run/main_scene="res://scenes/loading_screen.tscn"
+config/features=PackedStringArray("4.2", "Mobile")
 config/icon="res://icon.svg"
+
+[display]
+
+window/size/viewport_width=315
+window/size/viewport_height=560
+window/handheld/orientation=1
 
 [rendering]
 

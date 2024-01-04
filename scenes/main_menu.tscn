@@ -1,0 +1,56 @@
+[gd_scene format=3 uid="uid://btg7p8shxwqeg"]
+
+[node name="MainMenu" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VerticalLayout" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="VerticalLayout"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Menu" type="PanelContainer" parent="VerticalLayout"]
+layout_mode = 2
+
+[node name="MenuLayout" type="HBoxContainer" parent="VerticalLayout/Menu"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+theme_override_constants/separation = 2
+alignment = 1
+
+[node name="ShopButton" type="Button" parent="VerticalLayout/Menu/MenuLayout"]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Shop"
+
+[node name="DeckBuilderButton" type="Button" parent="VerticalLayout/Menu/MenuLayout"]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Deck"
+
+[node name="HomeButton" type="Button" parent="VerticalLayout/Menu/MenuLayout"]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+button_pressed = true
+text = "Home"
+
+[node name="FriendsButton" type="Button" parent="VerticalLayout/Menu/MenuLayout"]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Clan"
+
+[node name="EventsButton" type="Button" parent="VerticalLayout/Menu/MenuLayout"]
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Events"

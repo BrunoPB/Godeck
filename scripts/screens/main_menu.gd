@@ -1,9 +1,9 @@
 extends PanelContainer
 
-@onready var main_menu_paths = get_node("/root/Enums").main_menu_paths
-@onready var menu_screen_enum = get_node("/root/Enums").menu_screen_enum
+@onready var main_menu_paths = get_node("/root/Constants").main_menu_paths
+@onready var menu_screen_enum = get_node("/root/Constants").menu_screen_enum
 @onready var utils = get_node("/root/Utils")
-@onready var home_screen_scene = preload("res://scenes/home_screen.tscn").instantiate()
+@onready var home_screen_scene = preload("res://scenes/main_menu/home_screen.tscn").instantiate()
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

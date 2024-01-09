@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://d4jglnhn6kcqo"]
 
-[ext_resource type="Script" path="res://scripts/home_screen.gd" id="1_1h5sj"]
-[ext_resource type="Texture2D" uid="uid://cie3icaxwuaj6" path="res://assets/placeholders/eloicon.png" id="1_7pba2"]
+[ext_resource type="Script" path="res://scripts/screens/home_screen.gd" id="1_xdpgw"]
+[ext_resource type="Texture2D" uid="uid://cie3icaxwuaj6" path="res://assets/placeholders/eloicon.png" id="2_yh5oe"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gjxve"]
 content_margin_left = 10.0
@@ -16,7 +16,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_gjxve")
-script = ExtResource("1_1h5sj")
+script = ExtResource("1_xdpgw")
 
 [node name="VerticalLayout" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -34,12 +34,12 @@ alignment = 1
 [node name="Username" type="Label" parent="VerticalLayout/Infos/InfosLayout/FirstRow"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Jalin Habei"
+text = "???"
 
-[node name="TextureRect" type="TextureRect" parent="VerticalLayout/Infos/InfosLayout/FirstRow"]
+[node name="EloPic" type="TextureRect" parent="VerticalLayout/Infos/InfosLayout/FirstRow"]
 layout_mode = 2
 size_flags_horizontal = 3
-texture = ExtResource("1_7pba2")
+texture = ExtResource("2_yh5oe")
 expand_mode = 2
 stretch_mode = 6
 
@@ -50,11 +50,11 @@ alignment = 1
 [node name="Gold" type="Label" parent="VerticalLayout/Infos/InfosLayout/SecondRow"]
 layout_mode = 2
 size_flags_horizontal = 3
-text = "60"
+text = "???"
 
 [node name="Crystals" type="Label" parent="VerticalLayout/Infos/InfosLayout/SecondRow"]
 layout_mode = 2
-text = "5"
+text = "???"
 
 [node name="DeckArea" type="PanelContainer" parent="VerticalLayout"]
 layout_mode = 2

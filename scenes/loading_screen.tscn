@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://b1p8vjhri0n6w"]
 
 [ext_resource type="Texture2D" uid="uid://d2p4wuhqvp384" path="res://assets/placeholders/thor_background.jpg" id="1_1x051"]
-[ext_resource type="Script" path="res://scripts/loading_screen.gd" id="1_h8raw"]
+[ext_resource type="Script" path="res://scripts/screens/loading_screen.gd" id="1_h8raw"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_1w00s"]
 
@@ -26,5 +26,3 @@ theme_override_styles/panel = SubResource("StyleBoxEmpty_1w00s")
 
 [node name="ProgressBar" type="ProgressBar" parent="ProgressBarArea"]
 layout_mode = 2
-
-[node name="HTTPRequest" type="HTTPRequest" parent="."]

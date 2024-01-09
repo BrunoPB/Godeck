@@ -17,9 +17,10 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-Enums="*res://scripts/constants.gd"
-Utils="*res://scripts/utils.gd"
-User="*res://scripts/user.gd"
+Utils="*res://scripts/singletons/utils.gd"
+User="*res://scripts/singletons/user.gd"
+Address="*res://scripts/singletons/address.gd"
+Constants="*res://scripts/singletons/constants.gd"
 
 [display]
 

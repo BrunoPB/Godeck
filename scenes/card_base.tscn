@@ -1,0 +1,79 @@
+[gd_scene load_steps=2 format=3 uid="uid://dluf4iwodo23l"]
+
+[ext_resource type="Texture2D" uid="uid://b4rqph1ne81en" path="res://assets/placeholders/Boitata.jpg" id="1_6w30m"]
+
+[node name="CardBase" type="Node"]
+
+[node name="Layout" type="PanelContainer" parent="."]
+offset_right = 100.0
+offset_bottom = 86.0
+
+[node name="CardHex" type="Polygon2D" parent="Layout"]
+texture = ExtResource("1_6w30m")
+texture_offset = Vector2(36, -3)
+texture_scale = Vector2(7, 7)
+polygon = PackedVector2Array(25, 0, 75, 0, 100, 43, 75, 86, 25, 86, 0, 43)
+
+[node name="Stats" type="VBoxContainer" parent="Layout"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="North" type="Label" parent="Layout/Stats"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 10
+text = "5"
+horizontal_alignment = 1
+
+[node name="NorthSide" type="HBoxContainer" parent="Layout/Stats"]
+custom_minimum_size = Vector2(0, 29)
+layout_mode = 2
+theme_override_constants/separation = 60
+alignment = 1
+
+[node name="NorthWest" type="Label" parent="Layout/Stats/NorthSide"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 10
+text = "8"
+horizontal_alignment = 1
+
+[node name="NorthEast" type="Label" parent="Layout/Stats/NorthSide"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 10
+text = "4"
+horizontal_alignment = 1
+
+[node name="SouthSide" type="HBoxContainer" parent="Layout/Stats"]
+custom_minimum_size = Vector2(0, 29)
+layout_mode = 2
+theme_override_constants/separation = 60
+alignment = 1
+
+[node name="SouthWest" type="Label" parent="Layout/Stats/SouthSide"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 10
+text = "4"
+horizontal_alignment = 1
+
+[node name="SouthEast" type="Label" parent="Layout/Stats/SouthSide"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 10
+text = "7"
+horizontal_alignment = 1
+
+[node name="South" type="Label" parent="Layout/Stats"]
+layout_mode = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 10
+theme_override_font_sizes/font_size = 10
+text = "5"
+horizontal_alignment = 1

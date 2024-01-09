@@ -1,0 +1,77 @@
+[gd_scene load_steps=4 format=3 uid="uid://d4jglnhn6kcqo"]
+
+[ext_resource type="Script" path="res://scripts/home_screen.gd" id="1_1h5sj"]
+[ext_resource type="Texture2D" uid="uid://cie3icaxwuaj6" path="res://assets/placeholders/eloicon.png" id="1_7pba2"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gjxve"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
+
+[node name="HomeScreen" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_gjxve")
+script = ExtResource("1_1h5sj")
+
+[node name="VerticalLayout" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Infos" type="PanelContainer" parent="VerticalLayout"]
+layout_mode = 2
+
+[node name="InfosLayout" type="VBoxContainer" parent="VerticalLayout/Infos"]
+layout_mode = 2
+
+[node name="FirstRow" type="HBoxContainer" parent="VerticalLayout/Infos/InfosLayout"]
+layout_mode = 2
+alignment = 1
+
+[node name="Username" type="Label" parent="VerticalLayout/Infos/InfosLayout/FirstRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Jalin Habei"
+
+[node name="TextureRect" type="TextureRect" parent="VerticalLayout/Infos/InfosLayout/FirstRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("1_7pba2")
+expand_mode = 2
+stretch_mode = 6
+
+[node name="SecondRow" type="HBoxContainer" parent="VerticalLayout/Infos/InfosLayout"]
+layout_mode = 2
+alignment = 1
+
+[node name="Gold" type="Label" parent="VerticalLayout/Infos/InfosLayout/SecondRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "60"
+
+[node name="Crystals" type="Label" parent="VerticalLayout/Infos/InfosLayout/SecondRow"]
+layout_mode = 2
+text = "5"
+
+[node name="DeckArea" type="PanelContainer" parent="VerticalLayout"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="DeckAreaLayout" type="VBoxContainer" parent="VerticalLayout/DeckArea"]
+layout_mode = 2
+
+[node name="FirstRow" type="HBoxContainer" parent="VerticalLayout/DeckArea/DeckAreaLayout"]
+layout_mode = 2
+
+[node name="SecondRow" type="HBoxContainer" parent="VerticalLayout/DeckArea/DeckAreaLayout"]
+layout_mode = 2
+
+[node name="PlayArea" type="PanelContainer" parent="VerticalLayout"]
+layout_mode = 2
+
+[node name="PlayButton" type="Button" parent="VerticalLayout/PlayArea"]
+layout_mode = 2
+text = "PLAY"

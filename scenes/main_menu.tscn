@@ -1,4 +1,6 @@
-[gd_scene format=3 uid="uid://btg7p8shxwqeg"]
+[gd_scene load_steps=2 format=3 uid="uid://btg7p8shxwqeg"]
+
+[ext_resource type="Script" path="res://scenes/main_menu.gd" id="1_t1hcb"]
 
 [node name="MainMenu" type="PanelContainer"]
 anchors_preset = 15
@@ -6,12 +8,13 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_t1hcb")
 
 [node name="VerticalLayout" type="VBoxContainer" parent="."]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="PanelContainer" type="PanelContainer" parent="VerticalLayout"]
+[node name="ContentArea" type="PanelContainer" parent="VerticalLayout"]
 layout_mode = 2
 size_flags_vertical = 3
 

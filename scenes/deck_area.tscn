@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://dm78l558k4iek"]
+
+[sub_resource type="TileSet" id="TileSet_6rqyb"]
+tile_shape = 3
+tile_offset_axis = 1
+tile_size = Vector2i(100, 86)
+
+[node name="DeckArea" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TileMap" type="TileMap" parent="."]
+tile_set = SubResource("TileSet_6rqyb")
+format = 2

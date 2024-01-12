@@ -1,6 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://btg7p8shxwqeg"]
+[gd_scene load_steps=3 format=3 uid="uid://btg7p8shxwqeg"]
 
 [ext_resource type="Script" path="res://scripts/screens/main_menu.gd" id="1_4d3vi"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_s27h6"]
+content_margin_left = 10.0
+content_margin_top = 10.0
+content_margin_right = 10.0
+content_margin_bottom = 10.0
 
 [node name="MainMenu" type="PanelContainer"]
 anchors_preset = 15
@@ -17,6 +23,7 @@ theme_override_constants/separation = 0
 [node name="ContentArea" type="PanelContainer" parent="VerticalLayout"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_s27h6")
 
 [node name="Menu" type="PanelContainer" parent="VerticalLayout"]
 layout_mode = 2

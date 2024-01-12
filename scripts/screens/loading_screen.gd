@@ -22,7 +22,10 @@ func receive_data():
 	http.queue_free()
 	get_tree().change_scene_to_file("res://scenes/main_menu/main_menu.tscn")
 
-func start_user(result, reponse_code, headers, body):
+func start_user(result, response_code, headers, body):
+	if result != 0:
+		push_error("Failed getting user data. Code " + str(result))
+		return
 	var json = JSON.new()
 	json.parse(body.get_string_from_utf8())
 	var user_data = json.data[0]

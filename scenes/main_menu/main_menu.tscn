@@ -64,3 +64,9 @@ layout_mode = 2
 size_flags_horizontal = 3
 toggle_mode = true
 text = "Events"
+
+[connection signal="button_up" from="VerticalLayout/Menu/MenuLayout/ShopButton" to="." method="_on_shop_button_button_up"]
+[connection signal="button_up" from="VerticalLayout/Menu/MenuLayout/DeckBuilderButton" to="." method="_on_deck_builder_button_button_up"]
+[connection signal="button_up" from="VerticalLayout/Menu/MenuLayout/HomeButton" to="." method="_on_home_button_button_up"]
+[connection signal="button_up" from="VerticalLayout/Menu/MenuLayout/FriendsButton" to="." method="_on_friends_button_button_up"]
+[connection signal="button_up" from="VerticalLayout/Menu/MenuLayout/EventsButton" to="." method="_on_events_button_button_up"]

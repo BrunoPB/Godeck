@@ -5,8 +5,8 @@ func remove_children(node):
 		node.remove_child(child)
 		child.queue_free()
 
-func create_hexagon(initial_x, initial_y, diameter):
-	var hex = Polygon2D.new()
-	var vetices = PackedVector2Array
+#func create_hexagon(initial_x, initial_y, diameter):
+	#var hex = Polygon2D.new()
+	#var vetices = PackedVector2Array
 	
 	

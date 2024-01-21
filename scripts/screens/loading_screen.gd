@@ -20,7 +20,6 @@ func receive_data():
 	http.request(address.BASE_URL+"/test")
 	await http.request_completed
 	http.queue_free()
-	get_tree().change_scene_to_file("res://scenes/main_menu/main_menu.tscn")
 
 func start_user(result, response_code, headers, body):
 	if result != 0:
@@ -37,3 +36,4 @@ func start_user(result, response_code, headers, body):
 	user.collection = user_data.collection
 	user.deck = user_data.deck
 	get_node(paths["progress_bar"]).value = 100
+	get_tree().change_scene_to_file("res://scenes/main_menu/main_menu.tscn")

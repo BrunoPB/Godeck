@@ -2,7 +2,7 @@ extends PanelContainer
 
 @onready var main_menu_paths = get_node("/root/Constants").main_menu_paths
 @onready var menu_screen_enum = get_node("/root/Constants").menu_screen_enum
-@onready var utils = get_node("/root/Utils")
+@onready var node_utils = get_node("/root/NodeUtils")
 @onready var home_screen_scene = preload("res://scenes/main_menu/home_screen.tscn")
 @onready var deck_builder_screen_scene = preload("res://scenes/main_menu/deck_builder_screen.tscn")
 
@@ -17,7 +17,7 @@ func _process(delta):
 func change_menu_screen(screen):
 	release_menu_buttons()
 	var content_area = get_node(main_menu_paths["content_area"])
-	utils.remove_children(content_area)
+	node_utils.remove_children(content_area)
 	match screen:
 		menu_screen_enum.HOME:
 			content_area.add_child(home_screen_scene.instantiate())

@@ -5,5 +5,5 @@ var username : String
 var email : String
 var gold : int
 var crystals : int
-var deck
-var collection
+var deck : Array
+var collection : Array

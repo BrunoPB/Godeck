@@ -44,10 +44,12 @@ public class UserController {
         Integer crystals = 5;
         Iterable<GameCharacter> chars = getchars();
         Set<GameCharacter> collection = new HashSet<GameCharacter>();
+        System.out.println(collection);
+        List<GameCharacter> deck = new ArrayList<GameCharacter>();
         for (GameCharacter character : chars) {
             collection.add(character);
+            deck.add(character);
         }
-        List<GameCharacter> deck = new ArrayList<GameCharacter>();
         User user = new User(id, "bruno", "test@email", gold, crystals, deck, collection);
         return userRepository.save(user);
     }

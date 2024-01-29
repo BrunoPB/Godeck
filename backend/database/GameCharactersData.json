@@ -1,0 +1,120 @@
+[
+    {
+        "id": "f1145ff0-eaa0-4e31-b788-0632f8b436f3",
+        "number": 1,
+        "name": "Zeus",
+        "tier": 1,
+        "mythology": 0,
+        "file_name": "zeus.jpg",
+        "price": 1000,
+        "stars": 3,
+        "north": 7,
+        "north_east": 6,
+        "south_east": 5,
+        "south": 4,
+        "south_west": 6,
+        "north_west": 5
+    },
+
+    {
+        "id": "5d4bfcf9-5f60-4010-b425-c0c277fca76f",
+        "number": 2,
+        "name": "Poseidon",
+        "tier": 1,
+        "mythology": 0,
+        "file_name": "poseidon.jpg",
+        "price": 800,
+        "stars": 3,
+        "north": 5,
+        "north_east": 5,
+        "south_east": 4,
+        "south": 3,
+        "south_west": 5,
+        "north_west": 1
+    },
+
+    {
+        "id": "ed44ef52-4366-409a-be18-7858c4560f2c",
+        "number": 3,
+        "name": "Hades",
+        "tier": 1,
+        "mythology": 0,
+        "file_name": "hades.jpg",
+        "price": 850,
+        "stars": 3,
+        "north": 7,
+        "north_east": 5,
+        "south_east": 4,
+        "south": 3,
+        "south_west": 4,
+        "north_west": 1
+    },
+
+    {
+        "id": "d919d781-9fbc-43d6-8786-c9a5c0e20f1c",
+        "number": 10,
+        "name": "Saci Pererê",
+        "tier": 1,
+        "mythology": 4,
+        "file_name": "saci.jpg",
+        "price": 1200,
+        "stars": 2,
+        "north": 10,
+        "north_east": 5,
+        "south_east": 8,
+        "south": 3,
+        "south_west": 5,
+        "north_west": 4
+    },
+
+    {
+        "id": "8f9a9409-832f-4fb8-bfd6-dc679b35bf6e",
+        "number": 11,
+        "name": "Cuca",
+        "tier": 1,
+        "mythology": 4,
+        "file_name": "cuca.jpg",
+        "price": 300,
+        "stars": 2,
+        "north": 3,
+        "north_east": 4,
+        "south_east": 7,
+        "south": 3,
+        "south_west": 5,
+        "north_west": 4
+    },
+
+    {
+        "id": "1c7f56bc-3a22-465a-bf19-b9032bac209b",
+        "number": 12,
+        "name": "Boitatá",
+        "tier": 1,
+        "mythology": 4,
+        "file_name": "boitata.jpg",
+        "price": 1500,
+        "stars": 3,
+        "north": 10,
+        "north_east": 8,
+        "south_east": 8,
+        "south": 7,
+        "south_west": 5,
+        "north_west": 4
+    },
+
+    {
+        "id": "a3914a1f-0411-4ba8-8a39-e424f05b9fda",
+        "number": 15,
+        "name": "Pegasus",
+        "tier": 1,
+        "mythology": 6,
+        "file_name": "pegasus.jpg",
+        "price": 100,
+        "stars": 1,
+        "north": 3,
+        "north_east": 5,
+        "south_east": 4,
+        "south": 3,
+        "south_west": 2,
+        "north_west": 3
+    }
+]

@@ -1,7 +1,6 @@
-[gd_scene load_steps=3 format=3 uid="uid://b4g8wsjo80g0v"]
+[gd_scene load_steps=2 format=3 uid="uid://b4g8wsjo80g0v"]
 
-[ext_resource type="PackedScene" uid="uid://dm78l558k4iek" path="res://scenes/deck_area.tscn" id="1_fswpq"]
-[ext_resource type="PackedScene" uid="uid://dluf4iwodo23l" path="res://scenes/card_base.tscn" id="2_thsb4"]
+[ext_resource type="Script" path="res://scripts/screens/deck_builder_screen.gd" id="1_a0msj"]
 
 [node name="DeckBuilderScreen" type="PanelContainer"]
 anchors_preset = 15
@@ -9,6 +8,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_a0msj")
 
 [node name="VerticalLayout" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -33,17 +33,10 @@ text = "???"
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="DeckArea" parent="VerticalLayout/CurrentDeck" instance=ExtResource("1_fswpq")]
-
 [node name="CardsArea" type="PanelContainer" parent="VerticalLayout"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="CardsGrid" type="GridContainer" parent="VerticalLayout/CardsArea"]
+[node name="CollectionGrid" type="GridContainer" parent="VerticalLayout/CardsArea"]
 layout_mode = 2
 columns = 3
-
-[node name="PanelContainer" type="Node2D" parent="VerticalLayout/CardsArea/CardsGrid"]
-position = Vector2(50, 43)
-
-[node name="CardBase" parent="VerticalLayout/CardsArea/CardsGrid/PanelContainer" instance=ExtResource("2_thsb4")]

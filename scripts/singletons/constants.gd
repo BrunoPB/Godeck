@@ -22,6 +22,11 @@ var home_screen_paths = {
 	"crystals" : "VerticalLayout/Infos/InfosLayout/SecondRow/Crystals"
 }
 
+var deck_builder_paths = {
+	"collection_grid" : "VerticalLayout/CardsArea/CollectionGrid",
+	"deck_area" : "VerticalLayout/CurrentDeck"
+}
+
 ## ENUMS ##
 enum menu_screen_enum {
 	HOME,

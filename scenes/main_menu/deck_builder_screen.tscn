@@ -1,0 +1,42 @@
+[gd_scene load_steps=2 format=3 uid="uid://b4g8wsjo80g0v"]
+
+[ext_resource type="Script" path="res://scripts/screens/deck_builder_screen.gd" id="1_a0msj"]
+
+[node name="DeckBuilderScreen" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_a0msj")
+
+[node name="VerticalLayout" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Header" type="PanelContainer" parent="VerticalLayout"]
+layout_mode = 2
+
+[node name="SecondRow" type="HBoxContainer" parent="VerticalLayout/Header"]
+layout_mode = 2
+alignment = 1
+
+[node name="Gold" type="Label" parent="VerticalLayout/Header/SecondRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "???"
+
+[node name="Crystals" type="Label" parent="VerticalLayout/Header/SecondRow"]
+layout_mode = 2
+text = "???"
+
+[node name="CurrentDeck" type="PanelContainer" parent="VerticalLayout"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CardsArea" type="PanelContainer" parent="VerticalLayout"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CollectionGrid" type="GridContainer" parent="VerticalLayout/CardsArea"]
+layout_mode = 2
+columns = 3

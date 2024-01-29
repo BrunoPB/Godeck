@@ -6,12 +6,15 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 
 @Entity(name = "user")
 public class User {
@@ -26,10 +29,12 @@ public class User {
     private Integer gold;
     @Column(name = "crystals", nullable = false)
     private Integer crystals;
-    @OneToMany(mappedBy = "id")
-    private List<GameCharacter> deck;
-    @OneToMany(mappedBy = "id")
-    private Set<GameCharacter> collection;
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "user_deck", joinColumns = @JoinColumn(name = "game_character_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private List<GameCharacter> deck = new ArrayList<>();
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "user_collection", joinColumns = @JoinColumn(name = "game_character_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
+    private Set<GameCharacter> collection = new HashSet<>();
 
     public User() {
     }

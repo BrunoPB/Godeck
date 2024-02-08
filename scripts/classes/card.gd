@@ -9,7 +9,7 @@ var tier : int
 var mythology : int
 var file_name : String
 var price: int
-var stars: float
+var stars: int
 var north: int
 var north_east: int
 var south_east: int

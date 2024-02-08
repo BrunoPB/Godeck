@@ -17,7 +17,7 @@ public class GameCharacterService {
         this.gameCharacterRepository = gameCharacterRepository;
     }
 
-    public Iterable<GameCharacter> getAll() {
+    public Iterable<GameCharacter> findAll() {
         return gameCharacterRepository.findAll();
     }
 

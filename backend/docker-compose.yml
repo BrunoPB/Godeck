@@ -1,0 +1,35 @@
+version: "3.8"
+services:
+    db:
+        build:
+            context: "."
+            dockerfile: "./database.Dockerfile"
+        container_name: godeck-mysql
+        restart: always
+        ports:
+            - "3306:3306"
+        environment:
+            MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
+            MYSQL_DATABASE: "${SCHEMA_NAME}"
+        networks:
+            - backend
+    spring-boot:
+        build:
+            context: "."
+            dockerfile: "./backend.Dockerfile"
+        container_name: godeck-spring-boot
+        restart: always
+        ports:
+            - "8080:8080"
+        networks:
+            - backend
+        environment:
+            spring.datasource.url: "jdbc:mysql://db:3306/${SCHEMA_NAME}?allowPublicKeyRetrieval=true&useSSL=false&createDatabaseIfNotExist=true&useTimezone=true&serverTimezone=UTC"
+            spring.datasource.username: root
+            spring.datasource.password: "${DB_PASSWORD}"
+            spring.jpa.hibernate.ddl-auto: update
+            environment: "docker"
+
+networks:
+    backend:
+        driver: bridge

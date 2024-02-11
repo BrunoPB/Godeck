@@ -8,7 +8,7 @@ func _ready():
 	start_user_data()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	pass
 
 func start_user_data():

@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://xeh08dv64org"]
+
+[ext_resource type="Script" path="res://scripts/screens/deck_edit.gd" id="1_2fair"]
+[ext_resource type="PackedScene" uid="uid://dluf4iwodo23l" path="res://scenes/card_base.tscn" id="1_3nouw"]
+
+[sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_7qpnv"]
+scenes/1/scene = ExtResource("1_3nouw")
+
+[sub_resource type="TileSet" id="TileSet_unmip"]
+tile_shape = 3
+tile_layout = 1
+tile_offset_axis = 1
+tile_size = Vector2i(100, 86)
+sources/0 = SubResource("TileSetScenesCollectionSource_7qpnv")
+
+[node name="UserDeck" type="PanelContainer"]
+offset_right = 250.0
+offset_bottom = 258.0
+script = ExtResource("1_2fair")
+
+[node name="TileMap" type="TileMap" parent="."]
+tile_set = SubResource("TileSet_unmip")
+format = 2

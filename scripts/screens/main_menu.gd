@@ -11,7 +11,7 @@ func _ready():
 	change_menu_screen(menu_screen_enum.HOME)
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
+func _process(_delta):
 	pass
 
 func change_menu_screen(screen):

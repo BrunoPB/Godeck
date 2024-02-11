@@ -1,12 +1,14 @@
-[gd_scene load_steps=4 format=3 uid="uid://dluf4iwodo23l"]
+[gd_scene load_steps=5 format=3 uid="uid://dluf4iwodo23l"]
 
 [ext_resource type="Texture2D" uid="uid://b4rqph1ne81en" path="res://assets/placeholders/Boitata.jpg" id="1_6w30m"]
+[ext_resource type="Script" path="res://scripts/cards/card_base.gd" id="1_lsxs2"]
 [ext_resource type="Theme" uid="uid://b4hxxtkojagog" path="res://themes/deck_builder_themes/card_numbers_theme.tres" id="2_ys4vj"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6f5ra"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
 
 [node name="CardBase" type="Node2D"]
+script = ExtResource("1_lsxs2")
 
 [node name="Layout" type="PanelContainer" parent="."]
 anchors_preset = 8
@@ -14,8 +16,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_right = 100.0
-offset_bottom = 86.0
+offset_left = -50.0
+offset_top = -43.0
+offset_right = 50.0
+offset_bottom = 43.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_6f5ra")

@@ -29,6 +29,10 @@ window/size/viewport_width=315
 window/size/viewport_height=560
 window/handheld/orientation=1
 
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
+
 [rendering]
 
 renderer/rendering_method="mobile"

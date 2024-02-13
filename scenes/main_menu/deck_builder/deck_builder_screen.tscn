@@ -40,9 +40,13 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 0
 
-[node name="CardsArea" type="PanelContainer" parent="VerticalLayout"]
+[node name="CardsArea" type="ScrollContainer" parent="VerticalLayout"]
 layout_mode = 2
 size_flags_vertical = 3
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 3
 
 [node name="CollectionGrid" parent="VerticalLayout/CardsArea" instance=ExtResource("3_yk8j5")]
 layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 1

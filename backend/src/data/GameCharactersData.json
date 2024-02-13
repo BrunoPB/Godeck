@@ -51,6 +51,57 @@
     },
 
     {
+        "id": "ab0e8d75-332f-4844-b0d2-64834bfcd114",
+        "number": 4,
+        "name": "Kronos",
+        "tier": 1,
+        "mythology": 0,
+        "file_name": "kronos.jpg",
+        "price": 650,
+        "stars": 2,
+        "north": 5,
+        "north_east": 5,
+        "south_east": 3,
+        "south": 2,
+        "south_west": 4,
+        "north_west": 2
+    },
+
+    {
+        "id": "ddaa732d-756d-46bb-87d4-213d2ef6b957",
+        "number": 8,
+        "name": "Odin",
+        "tier": 1,
+        "mythology": 2,
+        "file_name": "odin.jpg",
+        "price": 850,
+        "stars": 3,
+        "north": 5,
+        "north_east": 5,
+        "south_east": 7,
+        "south": 3,
+        "south_west": 4,
+        "north_west": 2
+    },
+
+    {
+        "id": "9842d6c2-18a1-450d-9b28-a535986222d2",
+        "number": 9,
+        "name": "Thor",
+        "tier": 1,
+        "mythology": 2,
+        "file_name": "thor.jpg",
+        "price": 600,
+        "stars": 2,
+        "north": 4,
+        "north_east": 4,
+        "south_east": 5,
+        "south": 4,
+        "south_west": 2,
+        "north_west": 1
+    },
+
+    {
         "id": "d919d781-9fbc-43d6-8786-c9a5c0e20f1c",
         "number": 10,
         "name": "Saci Pererê",
@@ -116,5 +167,39 @@
         "south": 3,
         "south_west": 2,
         "north_west": 3
+    },
+
+    {
+        "id": "77ee1ee3-a72b-4ce8-bfc1-b1a8b7c159aa",
+        "number": 16,
+        "name": "Centaur",
+        "tier": 1,
+        "mythology": 6,
+        "file_name": "centaur.jpg",
+        "price": 100,
+        "stars": 1,
+        "north": 4,
+        "north_east": 4,
+        "south_east": 4,
+        "south": 1,
+        "south_west": 2,
+        "north_west": 5
+    },
+
+    {
+        "id": "29f28ff8-bcc8-41bc-9815-fa11422bac57",
+        "number": 17,
+        "name": "Valkyrie",
+        "tier": 1,
+        "mythology": 6,
+        "file_name": "valkyrie.jpg",
+        "price": 100,
+        "stars": 1,
+        "north": 3,
+        "north_east": 5,
+        "south_east": 3,
+        "south": 2,
+        "south_west": 2,
+        "north_west": 4
     }
 ]

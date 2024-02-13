@@ -27,6 +27,12 @@ var deck_builder_paths = {
 	"deck_area" : "VerticalLayout/CurrentDeck"
 }
 
+var card_base_paths = {
+	"panel" : "Layout",
+	"hex" : "Layout/CardHex",
+	"stats" : "Layout/Stats"
+}
+
 ## ENUMS ##
 enum menu_screen_enum {
 	HOME,

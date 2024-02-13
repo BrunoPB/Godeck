@@ -16,19 +16,23 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -50.0
-offset_top = -43.0
-offset_right = 50.0
-offset_bottom = 43.0
+offset_right = 80.0
+offset_bottom = 70.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_6f5ra")
 
 [node name="CardHex" type="Polygon2D" parent="Layout"]
 texture = ExtResource("1_6w30m")
-texture_offset = Vector2(36, -3)
+texture_offset = Vector2(44, 6)
 texture_scale = Vector2(7, 7)
-polygon = PackedVector2Array(25, 0, 75, 0, 100, 43, 75, 86, 25, 86, 0, 43)
+polygon = PackedVector2Array(20, 0, 60, 0, 80, 34, 60, 69, 20, 69, 0, 34)
+
+[node name="Area2D" type="Area2D" parent="Layout/CardHex"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Layout/CardHex/Area2D"]
+build_mode = 1
+polygon = PackedVector2Array(20, 0, 60, 0, 80, 34, 60, 69, 20, 69, 0, 34)
 
 [node name="Stats" type="VBoxContainer" parent="Layout"]
 layout_mode = 2
@@ -41,9 +45,9 @@ text = "5"
 horizontal_alignment = 1
 
 [node name="NorthSide" type="HBoxContainer" parent="Layout/Stats"]
-custom_minimum_size = Vector2(0, 29)
+custom_minimum_size = Vector2(0, 21)
 layout_mode = 2
-theme_override_constants/separation = 60
+theme_override_constants/separation = 46
 alignment = 1
 
 [node name="NorthWest" type="Label" parent="Layout/Stats/NorthSide"]
@@ -59,9 +63,9 @@ text = "5"
 horizontal_alignment = 1
 
 [node name="SouthSide" type="HBoxContainer" parent="Layout/Stats"]
-custom_minimum_size = Vector2(0, 29)
+custom_minimum_size = Vector2(0, 21)
 layout_mode = 2
-theme_override_constants/separation = 60
+theme_override_constants/separation = 46
 alignment = 1
 
 [node name="SouthWest" type="Label" parent="Layout/Stats/SouthSide"]

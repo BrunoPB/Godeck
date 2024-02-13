@@ -4,7 +4,7 @@ extends PanelContainer
 @onready var menu_screen_enum = get_node("/root/Constants").menu_screen_enum
 @onready var node_utils = get_node("/root/NodeUtils")
 @onready var home_screen_scene = preload("res://scenes/main_menu/home_screen.tscn")
-@onready var deck_builder_screen_scene = preload("res://scenes/main_menu/deck_builder_screen.tscn")
+@onready var deck_builder_screen_scene = preload("res://scenes/main_menu/deck_builder/deck_builder_screen.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

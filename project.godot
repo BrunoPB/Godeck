@@ -22,6 +22,7 @@ CardUtils="*res://scripts/singletons/utils/card_utils.gd"
 User="*res://scripts/singletons/user.gd"
 Address="*res://scripts/singletons/address.gd"
 Constants="*res://scripts/singletons/constants.gd"
+LoginSystem="*res://scripts/singletons/login_system.gd"
 
 [display]
 

@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
@@ -36,28 +37,46 @@ public class DatabaseInicialization {
     // TODO: This is just a test. Remove it later when oAuth is implemented
     @SuppressWarnings("null")
     public static void test_initializeUser() {
-        String userEmail = "test@email.com";
-        List<User> users = userRepository.findByEmail(userEmail);
-        if (users.size() > 0) {
-            System.out.println("Test user already initialized");
-            return;
-        }
-        System.out.println("Initializing test user...");
-        UUID id = UUID.randomUUID();
-        Integer gold = 5000;
-        Integer crystals = 30;
+        System.out.println("Initializing test users...");
+        Random random = new Random();
         Iterable<GameCharacter> chars = gameCharacterService.findAll();
-        Set<GameCharacter> collection = new HashSet<GameCharacter>();
-        List<GameCharacter> deck = new ArrayList<GameCharacter>();
-        for (GameCharacter character : chars) {
-            collection.add(character);
-            if (deck.size() < 7)
-                deck.add(character);
+        List<String> emails = new ArrayList<String>();
+        emails.add("arnaldo@email.com");
+        emails.add("berenice@email.com");
+        emails.add("catarina@email.com");
+        emails.add("dorival@email.com");
+        for (String email : emails) {
+            List<User> users = userRepository.findByEmail(email);
+            if (users.size() > 0) {
+                continue;
+            }
+            UUID id = UUID.randomUUID();
+            Integer gold = random.nextInt(10000);
+            Integer crystals = random.nextInt(100);
+            Set<GameCharacter> collection = new HashSet<GameCharacter>();
+            List<GameCharacter> deck = new ArrayList<GameCharacter>();
+            for (GameCharacter character : chars) {
+                collection.add(character);
+            }
+            deck.addAll(pickRandomGameCharacters(collection, 7));
+            User user = new User(id, email.substring(0, email.indexOf("@")), email, gold, crystals, deck,
+                    collection);
+            System.out.println("Saving user " + user.getName() + " to database...");
+            userRepository.save(user);
         }
-        User user = new User(id, "Testana", userEmail, gold, crystals, deck, collection);
-        System.out.println("Saving user " + user.getName() + " to database...");
-        userRepository.save(user);
-        System.out.println("User initialized successfully!");
+        System.out.println("All users initialized successfully!");
+    }
+
+    private static List<GameCharacter> pickRandomGameCharacters(Set<GameCharacter> list, int n) {
+        List<GameCharacter> randomList = new ArrayList<GameCharacter>();
+        List<GameCharacter> characters = new ArrayList<GameCharacter>(list);
+        Random r = new Random();
+        for (int i = 0; i < n; i++) {
+            GameCharacter randomElement = characters.get(r.nextInt(characters.size()));
+            randomList.add(randomElement);
+            characters.remove(randomElement);
+        }
+        return randomList;
     }
 
     public static void initializeGameCharacters() {

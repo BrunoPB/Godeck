@@ -23,6 +23,8 @@ User="*res://scripts/singletons/user.gd"
 Address="*res://scripts/singletons/address.gd"
 Constants="*res://scripts/singletons/constants.gd"
 LoginSystem="*res://scripts/singletons/login_system.gd"
+QueueSystem="*res://scripts/singletons/queue_system.gd"
+InGameSystem="*res://scripts/singletons/in_game_system.gd"
 
 [display]
 

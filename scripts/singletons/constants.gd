@@ -33,6 +33,11 @@ var card_base_paths = {
 	"stats" : "Layout/Stats"
 }
 
+var queue_screen_paths = {
+	"time_label" : "VerticalLayout/TimeLabel",
+	"background" : "BackgroundImage"
+}
+
 ## ENUMS ##
 enum menu_screen_enum {
 	HOME,

@@ -22,7 +22,7 @@ public class UserController {
 
     @GetMapping(path = "")
     @ResponseBody
-    public User test(@RequestBody String email) {
+    public User test(@RequestBody String email) { // TODO: Remove this end point when authentication is implemented
         return userRepository.findByEmail(email).get(0);
     }
 }

@@ -15,3 +15,6 @@ func start_user_data():
 	get_node(paths["username"]).text = user.username
 	get_node(paths["gold"]).text = str(user.gold)
 	get_node(paths["crystals"]).text = str(user.crystals)
+
+func _on_play_button_pressed():
+	get_tree().change_scene_to_file("res://scenes/queue_screen.tscn")

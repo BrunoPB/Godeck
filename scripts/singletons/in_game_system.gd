@@ -29,7 +29,6 @@ func tcp_disconnect():
 
 func send_move():
 	tcp_stream.poll()
-	print("my number is: " + str(user_number))
 	var temp_msg = "Hello World, this TCP is alive!\n"
 	tcp_stream.put_string(temp_msg)
 
@@ -73,7 +72,6 @@ func decode_host_message(from_host : Array):
 		var index = msg.find(":")
 		var command = msg.substr(0,index)
 		var parameter = msg.substr(index+1,msg.length())
-		print("parameter: " + parameter)
 		match command:
 			"GameMove":
 				pass

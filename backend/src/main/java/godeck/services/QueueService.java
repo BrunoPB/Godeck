@@ -37,7 +37,11 @@ public class QueueService {
                 e.printStackTrace();
             }
         }
+
         UserNumberAndPort userNumberAndPort = GameServerSingleton.getInstance().getUserNumberAndPort(user);
+        if (userNumberAndPort == null) {
+            return new QueueResponse(false, 0, "No game found!");
+        }
         return new QueueResponse(true, userNumberAndPort.port, "Game found on port " + userNumberAndPort.port + "!");
     }
 

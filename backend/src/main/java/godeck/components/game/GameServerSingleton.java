@@ -55,6 +55,6 @@ public class GameServerSingleton {
                 return userNumberAndPort;
             }
         }
-        throw new IllegalArgumentException("User not found in any game.");
+        return null;
     }
 }

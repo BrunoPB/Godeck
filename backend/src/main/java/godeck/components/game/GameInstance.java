@@ -86,7 +86,7 @@ public class GameInstance extends Thread {
         } else if (user.getId().equals(user1.getId())) {
             userNumberAndPort.number = 1;
         } else {
-            throw new IllegalArgumentException("User not found in this game.");
+            return null;
         }
         userNumberAndPort.port = port;
         return userNumberAndPort;

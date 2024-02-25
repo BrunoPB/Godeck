@@ -21,6 +21,9 @@ func emit_game_found(result, response_code, headers, body):
 	var json = JSON.new()
 	json.parse(body.get_string_from_utf8())
 	var response = json.data
+	if bool(response.status) == false:
+		push_error("An error occurred when starting the game. " + str(response.message))
+		cancel_queue()
 	in_game_system.socket_port = int(response.port)
 	queue_finished.emit(true)
 

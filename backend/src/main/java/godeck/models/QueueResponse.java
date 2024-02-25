@@ -6,16 +6,14 @@ import org.springframework.stereotype.Component;
 public class QueueResponse extends Object {
     private boolean status;
     private int port;
-    private int userNumber;
     private String message;
 
     public QueueResponse() {
     }
 
-    public QueueResponse(boolean status, int port, int userNumber, String message) {
+    public QueueResponse(boolean status, int port, String message) {
         this.status = status;
         this.port = port;
-        this.userNumber = userNumber;
         this.message = message;
     }
 
@@ -25,10 +23,6 @@ public class QueueResponse extends Object {
 
     public int getPort() {
         return this.port;
-    }
-
-    public int getUserNumber() {
-        return this.userNumber;
     }
 
     public String getMessage() {
@@ -41,10 +35,6 @@ public class QueueResponse extends Object {
 
     public void setPort(int port) {
         this.port = port;
-    }
-
-    public void setUserNumber(int userNumber) {
-        this.userNumber = userNumber;
     }
 
     public void setMessage(String message) {

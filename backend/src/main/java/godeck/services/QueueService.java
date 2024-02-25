@@ -38,8 +38,7 @@ public class QueueService {
             }
         }
         UserNumberAndPort userNumberAndPort = GameServerSingleton.getInstance().getUserNumberAndPort(user);
-        return new QueueResponse(true, userNumberAndPort.port, userNumberAndPort.number,
-                "Game found on port " + userNumberAndPort.port + "!");
+        return new QueueResponse(true, userNumberAndPort.port, "Game found on port " + userNumberAndPort.port + "!");
     }
 
     public QueueResponse dequeue(String stringUserId) {
@@ -49,6 +48,6 @@ public class QueueService {
         }
         User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found!"));
         QueueSingleton.getInstance().dequeue(user);
-        return new QueueResponse(false, 0, 0, "User " + user.getId() + "removed from queue!");
+        return new QueueResponse(false, 0, "User " + user.getId() + "removed from queue!");
     }
 }

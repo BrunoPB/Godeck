@@ -18,7 +18,7 @@ func establish_connection():
 		if e != OK:
 			push_error("An error has occurred while establishing connection to the server. Error: " + str(e))
 			return false
-		status = tcp_stream.get_status()
+		check_connection_status()
 		return true
 	else:
 		push_error("Set socket port first.")
@@ -29,10 +29,12 @@ func tcp_disconnect():
 
 func send_move():
 	tcp_stream.poll()
-	var msg = "Hello World, this TCP is alive! I'm player " + str(user_number) + "!\n"
-	tcp_stream.put_string(msg)
+	print("my number is: " + str(user_number))
+	var temp_msg = "Hello World, this TCP is alive!\n"
+	tcp_stream.put_string(temp_msg)
 
 func check_connection_status():
+	tcp_stream.poll()
 	var new_status: int = tcp_stream.get_status()
 	if new_status != status:
 		status = new_status
@@ -61,12 +63,20 @@ func decode_host_message(from_host : Array):
 	var end : bool = false
 	for byte in from_host:
 		var char : String = char(byte)
-		msg += char
 		if char == "\n":
 			end = true
 			break
+		msg += char
 	if end:
 		if msg.find(".") == 0:
 			msg = msg.substr(1,msg.length())
-		print(msg)
+		var index = msg.find(":")
+		var command = msg.substr(0,index)
+		var parameter = msg.substr(index+1,msg.length())
+		print("parameter: " + parameter)
+		match command:
+			"GameMove":
+				pass
+			"UserNumber":
+				user_number = int(parameter)
 		msg = ""

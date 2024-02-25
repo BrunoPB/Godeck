@@ -22,7 +22,6 @@ func emit_game_found(result, response_code, headers, body):
 	json.parse(body.get_string_from_utf8())
 	var response = json.data
 	in_game_system.socket_port = int(response.port)
-	in_game_system.user_number = int(response.userNumber)
 	queue_finished.emit(true)
 
 func cancel_queue():

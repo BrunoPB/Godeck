@@ -27,6 +27,16 @@ public class GameInstance extends Thread {
     public GameInstance() {
     }
 
+    private void sendClientNumber() {
+        try {
+            out0.writeBytes("UserNumber:0\n");
+            out1.writeBytes("UserNumber:1\n");
+        } catch (Exception e) {
+            System.out.println("Error sending client number.");
+            System.out.println(e.getMessage());
+        }
+    }
+
     private boolean verifyMove(int player, GameMove move) { // TODO: Implement validations
         return true;
     }
@@ -93,6 +103,8 @@ public class GameInstance extends Thread {
 
             out0 = new DataOutputStream(socket0.getOutputStream());
             out1 = new DataOutputStream(socket1.getOutputStream());
+
+            sendClientNumber();
 
             user0Client = new GameClient();
             user0Client.setupGameClient(0, this, in0);

@@ -3,7 +3,8 @@ extends PanelContainer
 @onready var ingame_system = get_node("/root/InGameSystem")
 
 func _ready():
-	pass
+	ingame_system.check_connection_status()
+	ingame_system.listen_to_host()
 
 func _process(delta):
 	ingame_system.check_connection_status()

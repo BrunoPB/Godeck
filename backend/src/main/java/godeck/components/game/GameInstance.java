@@ -23,7 +23,6 @@ public class GameInstance extends Thread {
     private GameClient user1Client;
     private DataOutputStream out0;
     private DataOutputStream out1;
-    public int looser; // TODO: This is just a test
 
     public GameInstance() {
     }
@@ -62,14 +61,15 @@ public class GameInstance extends Thread {
     private void endGame() { // TODO: Implement endGame
         try {
             System.out.println("Game ended.");
-            if (looser == 0) {
-                out1.writeBytes("GameEnd:SurrenderOpponent\n");
-                out0.writeBytes("GameEnd:SurrenderPlayer\n");
-            } else if (looser == 1) {
-                out1.writeBytes("GameEnd:SurrenderPlayer\n");
+            int winner = game.getGameWinner();
+            if (winner == 0) {
                 out0.writeBytes("GameEnd:SurrenderOpponent\n");
+                out1.writeBytes("GameEnd:SurrenderPlayer\n");
+            } else if (winner == 1) {
+                out0.writeBytes("GameEnd:SurrenderPlayer\n");
+                out1.writeBytes("GameEnd:SurrenderOpponent\n");
             } else {
-                throw new IllegalArgumentException("Invalid looser " + looser + ".");
+                throw new IllegalArgumentException("Invalid winner " + winner + ".");
             }
         } catch (Exception e) {
             System.out.println("Error closing sockets.");
@@ -81,7 +81,6 @@ public class GameInstance extends Thread {
         this.user0 = user0;
         this.user1 = user1;
         this.port = port;
-        this.looser = 2;
         game = new Game(user0.getDeck(), user1.getDeck());
     }
 
@@ -128,10 +127,10 @@ public class GameInstance extends Thread {
             }
 
             endGame();
-            user0Client.endClient();
-            user1Client.endClient();
-            // user0Client.interrupt();
-            // user1Client.interrupt();
+            user0Client.interrupt();
+            user1Client.interrupt();
+            while (user0Client.isAlive() || user1Client.isAlive()) {
+            }
             out0.close();
             out1.close();
             socket0.close();
@@ -153,7 +152,7 @@ public class GameInstance extends Thread {
 
     }
 
-    public void test_gameover() {
+    public void declareSurrender(int player) {
         game.test_gameover = true;
     }
 }

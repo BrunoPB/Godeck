@@ -15,7 +15,7 @@ func end_game():
 	get_tree().change_scene_to_file("res://scenes/main_menu/main_menu.tscn")
 
 func _on_button_pressed():
-	ingame_system.send_move("MessageFromClient")
+	ingame_system.send_move("This is my move!")
 
 func _on_surrender_pressed():
-	ingame_system.send_move("over")
+	ingame_system.declare_surrender()

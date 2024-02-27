@@ -16,11 +16,11 @@ The Server should use the `DataOutputStream.writeBytes(string)` method to send m
 
 -   Example: Sending a message to update the Client user's number to 1
 
-```java
+```cpp
 out0.writeBytes("UserNumber:1\n");
 ```
 
-### Commands
+### Server commands
 
 -   `UserNumber` Update the client user's number. Should get a number as parameter
 -   `GameMove` Update the game state based on the parameter move. Should get a `GameMove` string as parameter
@@ -28,6 +28,20 @@ out0.writeBytes("UserNumber:1\n");
 
 ## Client to Server
 
-As the Server keeps track of what Clients are doing at all moment, there is no need for the Client to specify the message type.
+The pattern used by the Client is the same as the Server, but with other commands.
 
-The only type of message the Client can send to the server is a `GameMove`.
+The Client should always use the `StreamPeerTCP.put_string(string)` method to send messages to the Server.
+
+-   Example: Sending a message to the Server to notify the Client is ready
+
+```cpp
+tcp_stream.put_string("Ready:true\n")
+```
+
+### Client commands
+
+-   `Ready` Notify the Server that the Client is ready to receive messages. Should get "true" or "false" as parameter
+-   `GameMove` Tries to make a move in the game, the game move might not be made, it is up to the server to decide. Should get a `GameMove` string as parameter
+-   `Lose` Notify the Server that this Client has lost the game. Should get the reason ("Surrender", "Connection") as parameter
+
+###

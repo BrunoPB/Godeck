@@ -16,7 +16,7 @@ func _process(delta):
 
 func preprocess_message():
 	var regex : RegEx = RegEx.new()
-	regex.compile("[a-zA-Z0-9]+:[a-zA-Z0-9]+")
+	regex.compile("[a-zA-Z0-9]+[:][a-zA-Z0-9 ]+")
 	msg = regex.search(msg).get_string()
 
 func establish_connection():
@@ -26,18 +26,19 @@ func establish_connection():
 			push_error("An error has occurred while establishing connection to the server. Error: " + str(e))
 			return false
 		check_connection_status()
-		tcp_stream.put_string("ready\n")
+		tcp_stream.put_string("Ready:true\n")
 		return true
 	else:
 		push_error("Set socket port first.")
 		return false
 
-func tcp_disconnect():
-	tcp_stream.disconnect_from_host()
-
 func send_move(move:String):
 	tcp_stream.poll()
-	tcp_stream.put_string(move + "\n")
+	tcp_stream.put_string("GameMove:" + move + "\n")
+
+func declare_surrender():
+	tcp_stream.poll()
+	tcp_stream.put_string("Lose:Surrender\n")
 
 func check_connection_status():
 	tcp_stream.poll()
@@ -78,7 +79,6 @@ func decode_host_message(from_host : Array):
 		var index = msg.find(":")
 		var command = msg.substr(0,index)
 		var parameter = msg.substr(index+1,msg.length())
-		print(msg)
 		match command:
 			"GameMove":
 				pass
@@ -87,5 +87,5 @@ func decode_host_message(from_host : Array):
 			"GameEnd":
 				game_end.emit()
 			"DebugTest":
-				print(parameter)
+				print("DebugTest: \"" + parameter + "\"")
 		msg = ""

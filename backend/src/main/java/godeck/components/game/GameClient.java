@@ -14,13 +14,13 @@ public class GameClient extends Thread {
     private int number;
     private DataInputStream in;
     private GameInstance gameInstance;
-    private boolean gameover;
 
     public GameClient() {
     }
 
     private String preProcessMessage(String msg) {
-        Pattern regex = Pattern.compile("[a-zA-Z0-9]+"); // TODO: Update regex when GameMove is implemented
+        Pattern regex = Pattern.compile("[a-zA-Z0-9]+[:][a-zA-Z0-9 ]+"); // TODO: Update regex when GameMove is
+                                                                         // implemented
 
         Matcher matcher = regex.matcher(msg);
         if (matcher.find()) {
@@ -31,27 +31,36 @@ public class GameClient extends Thread {
         throw new IllegalArgumentException("Unknown message from Client.");
     }
 
-    private void sendMove(String msg) { // TODO: Implement this
-        // GameMove move = new GameMove(msg);
-        // gameInstance.tryMove(number, move);
-        System.out.println("msg.equals(\"over\") => " + msg.equals("over"));
-        if (msg.equals("over")) {
-            gameInstance.looser = number;
-            gameInstance.test_gameover();
+    private void decodeMessage(String msg) {
+        String command = msg.split(":")[0];
+        String parameter = msg.split(":")[1];
+
+        if (command.equals("Ready")) {
+        } else if (command.equals("GameMove")) {
+            sendMove(parameter);
+        } else if (command.equals("Lose")) {
+            gameInstance.declareSurrender(number);
+        } else if (command.equals("DebugTest")) {
+            System.out.println("DebugTest: \"" + parameter + "\"");
         } else {
-            gameInstance.tryMove(number, msg);
+            throw new IllegalArgumentException("Unknown command from Client.");
         }
     }
 
+    private void sendMove(String msg) { // TODO: Implement this
+        // GameMove move = new GameMove(msg);
+        // gameInstance.tryMove(number, move);
+        gameInstance.tryMove(number, msg);
+    }
+
     public void setupGameClient(int number, GameInstance gameInstance, DataInputStream in) {
-        this.gameover = false;
         this.number = number;
         this.gameInstance = gameInstance;
         this.in = in;
     }
 
     public void run() {
-        while (!gameover) {
+        while (true) {
             String msg = "";
             byte byteChar = 0;
             char charChar = 0;
@@ -59,24 +68,15 @@ public class GameClient extends Thread {
                 while (true) {
                     byteChar = in.readByte();
                     charChar = (char) byteChar;
-                    if (charChar == '\n' || gameover) {
+                    if (charChar == '\n') {
                         break;
                     }
                     msg += charChar;
                 }
-                sendMove(preProcessMessage(msg));
+                decodeMessage(preProcessMessage(msg));
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-    }
-
-    public void endClient() {
-        gameover = true;
-        try {
-            in.close();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }

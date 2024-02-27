@@ -1,10 +1,13 @@
 package godeck.components.game;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
+import godeck.models.Port;
 import godeck.models.User;
 import godeck.models.UserNumberAndPort;
 
@@ -12,8 +15,12 @@ import godeck.models.UserNumberAndPort;
 public class GameServerSingleton {
     private static GameServerSingleton instance = null;
     private Set<GameInstance> threads = new HashSet<GameInstance>();
+    private List<Port> ports = new ArrayList<Port>();
 
     private GameServerSingleton() {
+        for (int i = 5555; i < 5565; i++) {
+            ports.add(new Port(i));
+        }
     }
 
     public static GameServerSingleton getInstance() {
@@ -24,7 +31,13 @@ public class GameServerSingleton {
     }
 
     private int findAvailablePort() {
-        return 5555; // TODO: Implement this
+        List<Port> portsCopy = new ArrayList<Port>(this.ports);
+        for (Port p : portsCopy) {
+            if (p.availbility) {
+                return p.port;
+            }
+        }
+        throw new IllegalStateException("No available port.");
     }
 
     public void startNewGame(User user0, User user1) {
@@ -56,5 +69,24 @@ public class GameServerSingleton {
             }
         }
         return null;
+    }
+
+    public void setPortAvailbility(int port, boolean availbility) {
+        for (Port p : ports) {
+            if (p.port == port) {
+                p.availbility = availbility;
+                return;
+            }
+        }
+    }
+
+    public boolean hasAvailablePort() {
+        List<Port> portsCopy = new ArrayList<Port>(this.ports);
+        for (Port p : portsCopy) {
+            if (p.availbility) {
+                return true;
+            }
+        }
+        return false;
     }
 }

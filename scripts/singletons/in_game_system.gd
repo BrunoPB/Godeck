@@ -6,11 +6,18 @@ var status : int = 0
 var msg : String = ""
 var tcp_stream : StreamPeerTCP = StreamPeerTCP.new()
 
+signal game_end
+
 func _ready():
 	pass
 
 func _process(delta):
 	pass
+
+func preprocess_message():
+	var regex : RegEx = RegEx.new()
+	regex.compile("[a-zA-Z0-9]+:[a-zA-Z0-9]+")
+	msg = regex.search(msg).get_string()
 
 func establish_connection():
 	if socket_port != 0:
@@ -19,6 +26,7 @@ func establish_connection():
 			push_error("An error has occurred while establishing connection to the server. Error: " + str(e))
 			return false
 		check_connection_status()
+		tcp_stream.put_string("ready\n")
 		return true
 	else:
 		push_error("Set socket port first.")
@@ -27,10 +35,9 @@ func establish_connection():
 func tcp_disconnect():
 	tcp_stream.disconnect_from_host()
 
-func send_move():
+func send_move(move:String):
 	tcp_stream.poll()
-	var temp_msg = "Hello World, this TCP is alive!\n"
-	tcp_stream.put_string(temp_msg)
+	tcp_stream.put_string(move + "\n")
 
 func check_connection_status():
 	tcp_stream.poll()
@@ -67,14 +74,18 @@ func decode_host_message(from_host : Array):
 			break
 		msg += char
 	if end:
-		if msg.find(".") == 0:
-			msg = msg.substr(1,msg.length())
+		preprocess_message()
 		var index = msg.find(":")
 		var command = msg.substr(0,index)
 		var parameter = msg.substr(index+1,msg.length())
+		print(msg)
 		match command:
 			"GameMove":
 				pass
 			"UserNumber":
 				user_number = int(parameter)
+			"GameEnd":
+				game_end.emit()
+			"DebugTest":
+				print(parameter)
 		msg = ""

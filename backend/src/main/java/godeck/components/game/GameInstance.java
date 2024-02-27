@@ -23,6 +23,7 @@ public class GameInstance extends Thread {
     private GameClient user1Client;
     private DataOutputStream out0;
     private DataOutputStream out1;
+    public int looser; // TODO: This is just a test
 
     public GameInstance() {
     }
@@ -45,12 +46,10 @@ public class GameInstance extends Thread {
         try {
             if (player == 0) {
                 out0.flush();
-                out0.writeBytes("Parabens, seu animal, você é o jogador 0!\n");
-                // out0.writeBytes(test + "\n");
+                out0.writeBytes("DebugTest:" + test + "\n");
             } else if (player == 1) {
                 out1.flush();
-                out0.writeBytes("Parabens, seu animal, você é o jogador 1!\n");
-                // out1.writeBytes(test + "\n");
+                out1.writeBytes("DebugTest:" + test + "\n");
             } else {
                 throw new IllegalArgumentException("Invalid player " + player + ".");
             }
@@ -62,10 +61,16 @@ public class GameInstance extends Thread {
 
     private void endGame() { // TODO: Implement endGame
         try {
-            out0.writeByte(0);
-            out1.writeByte(0);
-            out0.close();
-            out1.close();
+            System.out.println("Game ended.");
+            if (looser == 0) {
+                out1.writeBytes("GameEnd:SurrenderOpponent\n");
+                out0.writeBytes("GameEnd:SurrenderPlayer\n");
+            } else if (looser == 1) {
+                out1.writeBytes("GameEnd:SurrenderPlayer\n");
+                out0.writeBytes("GameEnd:SurrenderOpponent\n");
+            } else {
+                throw new IllegalArgumentException("Invalid looser " + looser + ".");
+            }
         } catch (Exception e) {
             System.out.println("Error closing sockets.");
             System.out.println(e.getMessage());
@@ -76,6 +81,7 @@ public class GameInstance extends Thread {
         this.user0 = user0;
         this.user1 = user1;
         this.port = port;
+        this.looser = 2;
         game = new Game(user0.getDeck(), user1.getDeck());
     }
 
@@ -94,6 +100,7 @@ public class GameInstance extends Thread {
 
     public void run() {
         try {
+            GameServerSingleton.getInstance().setPortAvailbility(port, false);
             ServerSocket server = new ServerSocket(port);
             Socket socket0 = server.accept();
             Socket socket1 = server.accept();
@@ -121,8 +128,16 @@ public class GameInstance extends Thread {
             }
 
             endGame();
-
+            user0Client.endClient();
+            user1Client.endClient();
+            // user0Client.interrupt();
+            // user1Client.interrupt();
+            out0.close();
+            out1.close();
+            socket0.close();
+            socket1.close();
             server.close();
+            GameServerSingleton.getInstance().setPortAvailbility(port, true);
         } catch (Exception e) {
             System.out.println("Server is not running");
             System.out.println(e.getMessage());
@@ -136,5 +151,9 @@ public class GameInstance extends Thread {
         synchronizeClients(player, test);
         // }
 
+    }
+
+    public void test_gameover() {
+        game.test_gameover = true;
     }
 }

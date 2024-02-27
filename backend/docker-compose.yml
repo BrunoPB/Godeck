@@ -21,7 +21,7 @@ services:
         restart: always
         ports:
             - "8080:8080"
-            - "5555:5555"
+            - "${MIN_TCP_PORT}-${MAX_TCP_PORT}:${MIN_TCP_PORT}-${MAX_TCP_PORT}"
         networks:
             - backend
         environment:
@@ -30,6 +30,8 @@ services:
             spring.datasource.password: "${DB_PASSWORD}"
             spring.jpa.hibernate.ddl-auto: update
             environment: "docker"
+            min_tcp_port: "${MIN_TCP_PORT}"
+            max_tcp_port: "${MAX_TCP_PORT}"
 
 networks:
     backend:

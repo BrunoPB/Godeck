@@ -30,5 +30,5 @@ func emit_game_found(result, response_code, headers, body):
 func cancel_queue():
 	http.request_completed.disconnect(emit_game_found)
 	http.cancel_request()
-	http.request(address.BASE_URL+"/dequeue",PackedStringArray(),HTTPClient.METHOD_POST,user.id)
+	http.request(address.BASE_URL+"/queue/dequeue",PackedStringArray(),HTTPClient.METHOD_POST,user.id)
 	queue_finished.emit(false)

@@ -15,7 +15,8 @@ public class QueueSystem extends Thread {
 
     public void run() {
         while (true) {
-            if (QueueSingleton.getInstance().getQueueSize() >= 2 && GameServerSingleton.getInstance().hasAvailablePort()){
+            if (QueueSingleton.getInstance().getQueueSize() >= 2
+                    && GameServerSingleton.getInstance().hasAvailablePort()) {
                 List<User> users = QueueSingleton.getInstance().getNFirstUsers(2);
                 GameServerSingleton.getInstance().startNewGame(users.get(0), users.get(1));
                 QueueSingleton.getInstance().dequeue(users.get(1));

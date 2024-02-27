@@ -133,4 +133,13 @@ public class User {
                 ", collection=" + collection +
                 '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof User) {
+            User u = (User) obj;
+            return this.id.equals(u.id);
+        }
+        return false;
+    }
 }

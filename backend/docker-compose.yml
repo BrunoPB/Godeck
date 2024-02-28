@@ -19,6 +19,9 @@ services:
             dockerfile: "./backend.Dockerfile"
         container_name: godeck-spring-boot
         restart: always
+        expose:
+            - "8080"
+            - "${MIN_TCP_PORT}-${MAX_TCP_PORT}"
         ports:
             - "8080:8080"
             - "${MIN_TCP_PORT}-${MAX_TCP_PORT}:${MIN_TCP_PORT}-${MAX_TCP_PORT}"

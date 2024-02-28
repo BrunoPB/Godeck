@@ -77,6 +77,13 @@ public class GameInstance extends Thread {
         }
     }
 
+    private void stopClients() {
+        user0Client.interrupt();
+        user1Client.interrupt();
+        // while (!user0Client.isInterrupted() || !user1Client.isInterrupted()) {
+        // }
+    }
+
     public void setupGame(User user0, User user1, int port) {
         this.user0 = user0;
         this.user1 = user1;
@@ -126,13 +133,7 @@ public class GameInstance extends Thread {
             while (!game.isGameOver()) {
             }
 
-            user0Client.interrupt();
-            user1Client.interrupt();
-            while (user0Client.isAlive() || user1Client.isAlive()) {
-                System.out.println("THEY ARE ALIVE");
-            }
-
-            System.out.println("CLIENTS INTERRUPTED!.");
+            stopClients();
 
             endGame();
             out0.close();

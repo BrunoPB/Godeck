@@ -58,23 +58,27 @@ public class GameClient extends Thread {
     }
 
     public void run() {
-        while (true) {
-            String msg = "";
-            byte byteChar = 0;
-            char charChar = 0;
-            try {
-                while (true) {
-                    byteChar = in.readByte();
-                    charChar = (char) byteChar;
-                    if (charChar == '\n') {
-                        break;
+        try {
+            while (in.available() > 0) {
+                String msg = "";
+                byte byteChar = 0;
+                char charChar = 0;
+                try {
+                    while (in.available() > 0) {
+                        byteChar = in.readByte();
+                        charChar = (char) byteChar;
+                        if (charChar == '\n') {
+                            break;
+                        }
+                        msg += charChar;
                     }
-                    msg += charChar;
+                    decodeMessage(preProcessMessage(msg));
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                decodeMessage(preProcessMessage(msg));
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -59,11 +59,6 @@ public class GameServerSingleton {
             throw new IllegalArgumentException("User cannot be null.");
         }
         for (GameInstance t : threads) {
-            // TEST TODO: How to clean threads?
-            // if (!t.isAlive()) {
-            // threads.remove(t);
-            // continue;
-            // }
             UserNumberAndPort userNumberAndPort = t.getUserNumberAndPort(user);
             if (userNumberAndPort != null) {
                 return userNumberAndPort;
@@ -97,6 +92,9 @@ public class GameServerSingleton {
         }
 
         int port = findAvailablePort();
+
+        System.out.println("Starting game between " + user0.getName() + " and " + user1.getName() + " on port "
+                + port + ".");
 
         GameInstance gameInstance = new GameInstance();
         threads.add(gameInstance);

@@ -1,6 +1,7 @@
 package godeck.components.game;
 
 import java.io.DataInputStream;
+import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,20 +22,17 @@ public class GameClient extends Thread {
     private String preProcessMessage(String msg) {
         Pattern regex = Pattern.compile("[a-zA-Z0-9]+[:][a-zA-Z0-9 ]+"); // TODO: Update regex when GameMove is
                                                                          // implemented
-
         Matcher matcher = regex.matcher(msg);
         if (matcher.find()) {
             String result = matcher.group();
             return result;
         }
-
         throw new IllegalArgumentException("Unknown message from Client.");
     }
 
     private void decodeMessage(String msg) {
         String command = msg.split(":")[0];
         String parameter = msg.split(":")[1];
-
         if (command.equals("Ready")) {
         } else if (command.equals("GameMove")) {
             sendMove(parameter);
@@ -74,7 +72,7 @@ public class GameClient extends Thread {
                     msg += charChar;
                 }
                 decodeMessage(preProcessMessage(msg));
-            } catch (Exception e) {
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         }

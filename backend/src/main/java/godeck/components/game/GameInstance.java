@@ -126,11 +126,15 @@ public class GameInstance extends Thread {
             while (!game.isGameOver()) {
             }
 
-            endGame();
             user0Client.interrupt();
             user1Client.interrupt();
             while (user0Client.isAlive() || user1Client.isAlive()) {
+                System.out.println("THEY ARE ALIVE");
             }
+
+            System.out.println("CLIENTS INTERRUPTED!.");
+
+            endGame();
             out0.close();
             out1.close();
             socket0.close();

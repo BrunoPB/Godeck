@@ -32,6 +32,9 @@ func establish_connection():
 		push_error("Set socket port first.")
 		return false
 
+func disconnect_from_server():
+	tcp_stream.disconnect_from_host()
+
 func send_move(move:String):
 	tcp_stream.poll()
 	tcp_stream.put_string("GameMove:" + move + "\n")
@@ -86,6 +89,7 @@ func decode_host_message(from_host : Array):
 				user_number = int(parameter)
 			"GameEnd":
 				game_end.emit()
+				disconnect_from_server()
 			"DebugTest":
 				print("DebugTest: \"" + parameter + "\"")
 		msg = ""

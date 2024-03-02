@@ -10,11 +10,11 @@ signal queue_finished(game_found)
 
 func _ready():
 	add_child(http)
-	http.request_completed.connect(emit_game_found)
 	queue_endpoint = address.BASE_URL+"/queue"
 
 func initiate_queue():
 	http.cancel_request()
+	http.request_completed.connect(emit_game_found)
 	http.request(queue_endpoint,PackedStringArray(),HTTPClient.METHOD_POST,user.id)
 
 func emit_game_found(result, response_code, headers, body):

@@ -46,6 +46,7 @@ public class QueueSingleton {
     }
 
     public List<User> getQueue() {
-        return usersQueue;
+        List<User> usersQueueCopy = new LinkedList<User>(usersQueue);
+        return usersQueueCopy;
     }
 }

@@ -14,6 +14,7 @@ func _ready():
 	queue_endpoint = address.BASE_URL+"/queue"
 
 func initiate_queue():
+	http.cancel_request()
 	http.request(queue_endpoint,PackedStringArray(),HTTPClient.METHOD_POST,user.id)
 
 func emit_game_found(result, response_code, headers, body):

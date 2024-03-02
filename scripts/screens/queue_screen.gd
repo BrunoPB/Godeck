@@ -9,6 +9,7 @@ var queue_time_seconds : int = 0
 func _ready():
 	queue_system.queue_finished.connect(check_queue)
 	queue_system.initiate_queue()
+	await queue_system.queue_finished
 
 func _process(delta):
 	update_time(delta)

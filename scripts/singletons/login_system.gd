@@ -32,7 +32,6 @@ func receive_data():
 		http.request(address.BASE_URL+"/test",PackedStringArray(),HTTPClient.METHOD_GET,"catarina@email.com")
 	else:
 		http.request(address.BASE_URL+"/test",PackedStringArray(),HTTPClient.METHOD_GET,"dorival@email.com")
-	#http.request(address.BASE_URL+"/test",PackedStringArray(),HTTPClient.METHOD_GET,"catarina@email.com")
 	###############################################################
 	
 	await http.request_completed

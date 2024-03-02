@@ -130,6 +130,7 @@ public class GameInstance extends Thread {
             in1.readByte();
 
             while (!game.isGameOver()) {
+                Thread.sleep(10);
             }
 
             stopClients();

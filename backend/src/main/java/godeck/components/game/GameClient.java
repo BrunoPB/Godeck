@@ -1,14 +1,10 @@
 package godeck.components.game;
 
 import java.io.DataInputStream;
-import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
-
-import godeck.models.Coordinates;
-import godeck.models.GameMove;
 
 @Component
 public class GameClient extends Thread {
@@ -76,6 +72,7 @@ public class GameClient extends Thread {
                     }
                     decodeMessage(preProcessMessage(msg));
                 }
+                Thread.sleep(10);
             }
         } catch (Exception e) {
             System.out.println(e.getMessage());

@@ -44,4 +44,8 @@ public class QueueSingleton {
         List<User> usersQueueCopy = new LinkedList<User>(usersQueue);
         return usersQueueCopy.subList(0, n);
     }
+
+    public List<User> getQueue() {
+        return usersQueue;
+    }
 }

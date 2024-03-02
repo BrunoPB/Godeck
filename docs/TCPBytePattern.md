@@ -23,6 +23,7 @@ out0.writeBytes("UserNumber:1\n");
 ### Server commands
 
 -   `UserNumber` Update the client user's number. This command also confirms that the game is starting. Should get a number as parameter
+-   `Error` Notify the client that an error has occurred in the server. Should get the error message as parameter
 -   `GameMove` Update the game state based on the parameter move. Should get a `GameMove` string as parameter
 -   `GameEnd` Ends the current game. Should get the reason for the game ending ("Win", "Lose", "SurrenderPlayer", "SurrenderOpponent", "AFKPlayer", "AFKOpponent") as parameter
 

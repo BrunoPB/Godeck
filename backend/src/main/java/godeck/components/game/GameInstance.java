@@ -5,6 +5,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.springframework.stereotype.Component;
 
@@ -21,12 +24,39 @@ public class GameInstance extends Thread {
     private Game game;
     private GameClient user0Client;
     private GameClient user1Client;
+    private ServerSocket server;
     private DataOutputStream out0;
     private DataOutputStream out1;
     private boolean client1Ready;
     private boolean client2Ready;
+    private Socket socket0;
+    private Socket socket1;
+    private DataInputStream in0;
+    private DataInputStream in1;
 
     public GameInstance() {
+    }
+
+    private void closeServer() {
+        try {
+            if (in0 != null)
+                in0.close();
+            if (in1 != null)
+                in1.close();
+            if (out0 != null)
+                out0.close();
+            if (out1 != null)
+                out1.close();
+            if (socket0 != null)
+                socket0.close();
+            if (socket1 != null)
+                socket1.close();
+            if (server != null)
+                server.close();
+        } catch (Exception e) {
+            System.out.println("Error closing sockets.");
+            System.out.println(e.getMessage());
+        }
     }
 
     private void sendClientNumber() {
@@ -111,11 +141,23 @@ public class GameInstance extends Thread {
         try {
             // Setting up server
             GameServerSingleton.getInstance().setPortAvailbility(port, false);
-            ServerSocket server = new ServerSocket(port);
-            Socket socket0 = server.accept();
-            Socket socket1 = server.accept();
-            DataInputStream in0 = new DataInputStream(new BufferedInputStream(socket0.getInputStream()));
-            DataInputStream in1 = new DataInputStream(new BufferedInputStream(socket1.getInputStream()));
+            server = new ServerSocket(port);
+            server.setSoTimeout(5000); // 5 seconds timeout
+            try {
+                socket0 = server.accept();
+                socket1 = server.accept();
+            } catch (SocketTimeoutException e) {
+                if (socket0.isBound()) {
+                    in0 = new DataInputStream(new BufferedInputStream(socket0.getInputStream()));
+                    in0.readByte();
+                    out0 = new DataOutputStream(socket0.getOutputStream());
+                    out0.writeBytes("Error:Opponent could not connect.\n");
+                }
+                closeServer();
+                return;
+            }
+            in0 = new DataInputStream(new BufferedInputStream(socket0.getInputStream()));
+            in1 = new DataInputStream(new BufferedInputStream(socket1.getInputStream()));
             in0.readByte();
             in1.readByte();
             out0 = new DataOutputStream(socket0.getOutputStream());
@@ -142,14 +184,7 @@ public class GameInstance extends Thread {
             stopClients();
             endGame();
 
-            // Closing server
-            in0.close();
-            in1.close();
-            out0.close();
-            out1.close();
-            socket0.close();
-            socket1.close();
-            server.close();
+            closeServer();
             GameServerSingleton.getInstance().setPortAvailbility(port, true);
         } catch (Exception e) {
             System.out.println("Server is not running");

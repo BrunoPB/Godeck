@@ -89,6 +89,11 @@ func decode_host_message(from_host : Array):
 			"UserNumber":
 				user_number = int(parameter)
 				game_confirmation.emit(true)
+			"Error":
+				# TODO: Error handling
+				disconnect_from_server()
+				get_tree().change_scene_to_file("res://scenes/main_menu/main_menu.tscn")
+				push_error(parameter)
 			"GameEnd":
 				disconnect_from_server()
 				game_end.emit()

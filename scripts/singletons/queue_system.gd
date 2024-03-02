@@ -27,6 +27,7 @@ func emit_game_found(result, response_code, headers, body):
 	if bool(response.status) == false:
 		push_error("An error occurred when starting the game. " + str(response.message))
 		cancel_queue()
+		return
 	in_game_system.socket_port = int(response.port)
 	queue_finished.emit(true)
 

@@ -7,6 +7,7 @@ var msg : String = ""
 var tcp_stream : StreamPeerTCP = StreamPeerTCP.new()
 
 signal game_end
+signal game_confirmation
 
 func _ready():
 	pass
@@ -87,6 +88,7 @@ func decode_host_message(from_host : Array):
 				pass
 			"UserNumber":
 				user_number = int(parameter)
+				game_confirmation.emit(true)
 			"GameEnd":
 				disconnect_from_server()
 				game_end.emit()

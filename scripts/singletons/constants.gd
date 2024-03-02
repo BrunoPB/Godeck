@@ -35,7 +35,8 @@ var card_base_paths = {
 
 var queue_screen_paths = {
 	"time_label" : "VerticalLayout/TimeLabel",
-	"background" : "BackgroundImage"
+	"background" : "BackgroundImage",
+	"cancel_button" : "VerticalLayout/CancelButton"
 }
 
 ## ENUMS ##

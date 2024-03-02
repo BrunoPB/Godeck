@@ -23,6 +23,8 @@ public class GameInstance extends Thread {
     private GameClient user1Client;
     private DataOutputStream out0;
     private DataOutputStream out1;
+    private boolean client1Ready;
+    private boolean client2Ready;
 
     public GameInstance() {
     }
@@ -88,6 +90,8 @@ public class GameInstance extends Thread {
         this.user1 = user1;
         this.port = port;
         game = new Game(user0.getDeck(), user1.getDeck());
+        client1Ready = false;
+        client2Ready = false;
     }
 
     public UserNumberAndPort getUserNumberAndPort(User user) {
@@ -105,37 +109,40 @@ public class GameInstance extends Thread {
 
     public void run() {
         try {
+            // Setting up server
             GameServerSingleton.getInstance().setPortAvailbility(port, false);
             ServerSocket server = new ServerSocket(port);
             Socket socket0 = server.accept();
             Socket socket1 = server.accept();
-
             DataInputStream in0 = new DataInputStream(new BufferedInputStream(socket0.getInputStream()));
             DataInputStream in1 = new DataInputStream(new BufferedInputStream(socket1.getInputStream()));
-
+            in0.readByte();
+            in1.readByte();
             out0 = new DataOutputStream(socket0.getOutputStream());
             out1 = new DataOutputStream(socket1.getOutputStream());
 
-            sendClientNumber();
-
+            // Setting up clients
             user0Client = new GameClient();
             user0Client.setupGameClient(0, this, in0);
             user1Client = new GameClient();
             user1Client.setupGameClient(1, this, in1);
-
             user0Client.start();
             user1Client.start();
+            while (!client1Ready || !client2Ready) {
+                Thread.sleep(10);
+            }
+            sendClientNumber();
 
-            in0.readByte();
-            in1.readByte();
-
+            // Game loop
             while (!game.isGameOver()) {
                 Thread.sleep(10);
             }
 
+            // Closing clients
             stopClients();
             endGame();
 
+            // Closing server
             in0.close();
             in1.close();
             out0.close();
@@ -147,6 +154,16 @@ public class GameInstance extends Thread {
         } catch (Exception e) {
             System.out.println("Server is not running");
             System.out.println(e.getMessage());
+        }
+    }
+
+    public void prepareClient(int number) {
+        if (number == 0) {
+            client1Ready = true;
+        } else if (number == 1) {
+            client2Ready = true;
+        } else {
+            throw new IllegalArgumentException("Invalid number " + number + ".");
         }
     }
 

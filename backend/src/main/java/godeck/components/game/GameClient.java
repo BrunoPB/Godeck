@@ -31,6 +31,7 @@ public class GameClient extends Thread {
         String command = msg.split(":")[0];
         String parameter = msg.split(":")[1];
         if (command.equals("Ready")) {
+            gameInstance.prepareClient(number);
         } else if (command.equals("GameMove")) {
             sendMove(parameter);
         } else if (command.equals("Lose")) {

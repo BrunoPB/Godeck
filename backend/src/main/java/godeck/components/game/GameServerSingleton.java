@@ -93,9 +93,6 @@ public class GameServerSingleton {
 
         int port = findAvailablePort();
 
-        System.out.println("Starting game between " + user0.getName() + " and " + user1.getName() + " on port "
-                + port + ".");
-
         GameInstance gameInstance = new GameInstance();
         threads.add(gameInstance);
         gameInstance.setupGame(user0, user1, port);

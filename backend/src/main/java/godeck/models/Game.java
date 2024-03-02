@@ -26,12 +26,10 @@ public class Game {
     }
 
     public boolean isGameOver() { // TODO: This is just a test
-        if (test_gameover)
-            System.out.println("GAME OVER!");
         return test_gameover;
     }
 
-    public int getGameWinner() {
+    public int getGameWinner() { // TODO: Implement getGameWinner
         return 0;
     }
 }

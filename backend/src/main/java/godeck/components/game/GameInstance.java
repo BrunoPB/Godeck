@@ -60,7 +60,6 @@ public class GameInstance extends Thread {
 
     private void endGame() { // TODO: Implement endGame
         try {
-            System.out.println("Game ended.");
             int winner = game.getGameWinner();
             if (winner == 0) {
                 out0.writeBytes("GameEnd:SurrenderOpponent\n");
@@ -78,10 +77,10 @@ public class GameInstance extends Thread {
     }
 
     private void stopClients() {
-        user0Client.interrupt();
-        user1Client.interrupt();
-        // while (!user0Client.isInterrupted() || !user1Client.isInterrupted()) {
-        // }
+        user0Client.kill();
+        user1Client.kill();
+        while (user0Client.isAlive() || user1Client.isAlive()) {
+        }
     }
 
     public void setupGame(User user0, User user1, int port) {
@@ -134,8 +133,10 @@ public class GameInstance extends Thread {
             }
 
             stopClients();
-
             endGame();
+
+            in0.close();
+            in1.close();
             out0.close();
             out1.close();
             socket0.close();

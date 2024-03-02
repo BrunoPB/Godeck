@@ -15,6 +15,7 @@ public class GameClient extends Thread {
     private int number;
     private DataInputStream in;
     private GameInstance gameInstance;
+    private boolean exit;
 
     public GameClient() {
     }
@@ -55,16 +56,17 @@ public class GameClient extends Thread {
         this.number = number;
         this.gameInstance = gameInstance;
         this.in = in;
+        this.exit = false;
     }
 
     public void run() {
         try {
-            while (in.available() > 0) {
+            while (!exit) {
                 String msg = "";
                 byte byteChar = 0;
                 char charChar = 0;
-                try {
-                    while (in.available() > 0) {
+                if (in.available() > 0) {
+                    while (!exit) {
                         byteChar = in.readByte();
                         charChar = (char) byteChar;
                         if (charChar == '\n') {
@@ -73,12 +75,15 @@ public class GameClient extends Thread {
                         msg += charChar;
                     }
                     decodeMessage(preProcessMessage(msg));
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
             }
-        } catch (IOException e) {
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
             e.printStackTrace();
         }
+    }
+
+    public void kill() {
+        exit = true;
     }
 }

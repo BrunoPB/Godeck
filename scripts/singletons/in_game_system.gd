@@ -88,8 +88,8 @@ func decode_host_message(from_host : Array):
 			"UserNumber":
 				user_number = int(parameter)
 			"GameEnd":
-				game_end.emit()
 				disconnect_from_server()
+				game_end.emit()
 			"DebugTest":
 				print("DebugTest: \"" + parameter + "\"")
 		msg = ""

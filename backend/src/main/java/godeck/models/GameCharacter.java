@@ -174,4 +174,23 @@ public class GameCharacter {
     public void setNorthWest(int northWest) {
         this.northWest = northWest;
     }
+
+    // Methods
+
+    public String toJSONString() {
+        return "{\"id\" : \"" + id + "\", \"number\" : " + number + ", \"name\" : \"" + name + "\", \"tier\" : " + tier
+                + ", \"mythology\" : " + mythology + ", \"fileName\" : \"" + fileName + "\", \"price\" : " + price
+                + ", \"stars\" : " + stars + ", \"north\" : " + north + ", \"northEast\" : " + northEast
+                + ", \"southEast\" : " + southEast + ", \"south\" : " + south + ", \"southWest\" : " + southWest
+                + ", \"northWest\" : " + northWest + "}";
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof GameCharacter) {
+            GameCharacter gameCharacter = (GameCharacter) obj;
+            return gameCharacter.getId() == this.id;
+        }
+        return false;
+    }
 }

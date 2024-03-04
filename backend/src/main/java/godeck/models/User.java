@@ -122,16 +122,23 @@ public class User {
         this.collection = collection;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "name='" + name + '\'' +
-                ", email=" + email +
-                ", gold=" + gold +
-                ", crystals=" + crystals +
-                ", deck=" + deck +
-                ", collection=" + collection +
-                '}';
+    // Methods
+
+    public String toJSONString() {
+        String string = "{\"id\" : \"" + id + "\", \"name\" : \"" + name + "\", \"email\" : \"" + email
+                + "\", \"gold\" : " + gold
+                + ", \"crystals\" : " + crystals + ", \"deck\" : ";
+        for (GameCharacter gameCharacter : deck) {
+            string += gameCharacter.toJSONString() + ", ";
+        }
+        string = string.substring(0, string.length() - 2);
+        string += ", \"collection\" : ";
+        for (GameCharacter gameCharacter : collection) {
+            string += gameCharacter.toJSONString() + ", ";
+        }
+        string = string.substring(0, string.length() - 2);
+        string += "}";
+        return string;
     }
 
     @Override

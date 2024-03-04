@@ -6,8 +6,6 @@ import java.io.DataOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.springframework.stereotype.Component;
 
@@ -37,40 +35,71 @@ public class GameInstance extends Thread {
     public GameInstance() {
     }
 
-    private void closeServer() {
+    private void setupGameServer() throws Exception {
+        GameServerSingleton.getInstance().setPortAvailbility(port, false);
+        server = new ServerSocket(port);
+        server.setSoTimeout(5000); // 5 seconds timeout
         try {
-            if (in0 != null)
-                in0.close();
-            if (in1 != null)
-                in1.close();
-            if (out0 != null)
-                out0.close();
-            if (out1 != null)
-                out1.close();
-            if (socket0 != null)
-                socket0.close();
-            if (socket1 != null)
-                socket1.close();
-            if (server != null)
-                server.close();
-        } catch (Exception e) {
-            System.out.println("Error closing sockets.");
-            System.out.println(e.getMessage());
+            socket0 = server.accept();
+            socket1 = server.accept();
+        } catch (SocketTimeoutException e) {
+            if (socket0.isBound()) {
+                in0 = new DataInputStream(new BufferedInputStream(socket0.getInputStream()));
+                in0.readByte();
+                out0 = new DataOutputStream(socket0.getOutputStream());
+                out0.writeBytes("Error:Opponent could not connect.\n");
+            }
+            closeServer();
+            throw new Exception("Opponent could not connect.");
+        }
+        in0 = new DataInputStream(new BufferedInputStream(socket0.getInputStream()));
+        in1 = new DataInputStream(new BufferedInputStream(socket1.getInputStream()));
+        in0.readByte();
+        in1.readByte();
+        out0 = new DataOutputStream(socket0.getOutputStream());
+        out1 = new DataOutputStream(socket1.getOutputStream());
+    }
+
+    private void setupGameClients() throws Exception {
+        user0Client = new GameClient();
+        user0Client.setupGameClient(0, this, in0);
+        user1Client = new GameClient();
+        user1Client.setupGameClient(1, this, in1);
+        user0Client.start();
+        user1Client.start();
+        while (!client1Ready || !client2Ready) {
+            Thread.sleep(10);
+        }
+        sendClientNumber();
+    }
+
+    private void gameLoop() throws Exception {
+        while (!game.isGameOver()) {
+            Thread.sleep(10);
         }
     }
 
-    private void sendClientNumber() {
-        try {
-            out0.writeBytes("UserNumber:0\n");
-            out1.writeBytes("UserNumber:1\n");
-        } catch (Exception e) {
-            System.out.println("Error sending client number.");
-            System.out.println(e.getMessage());
-        }
+    private void closeServer() throws Exception {
+        if (in0 != null)
+            in0.close();
+        if (in1 != null)
+            in1.close();
+        if (out0 != null)
+            out0.close();
+        if (out1 != null)
+            out1.close();
+        if (socket0 != null)
+            socket0.close();
+        if (socket1 != null)
+            socket1.close();
+        if (server != null)
+            server.close();
+        GameServerSingleton.getInstance().setPortAvailbility(port, true);
     }
 
-    private boolean verifyMove(int player, GameMove move) { // TODO: Implement validations
-        return true;
+    private void sendClientNumber() throws Exception {
+        out0.writeBytes("UserNumber:0\n");
+        out1.writeBytes("UserNumber:1\n");
     }
 
     private void synchronizeClients(int player, String test) {
@@ -85,26 +114,20 @@ public class GameInstance extends Thread {
                 throw new IllegalArgumentException("Invalid player " + player + ".");
             }
         } catch (Exception e) {
-            System.out.println("Error trying to move.");
             System.out.println(e.getMessage());
         }
     }
 
-    private void endGame() { // TODO: Implement endGame
-        try {
-            int winner = game.getGameWinner();
-            if (winner == 0) {
-                out0.writeBytes("GameEnd:SurrenderOpponent\n");
-                out1.writeBytes("GameEnd:SurrenderPlayer\n");
-            } else if (winner == 1) {
-                out0.writeBytes("GameEnd:SurrenderPlayer\n");
-                out1.writeBytes("GameEnd:SurrenderOpponent\n");
-            } else {
-                throw new IllegalArgumentException("Invalid winner " + winner + ".");
-            }
-        } catch (Exception e) {
-            System.out.println("Error closing sockets.");
-            System.out.println(e.getMessage());
+    private void endGame() throws Exception { // TODO: Implement endGame
+        int winner = game.getGameWinner();
+        if (winner == 0) {
+            out0.writeBytes("GameEnd:SurrenderOpponent\n");
+            out1.writeBytes("GameEnd:SurrenderPlayer\n");
+        } else if (winner == 1) {
+            out0.writeBytes("GameEnd:SurrenderPlayer\n");
+            out1.writeBytes("GameEnd:SurrenderOpponent\n");
+        } else {
+            throw new IllegalArgumentException("Invalid winner " + winner + ".");
         }
     }
 
@@ -119,9 +142,9 @@ public class GameInstance extends Thread {
         this.user0 = user0;
         this.user1 = user1;
         this.port = port;
-        game = new Game(user0.getDeck(), user1.getDeck());
         client1Ready = false;
         client2Ready = false;
+        game = new Game(user0.getDeck(), user1.getDeck());
     }
 
     public UserNumberAndPort getUserNumberAndPort(User user) {
@@ -137,61 +160,6 @@ public class GameInstance extends Thread {
         return userNumberAndPort;
     }
 
-    public void run() {
-        try {
-            // Setting up server
-            GameServerSingleton.getInstance().setPortAvailbility(port, false);
-            server = new ServerSocket(port);
-            server.setSoTimeout(5000); // 5 seconds timeout
-            try {
-                socket0 = server.accept();
-                socket1 = server.accept();
-            } catch (SocketTimeoutException e) {
-                if (socket0.isBound()) {
-                    in0 = new DataInputStream(new BufferedInputStream(socket0.getInputStream()));
-                    in0.readByte();
-                    out0 = new DataOutputStream(socket0.getOutputStream());
-                    out0.writeBytes("Error:Opponent could not connect.\n");
-                }
-                closeServer();
-                return;
-            }
-            in0 = new DataInputStream(new BufferedInputStream(socket0.getInputStream()));
-            in1 = new DataInputStream(new BufferedInputStream(socket1.getInputStream()));
-            in0.readByte();
-            in1.readByte();
-            out0 = new DataOutputStream(socket0.getOutputStream());
-            out1 = new DataOutputStream(socket1.getOutputStream());
-
-            // Setting up clients
-            user0Client = new GameClient();
-            user0Client.setupGameClient(0, this, in0);
-            user1Client = new GameClient();
-            user1Client.setupGameClient(1, this, in1);
-            user0Client.start();
-            user1Client.start();
-            while (!client1Ready || !client2Ready) {
-                Thread.sleep(10);
-            }
-            sendClientNumber();
-
-            // Game loop
-            while (!game.isGameOver()) {
-                Thread.sleep(10);
-            }
-
-            // Closing clients
-            stopClients();
-            endGame();
-
-            closeServer();
-            GameServerSingleton.getInstance().setPortAvailbility(port, true);
-        } catch (Exception e) {
-            System.out.println("Server is not running");
-            System.out.println(e.getMessage());
-        }
-    }
-
     public void prepareClient(int number) {
         if (number == 0) {
             client1Ready = true;
@@ -203,15 +171,26 @@ public class GameInstance extends Thread {
     }
 
     public void tryMove(int player, String test) { // TODO: Implement tryMove
-
         // if (verifyMove(player, move)) {
         // game.executeMove(player, move);
         synchronizeClients(player, test);
         // }
-
     }
 
     public void declareSurrender(int player) {
         game.test_gameover = true;
+    }
+
+    public void run() {
+        try {
+            setupGameServer();
+            setupGameClients();
+            gameLoop();
+            stopClients();
+            endGame();
+            closeServer();
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

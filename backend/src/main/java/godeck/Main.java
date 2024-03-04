@@ -11,16 +11,25 @@ import godeck.components.queue.QueueSystem;
 @SpringBootApplication
 public class Main {
 
-	public static void main(String[] args) {
-		SpringApplication.run(Main.class, args);
-
+	private static void startSingletons() {
 		GameServerSingleton.getInstance();
 		QueueSingleton.getInstance();
+	}
 
+	private static void startDatabases() {
 		DatabaseInicialization.initializeGameCharacters();
 		DatabaseInicialization.test_initializeUser(); // TODO: remove this line
+	}
 
+	private static void runQueueSystem() {
 		QueueSystem queueSystem = new QueueSystem();
 		queueSystem.start();
+	}
+
+	public static void main(String[] args) {
+		SpringApplication.run(Main.class, args);
+		startSingletons();
+		startDatabases();
+		runQueueSystem();
 	}
 }

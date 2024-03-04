@@ -22,6 +22,10 @@ public class Game {
         this.test_gameover = false; // TODO: Delete this later
     }
 
+    public boolean verifyMove(int player, GameMove move) { // TODO: Implement validations
+        return true;
+    }
+
     public void executeMove(int user, boolean move) {
     }
 

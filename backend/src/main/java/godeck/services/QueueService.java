@@ -21,15 +21,15 @@ public class QueueService {
         this.userRepository = userRepository;
     }
 
-    public QueueResponse queue(String stringUserId) {
+    private User getUserById(String stringUserId) {
         UUID userId = UUID.fromString(stringUserId);
         if (userId == null) {
             throw new IllegalArgumentException("User id cannot be null.");
         }
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found!"));
+        return userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found!"));
+    }
 
-        QueueSingleton.getInstance().queue(user);
-
+    private void waitWhileUserIsInQueue(User user) {
         while (QueueSingleton.getInstance().isInQueue(user)) {
             try {
                 Thread.sleep(10);
@@ -37,7 +37,9 @@ public class QueueService {
                 e.printStackTrace();
             }
         }
+    }
 
+    private QueueResponse getQueueResponseForUser(User user) {
         UserNumberAndPort userNumberAndPort = GameServerSingleton.getInstance().getUserNumberAndPort(user);
         if (userNumberAndPort == null) {
             return new QueueResponse(false, 0, "No game found!");
@@ -45,12 +47,15 @@ public class QueueService {
         return new QueueResponse(true, userNumberAndPort.port, "Game found on port " + userNumberAndPort.port + "!");
     }
 
+    public QueueResponse queue(String stringUserId) {
+        User user = getUserById(stringUserId);
+        QueueSingleton.getInstance().queue(user);
+        waitWhileUserIsInQueue(user);
+        return getQueueResponseForUser(user);
+    }
+
     public QueueResponse dequeue(String stringUserId) {
-        UUID userId = UUID.fromString(stringUserId);
-        if (userId == null) {
-            throw new IllegalArgumentException("User id cannot be null.");
-        }
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found!"));
+        User user = getUserById(stringUserId);
         QueueSingleton.getInstance().dequeue(user);
         return new QueueResponse(false, 0, "User " + user.getId() + "removed from queue!");
     }

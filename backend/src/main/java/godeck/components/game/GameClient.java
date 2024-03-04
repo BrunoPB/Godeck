@@ -16,6 +16,31 @@ public class GameClient extends Thread {
     public GameClient() {
     }
 
+    private void getMessagesFromServer() {
+        try {
+            while (!exit) {
+                String msg = "";
+                byte byteChar = 0;
+                char charChar = 0;
+                if (in.available() > 0) {
+                    while (!exit) {
+                        byteChar = in.readByte();
+                        charChar = (char) byteChar;
+                        if (charChar == '\n') {
+                            break;
+                        }
+                        msg += charChar;
+                    }
+                    decodeMessage(preProcessMessage(msg));
+                }
+                Thread.sleep(10);
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     private String preProcessMessage(String msg) {
         Pattern regex = Pattern.compile("[a-zA-Z0-9]+[:][a-zA-Z0-9 ]+"); // TODO: Update regex when GameMove is
                                                                          // implemented
@@ -57,28 +82,7 @@ public class GameClient extends Thread {
     }
 
     public void run() {
-        try {
-            while (!exit) {
-                String msg = "";
-                byte byteChar = 0;
-                char charChar = 0;
-                if (in.available() > 0) {
-                    while (!exit) {
-                        byteChar = in.readByte();
-                        charChar = (char) byteChar;
-                        if (charChar == '\n') {
-                            break;
-                        }
-                        msg += charChar;
-                    }
-                    decodeMessage(preProcessMessage(msg));
-                }
-                Thread.sleep(10);
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
-        }
+        getMessagesFromServer();
     }
 
     public void kill() {

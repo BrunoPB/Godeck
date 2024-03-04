@@ -84,7 +84,6 @@ public class DatabaseInicialization {
         try {
             System.out.println("Environment: " + environment);
             System.out.println("Initializing game characters...");
-            System.out.println("Reading data from GameCharactersData.json...");
             String gameCharactersDataSource = "";
             if (environment.equals("production")) {
                 gameCharactersDataSource = "";
@@ -105,10 +104,7 @@ public class DatabaseInicialization {
             System.out.println(e.getMessage());
             return;
         }
-        System.out.println("Data read successfully");
-        System.out.println("Saving data to database...");
         for (GameCharacter gameCharacter : gameCharacters) {
-            System.out.println("Saving " + gameCharacter.getName() + "...");
             gameCharacterService.save(gameCharacter);
         }
         Iterable<GameCharacter> databaseGameCharacters = gameCharacterService.findAll();
@@ -124,7 +120,6 @@ public class DatabaseInicialization {
                 gameCharacterService.delete(gameCharacter.getId());
             }
         });
-        System.out.println("Data saved successfully!");
         System.out.println("Game characters initialized successfully!");
     }
 

@@ -6,17 +6,33 @@ import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * Represents a client in a game. Receives messages from the server and sends
+ * moves to the server.
+ * 
+ * @author Bruno Pena Baeta
+ */
 @Component
 public class GameClient extends Thread {
+    // Properties
+
     private int number;
     private DataInputStream in;
     private GameInstance gameInstance;
     private boolean exit;
 
+    // Constructors
+
+    /**
+     * Creates a new game client.
+     */
     public GameClient() {
     }
 
-    private void getMessagesFromServer() {
+    /**
+     * Waits for messages from the client and decodes them.
+     */
+    private void getMessagesFromClient() {
         try {
             while (!exit) {
                 String msg = "";
@@ -41,6 +57,15 @@ public class GameClient extends Thread {
         }
     }
 
+    // Private Methods
+
+    /**
+     * Pre-processes the message from the client. Uses a regex to extract the
+     * command and parameter from the message.
+     * 
+     * @param msg The message from the client.
+     * @return The message after pre-processing.
+     */
     private String preProcessMessage(String msg) {
         Pattern regex = Pattern.compile("[a-zA-Z0-9]+[:][a-zA-Z0-9 ]+"); // TODO: Update regex when GameMove is
                                                                          // implemented
@@ -52,7 +77,14 @@ public class GameClient extends Thread {
         throw new IllegalArgumentException("Unknown message from Client.");
     }
 
-    private void decodeMessage(String msg) {
+    /**
+     * Decodes the message from the client and executes the corresponding command
+     * with the parameter.
+     * 
+     * @param msg The pre-processed message from the client.
+     * @throws Exception If the command is unknown.
+     */
+    private void decodeMessage(String msg) throws Exception {
         String command = msg.split(":")[0];
         String parameter = msg.split(":")[1];
         if (command.equals("Ready")) {
@@ -68,12 +100,26 @@ public class GameClient extends Thread {
         }
     }
 
+    /**
+     * Processes the move from a string and sends it to the game instance.
+     * 
+     * @param msg The move string to be sent.
+     */
     private void sendMove(String msg) { // TODO: Implement this
         // GameMove move = new GameMove(msg);
         // gameInstance.tryMove(number, move);
         gameInstance.tryMove(number, msg);
     }
 
+    // Public Methods
+
+    /**
+     * Sets up the game client with the number, game instance and input stream.
+     * 
+     * @param number       The player number.
+     * @param gameInstance The game instance.
+     * @param in           The data input stream from the game instance.
+     */
     public void setupGameClient(int number, GameInstance gameInstance, DataInputStream in) {
         this.number = number;
         this.gameInstance = gameInstance;
@@ -81,10 +127,17 @@ public class GameClient extends Thread {
         this.exit = false;
     }
 
+    /**
+     * Runs the game client. Waits for messages from the client, decodes them and
+     * executes the corresponding command.
+     */
     public void run() {
-        getMessagesFromServer();
+        getMessagesFromClient();
     }
 
+    /**
+     * Kills the game client. Stops the thread.
+     */
     public void kill() {
         exit = true;
     }

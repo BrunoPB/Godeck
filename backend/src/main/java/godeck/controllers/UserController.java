@@ -10,6 +10,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import godeck.models.User;
 import godeck.repositories.UserRepository;
 
+/**
+ * Controller that handles user manipulation. It is responsible for manipulating
+ * the user from http requests.
+ * 
+ * Is a controller. Can be accessed from the web.
+ * 
+ * @author Bruno Pena Baeta
+ */
 @Controller
 @RequestMapping("/test")
 public class UserController {

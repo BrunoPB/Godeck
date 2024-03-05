@@ -8,6 +8,14 @@ import org.springframework.stereotype.Service;
 import godeck.models.GameCharacter;
 import godeck.repositories.GameCharacterRepository;
 
+/**
+ * Service for the game character model. It is responsible for managing the game
+ * character data in the database. It uses the GameCharacterRepository to
+ * provide
+ * the basic CRUD operations.
+ * 
+ * @author Bruno Pena Baeta
+ */
 @Service
 public class GameCharacterService {
     private GameCharacterRepository gameCharacterRepository;

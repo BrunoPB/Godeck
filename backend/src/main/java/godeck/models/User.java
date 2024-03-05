@@ -16,8 +16,15 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 
+/**
+ * Represents a user. A user is a player of the game.
+ * 
+ * @author Bruno Pena Baeta
+ */
 @Entity(name = "user")
 public class User {
+    // Properties
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
@@ -36,9 +43,25 @@ public class User {
     @JoinTable(name = "user_collection", joinColumns = @JoinColumn(name = "game_character_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<GameCharacter> collection = new HashSet<>();
 
+    // Constructors
+
+    /**
+     * Default constructor.
+     */
     public User() {
     }
 
+    /**
+     * Main constructor.
+     * 
+     * @param id         User's id
+     * @param name       User's name
+     * @param email      User's email
+     * @param gold       User's gold
+     * @param crystals   User's crystals
+     * @param deck       User's deck
+     * @param collection User's collection
+     */
     public User(UUID id, String name, String email, Integer gold, Integer crystals, List<GameCharacter> deck,
             Set<GameCharacter> collection) {
         this.id = id;
@@ -50,6 +73,16 @@ public class User {
         this.collection = collection;
     }
 
+    /**
+     * Constructor without id.
+     * 
+     * @param name       User's name
+     * @param email      User's email
+     * @param gold       User's gold
+     * @param crystals   User's crystals
+     * @param deck       User's deck
+     * @param collection User's collection
+     */
     public User(String name, String email, Integer gold, Integer crystals, List<GameCharacter> deck,
             Set<GameCharacter> collection) {
         this.name = name;
@@ -59,6 +92,8 @@ public class User {
         this.deck = deck;
         this.collection = collection;
     }
+
+    // Getters and Setters
 
     public UUID getId() {
         return id;
@@ -124,6 +159,11 @@ public class User {
 
     // Methods
 
+    /**
+     * Returns a JSON representation of the user.
+     * 
+     * @return A JSON representation of the user.
+     */
     public String toJSONString() {
         String string = "{\"id\" : \"" + id + "\", \"name\" : \"" + name + "\", \"email\" : \"" + email
                 + "\", \"gold\" : " + gold

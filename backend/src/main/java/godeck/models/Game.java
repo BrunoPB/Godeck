@@ -4,14 +4,24 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * Represents a game. It is responsible for managing the game state,
+ * executing the moves and provide all game information.
+ * 
+ * @author Bruno Pena Baeta
+ */
 @Component
 public class Game {
+    // Properties
+
     private List<GameCharacter> deck0;
     private List<GameCharacter> deck1;
     private boolean board;
     private int turn;
     private int round;
     public boolean test_gameover; // TODO: Delete this later
+
+    // Constructors
 
     public Game(List<GameCharacter> deck0, List<GameCharacter> deck1) { // TODO: Implement Game
         this.deck0 = deck0;
@@ -21,6 +31,8 @@ public class Game {
         this.round = 0;
         this.test_gameover = false; // TODO: Delete this later
     }
+
+    // Public Methods
 
     public boolean verifyMove(int player, GameMove move) { // TODO: Implement validations
         return true;

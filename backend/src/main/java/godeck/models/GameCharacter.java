@@ -6,8 +6,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 
+/**
+ * Represents a game character. A game character is a card that can be used in a
+ * game.
+ * 
+ * @author Bruno Pena Baeta
+ */
 @Entity(name = "game_character")
 public class GameCharacter {
+    // Properties
+
     @Id
     private UUID id;
     @Column(name = "number", nullable = false, unique = false)
@@ -39,9 +47,30 @@ public class GameCharacter {
 
     // Constructors
 
+    /**
+     * Default constructor.
+     */
     public GameCharacter() {
     }
 
+    /**
+     * Main constructor.
+     * 
+     * @param id        GameCharacter's id
+     * @param number    GameCharacter's number
+     * @param name      GameCharacter's name
+     * @param tier      GameCharacter's tier
+     * @param mythology GameCharacter's mythology
+     * @param fileName  GameCharacter's fileName
+     * @param price     GameCharacter's price
+     * @param stars     GameCharacter's stars
+     * @param north     GameCharacter's north value
+     * @param northEast GameCharacter's north-east value
+     * @param southEast GameCharacter's south-east value
+     * @param south     GameCharacter's south value
+     * @param southWest GameCharacter's south-west value
+     * @param northWest GameCharacter's north-west value
+     */
     public GameCharacter(UUID id, int number, String name, int tier, int mythology, String fileName, int price,
             int stars, int north, int northEast, int southEast, int south,
             int southWest, int northWest) {
@@ -177,6 +206,11 @@ public class GameCharacter {
 
     // Methods
 
+    /**
+     * Returns a JSON representation of the game character.
+     * 
+     * @return A JSON representation of the game character.
+     */
     public String toJSONString() {
         return "{\"id\" : \"" + id + "\", \"number\" : " + number + ", \"name\" : \"" + name + "\", \"tier\" : " + tier
                 + ", \"mythology\" : " + mythology + ", \"fileName\" : \"" + fileName + "\", \"price\" : " + price

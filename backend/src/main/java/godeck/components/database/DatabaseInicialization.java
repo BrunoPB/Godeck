@@ -20,12 +20,29 @@ import godeck.models.User;
 import godeck.repositories.UserRepository;
 import godeck.services.GameCharacterService;
 
+/**
+ * Static class to initialize all the pre-defined data in the database.
+ * 
+ * @author Bruno Pena Baeta
+ */
 @Component
 public class DatabaseInicialization {
+    // Properties
+
     private static String environment;
     private static GameCharacterService gameCharacterService;
     private static UserRepository userRepository;
 
+    // Constructors
+
+    /**
+     * Main constructor. Should never be called, this is a static class. Uses
+     * Autowire to inject the game character service and the user repository.
+     * 
+     * @param gameCharacterService The game character service.
+     * @param userRepository       The user repository.
+     * @param environment          The current environment.
+     */
     @Autowired
     public DatabaseInicialization(GameCharacterService gameCharacterService, UserRepository userRepository,
             @Value("${environment}") String environment) {
@@ -33,6 +50,8 @@ public class DatabaseInicialization {
         DatabaseInicialization.userRepository = userRepository;
         DatabaseInicialization.environment = environment;
     }
+
+    // Methods
 
     // TODO: This is just a test. Remove it later when oAuth is implemented
     @SuppressWarnings("null")
@@ -79,6 +98,10 @@ public class DatabaseInicialization {
         return randomList;
     }
 
+    /**
+     * Populates the database with the game characters. Reads the data from a JSON
+     * file and saves it to the database.
+     */
     public static void initializeGameCharacters() {
         List<GameCharacter> gameCharacters = null;
         try {
@@ -123,6 +146,14 @@ public class DatabaseInicialization {
         System.out.println("Game characters initialized successfully!");
     }
 
+    /**
+     * Reads the game characters data from a JSON file.
+     * 
+     * @param fileName The file name.
+     * @return A list of game characters.
+     * @throws Exception If the file is not found or if the data is not in the
+     *                   correct format.
+     */
     private static List<GameCharacter> readGameCharactersData(String fileName) throws Exception {
         File file = new File(fileName);
         if (!file.exists()) {

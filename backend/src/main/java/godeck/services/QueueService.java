@@ -12,6 +12,11 @@ import godeck.models.User;
 import godeck.models.UserNumberAndPort;
 import godeck.repositories.UserRepository;
 
+/**
+ * Service for handling queue manipulations from the controller http requests.
+ * 
+ * @author Bruno Pena Baeta
+ */
 @Service
 public class QueueService {
     private UserRepository userRepository;

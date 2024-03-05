@@ -9,6 +9,13 @@ import org.springframework.stereotype.Service;
 import godeck.models.User;
 import godeck.repositories.UserRepository;
 
+/**
+ * Service for the user model. It is responsible for managing the user data in
+ * the database. It uses the UserRepository to provide the basic CRUD
+ * operations.
+ * 
+ * @author Bruno Pena Baeta
+ */
 @Service
 public class UserService {
     private UserRepository userRepository;

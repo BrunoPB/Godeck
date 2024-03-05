@@ -2,12 +2,21 @@ package godeck.models;
 
 import org.springframework.stereotype.Component;
 
+/**
+ * Represents a move in the game.
+ * 
+ * @author Bruno Pena Baeta
+ */
 @Component
 public class GameMove {
+    // Properties
+
     private int player;
     private Coordinates initialCoords;
     private Coordinates finalCoords;
     private GameCharacter character;
+
+    // Constructors
 
     public GameMove() {
     }
@@ -31,6 +40,8 @@ public class GameMove {
         this.initialCoords = new Coordinates(Integer.parseInt(move[1]), Integer.parseInt(move[2]));
         this.finalCoords = new Coordinates(Integer.parseInt(move[3]), Integer.parseInt(move[4]));
     }
+
+    // Getters and Setters
 
     public int getPlayer() {
         return player;
@@ -63,6 +74,8 @@ public class GameMove {
     public void setCharacter(GameCharacter character) {
         this.character = character;
     }
+
+    // Public Methods
 
     public String toString() {
         return "GameMove [player=" + player + ", initialCoords=" + initialCoords + ", finalCoords=" + finalCoords

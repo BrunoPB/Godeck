@@ -7,12 +7,25 @@ import org.springframework.stereotype.Component;
 import godeck.components.game.GameServerSingleton;
 import godeck.models.User;
 
+/**
+ * Thread that manages the queue of users waiting for a game. It is responsible
+ * for checking if a game can be started and starting it.
+ * 
+ * Is a thread. Can be started and stopped.
+ * 
+ * @author Bruno Pena Baeta
+ */
 @Component
 public class QueueSystem extends Thread {
+    // Properties
     private boolean exit = false;
+
+    // Constructors
 
     public QueueSystem() {
     }
+
+    // Private Methods
 
     private boolean hasGameToStart() {
         return QueueSingleton.getInstance().getQueueSize() >= 2
@@ -26,9 +39,7 @@ public class QueueSystem extends Thread {
         QueueSingleton.getInstance().dequeue(users.get(0));
     }
 
-    public void stopQueueSystem() {
-        exit = true;
-    }
+    // Public Methods
 
     public void run() {
         while (!exit) {
@@ -41,5 +52,9 @@ public class QueueSystem extends Thread {
                 e.printStackTrace();
             }
         }
+    }
+
+    public void kill() {
+        exit = true;
     }
 }

@@ -1,4 +1,4 @@
-package godeck.components.game;
+package godeck.game;
 
 import java.util.ArrayList;
 import java.util.HashSet;

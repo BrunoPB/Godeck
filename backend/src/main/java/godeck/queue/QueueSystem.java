@@ -1,10 +1,10 @@
-package godeck.components.queue;
+package godeck.queue;
 
 import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import godeck.components.game.GameServerSingleton;
+import godeck.game.GameServerSingleton;
 import godeck.models.User;
 
 /**

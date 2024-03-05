@@ -5,11 +5,11 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import godeck.components.game.GameServerSingleton;
-import godeck.components.queue.QueueSingleton;
+import godeck.game.GameServerSingleton;
 import godeck.models.QueueResponse;
 import godeck.models.User;
 import godeck.models.UserNumberAndPort;
+import godeck.queue.QueueSingleton;
 import godeck.repositories.UserRepository;
 
 /**

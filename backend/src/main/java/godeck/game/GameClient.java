@@ -1,4 +1,4 @@
-package godeck.components.game;
+package godeck.game;
 
 import java.io.DataInputStream;
 import java.util.regex.Matcher;

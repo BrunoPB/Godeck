@@ -1,4 +1,4 @@
-package godeck.components.game;
+package godeck.game;
 
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;

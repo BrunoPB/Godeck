@@ -1,4 +1,4 @@
-package godeck.components.database;
+package godeck.database;
 
 import java.io.File;
 import java.util.ArrayList;

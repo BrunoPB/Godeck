@@ -1,4 +1,4 @@
-package godeck.components.queue;
+package godeck.queue;
 
 import java.util.LinkedList;
 import java.util.List;

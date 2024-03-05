@@ -3,10 +3,10 @@ package godeck;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import godeck.components.database.DatabaseInicialization;
-import godeck.components.game.GameServerSingleton;
-import godeck.components.queue.QueueSingleton;
-import godeck.components.queue.QueueSystem;
+import godeck.database.DatabaseInicialization;
+import godeck.game.GameServerSingleton;
+import godeck.queue.QueueSingleton;
+import godeck.queue.QueueSystem;
 
 @SpringBootApplication
 public class Main {

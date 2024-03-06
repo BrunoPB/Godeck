@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 
 import godeck.game.GameServerSingleton;
 import godeck.models.User;
+import godeck.utils.ErrorHandler;
+import godeck.utils.ThreadUtils;
 
 /**
  * Thread that manages the queue of users waiting for a game. It is responsible
@@ -22,17 +24,36 @@ public class QueueSystem extends Thread {
 
     // Constructors
 
+    /**
+     * Main constructor. Should never be called, this is a thread.
+     */
     public QueueSystem() {
     }
 
     // Private Methods
 
+    /**
+     * Checks if there are enough users in the queue to start a game and if there
+     * are available ports to start the game. If both conditions are met, returns
+     * true, otherwise returns false.
+     * 
+     * @return True if there are enough users in the queue to start a game and there
+     *         are available ports to start the game, false otherwise.
+     */
     private boolean hasGameToStart() {
         return QueueSingleton.getInstance().getQueueSize() >= 2
                 && GameServerSingleton.getInstance().hasAvailablePort();
     }
 
-    private void startGame() {
+    /**
+     * Starts a new game with the first two users in the queue. If the game is
+     * started, removes the users from the queue.
+     * 
+     * @throws IllegalStateException If there are not enough users in the queue to
+     *                               start a game or there are no available ports to
+     *                               start the game.
+     */
+    private void startGame() throws IllegalStateException {
         List<User> users = QueueSingleton.getInstance().getNFirstUsers(2);
         GameServerSingleton.getInstance().startNewGame(users.get(0), users.get(1));
         QueueSingleton.getInstance().dequeue(users.get(1));
@@ -41,19 +62,29 @@ public class QueueSystem extends Thread {
 
     // Public Methods
 
+    /**
+     * Starts the thread. It will keep checking if there are enough users in the
+     * queue to start a game and if there are available ports to start the game.
+     * When both conditions are met, it will start a new game. It will keep running
+     * until the kill method is called.
+     */
+    @Override
     public void run() {
         while (!exit) {
             if (hasGameToStart()) {
-                startGame();
+                try {
+                    startGame();
+                } catch (IllegalStateException e) {
+                    ErrorHandler.message(e);
+                }
             }
-            try {
-                Thread.sleep(10);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            ThreadUtils.sleep(10);
         }
     }
 
+    /**
+     * Kills the thread. It will stop running the run method.
+     */
     public void kill() {
         exit = true;
     }

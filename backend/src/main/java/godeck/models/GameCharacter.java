@@ -223,7 +223,7 @@ public class GameCharacter {
     public boolean equals(Object obj) {
         if (obj instanceof GameCharacter) {
             GameCharacter gameCharacter = (GameCharacter) obj;
-            return gameCharacter.getId() == this.id;
+            return gameCharacter.getId().equals(this.id);
         }
         return false;
     }

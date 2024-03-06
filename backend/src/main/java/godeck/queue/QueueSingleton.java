@@ -92,9 +92,13 @@ public class QueueSingleton {
      * 
      * @param n The number of users to be returned.
      * @return The first n users in the queue.
+     * @throws IllegalArgumentException If there are not enough users in the queue.
      */
-    public List<User> getNFirstUsers(int n) {
+    public List<User> getNFirstUsers(int n) throws IllegalArgumentException {
         List<User> usersQueueCopy = new LinkedList<User>(usersQueue);
+        if (n > usersQueueCopy.size()) {
+            throw new IllegalArgumentException("Not enough users in the queue.");
+        }
         return usersQueueCopy.subList(0, n);
     }
 

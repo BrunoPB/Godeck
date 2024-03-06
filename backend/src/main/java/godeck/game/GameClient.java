@@ -6,6 +6,9 @@ import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
 
+import godeck.utils.ErrorHandler;
+import godeck.utils.ThreadUtils;
+
 /**
  * Represents a client in a game. Receives messages from the server and sends
  * moves to the server.
@@ -31,30 +34,25 @@ public class GameClient extends Thread {
 
     /**
      * Waits for messages from the client and decodes them.
+     * 
+     * @throws Exception If the message could not be received or decoded.
      */
-    private void getMessagesFromClient() {
-        try {
+    private void getMessagesFromClient() throws Exception {
+        String msg = "";
+        byte byteChar = 0;
+        char charChar = 0;
+        if (in.available() > 0) {
             while (!exit) {
-                String msg = "";
-                byte byteChar = 0;
-                char charChar = 0;
-                if (in.available() > 0) {
-                    while (!exit) {
-                        byteChar = in.readByte();
-                        charChar = (char) byteChar;
-                        if (charChar == '\n') {
-                            break;
-                        }
-                        msg += charChar;
-                    }
-                    decodeMessage(preProcessMessage(msg));
+                byteChar = in.readByte();
+                charChar = (char) byteChar;
+                if (charChar == '\n') {
+                    break;
                 }
-                Thread.sleep(10);
+                msg += charChar;
             }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+            decodeMessage(preProcessMessage(msg));
         }
+        ThreadUtils.sleep(10);
     }
 
     // Private Methods
@@ -65,8 +63,9 @@ public class GameClient extends Thread {
      * 
      * @param msg The message from the client.
      * @return The message after pre-processing.
+     * @throws IllegalArgumentException If the message is unknown.
      */
-    private String preProcessMessage(String msg) {
+    private String preProcessMessage(String msg) throws IllegalArgumentException {
         Pattern regex = Pattern.compile("[a-zA-Z0-9]+[:][a-zA-Z0-9 ]+"); // TODO: Update regex when GameMove is
                                                                          // implemented
         Matcher matcher = regex.matcher(msg);
@@ -82,9 +81,9 @@ public class GameClient extends Thread {
      * with the parameter.
      * 
      * @param msg The pre-processed message from the client.
-     * @throws Exception If the command is unknown.
+     * @throws IllegalArgumentException If the command is unknown.
      */
-    private void decodeMessage(String msg) throws Exception {
+    private void decodeMessage(String msg) throws IllegalArgumentException {
         String command = msg.split(":")[0];
         String parameter = msg.split(":")[1];
         if (command.equals("Ready")) {
@@ -132,7 +131,13 @@ public class GameClient extends Thread {
      * executes the corresponding command.
      */
     public void run() {
-        getMessagesFromClient();
+        while (!exit) {
+            try {
+                getMessagesFromClient();
+            } catch (Exception e) {
+                ErrorHandler.message(e);
+            }
+        }
     }
 
     /**

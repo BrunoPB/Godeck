@@ -1,11 +1,11 @@
 package godeck.database;
 
-import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.UUID;
 
@@ -19,6 +19,7 @@ import godeck.models.GameCharacter;
 import godeck.models.User;
 import godeck.repositories.UserRepository;
 import godeck.services.GameCharacterService;
+import godeck.utils.ErrorHandler;
 
 /**
  * Static class to initialize all the pre-defined data in the database.
@@ -51,8 +52,130 @@ public class DatabaseInicialization {
         DatabaseInicialization.environment = environment;
     }
 
-    // Methods
+    // Private Methods
 
+    /**
+     * Gets the file path of the game characters data file according to the
+     * current environment.
+     * 
+     * @return The file path of the game characters data file.
+     * @throws RuntimeException
+     */
+    private static String getGameCharactersDataFilePath() throws RuntimeException {
+        if (environment.equals("production")) {
+            return "";
+        } else if (environment.equals("docker")) {
+            return "../data/GameCharactersData.json";
+        } else if (environment.equals("dev")) {
+            return "src/data/GameCharactersData.json";
+        } else {
+            throw new RuntimeException(
+                    "\u001B[31mERROR!\u001B[0m Environment not recognized. Please check the environment variable. Environment: "
+                            + environment);
+        }
+    }
+
+    /**
+     * Reads the game characters data from a JSON file and returns a list of game
+     * characters.
+     * 
+     * @param fileName The file name.
+     * @return A list of game characters.
+     * @throws Exception If the file is not found or if there is an error reading
+     *                   the file.
+     */
+    private static List<GameCharacter> readGameCharactersDataFromFile(String fileName) throws Exception {
+        String data = Files.readString(Path.of(fileName)); // TODO: Check this
+        JSONArray jsonArray = new JSONArray(data);
+        List<GameCharacter> gameCharacters = getGameCharactersFromJSON(jsonArray);
+        return gameCharacters;
+    }
+
+    /**
+     * Converts a JSON array of game characters to a list of game characters.
+     * 
+     * @param jsonArray The JSON array of game characters.
+     * @return A list of game characters.
+     */
+    private static List<GameCharacter> getGameCharactersFromJSON(JSONArray jsonArray) {
+        List<GameCharacter> gameCharacters = new ArrayList<>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            JSONObject gameCharacterJson = jsonArray.getJSONObject(i);
+            GameCharacter gameCharacter = convertJSONToGameCharacter(gameCharacterJson);
+            gameCharacters.add(gameCharacter);
+        }
+        return gameCharacters;
+    }
+
+    /**
+     * Converts a JSON object of a game character to a game character.
+     * 
+     * @param gameCharacterJson The JSON object of a game character.
+     * @return A game character.
+     */
+    private static GameCharacter convertJSONToGameCharacter(JSONObject gameCharacterJson) {
+        return new GameCharacter(
+                UUID.fromString(gameCharacterJson.getString("id")),
+                gameCharacterJson.getInt("number"),
+                gameCharacterJson.getString("name"),
+                gameCharacterJson.getInt("tier"),
+                gameCharacterJson.getInt("mythology"),
+                gameCharacterJson.getString("file_name"),
+                gameCharacterJson.getInt("price"),
+                gameCharacterJson.getInt("stars"),
+                gameCharacterJson.getInt("north"),
+                gameCharacterJson.getInt("north_east"),
+                gameCharacterJson.getInt("south_east"),
+                gameCharacterJson.getInt("south"),
+                gameCharacterJson.getInt("south_west"),
+                gameCharacterJson.getInt("north_west"));
+    }
+
+    /**
+     * Saves a list of game characters to the database. Also updates the game
+     * characters that already exist in the database.
+     * 
+     * @param gameCharacters The list of game characters.
+     */
+    private static void saveGameCharactersToDatabase(List<GameCharacter> gameCharacters) {
+        for (GameCharacter gameCharacter : gameCharacters) {
+            gameCharacterService.save(gameCharacter);
+        }
+    }
+
+    /**
+     * Removes any unknown game characters from the database.
+     * 
+     * @param gameCharacters The list of game characters.
+     */
+    private static void removeUnknownGameCharacters(List<GameCharacter> gameCharacters) {
+        Iterable<GameCharacter> databaseGameCharacters = gameCharacterService.findAll();
+        for (GameCharacter databaseGameCharacter : databaseGameCharacters) {
+            if (!gameCharacters.contains(databaseGameCharacter)) {
+                gameCharacterService.delete(databaseGameCharacter.getId());
+            }
+        }
+    }
+
+    // Public Methods
+
+    /**
+     * Populates the database with the game characters. Reads the data from a JSON
+     * file and saves it to the database. Also removes any unknown game characters
+     * from the database.
+     */
+    public static void initializeGameCharacters() {
+        try {
+            String gameCharactersDataFilePath = getGameCharactersDataFilePath();
+            List<GameCharacter> gameCharacters = readGameCharactersDataFromFile(gameCharactersDataFilePath);
+            saveGameCharactersToDatabase(gameCharacters);
+            removeUnknownGameCharacters(gameCharacters);
+        } catch (Exception e) {
+            ErrorHandler.message(e);
+        }
+    }
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // TODO: This is just a test. Remove it later when oAuth is implemented
     @SuppressWarnings("null")
     public static void test_initializeUser() {
@@ -97,95 +220,5 @@ public class DatabaseInicialization {
         }
         return randomList;
     }
-
-    /**
-     * Populates the database with the game characters. Reads the data from a JSON
-     * file and saves it to the database.
-     */
-    public static void initializeGameCharacters() {
-        List<GameCharacter> gameCharacters = null;
-        try {
-            System.out.println("Environment: " + environment);
-            System.out.println("Initializing game characters...");
-            String gameCharactersDataSource = "";
-            if (environment.equals("production")) {
-                gameCharactersDataSource = "";
-            } else if (environment.equals("docker")) {
-                gameCharactersDataSource = "../data/GameCharactersData.json";
-            } else if (environment.equals("dev")) {
-                gameCharactersDataSource = "src/data/GameCharactersData.json";
-            } else {
-                throw new Exception(
-                        "\u001B[31mERROR!\u001B[0m Environment not recognized. Please check the environment variable. Environment: "
-                                + environment);
-            }
-            gameCharacters = readGameCharactersData(gameCharactersDataSource);
-            if (gameCharacters == null) {
-                throw new Exception("\u001B[31mERROR!\u001B[0m Could not read data from GameCharactersData.json");
-            }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            return;
-        }
-        for (GameCharacter gameCharacter : gameCharacters) {
-            gameCharacterService.save(gameCharacter);
-        }
-        Iterable<GameCharacter> databaseGameCharacters = gameCharacterService.findAll();
-        List<UUID> ids = new ArrayList<>();
-        gameCharacters.forEach(gameCharacter -> {
-            ids.add(gameCharacter.getId());
-        });
-        databaseGameCharacters.forEach(gameCharacter -> {
-            if (!ids.contains(gameCharacter.getId())) {
-                System.out.println("\u001B[31mDeleting unknown game character: " +
-                        gameCharacter.getName());
-                System.out.println(" \u001B[31mId: " + gameCharacter.getId());
-                gameCharacterService.delete(gameCharacter.getId());
-            }
-        });
-        System.out.println("Game characters initialized successfully!");
-    }
-
-    /**
-     * Reads the game characters data from a JSON file.
-     * 
-     * @param fileName The file name.
-     * @return A list of game characters.
-     * @throws Exception If the file is not found or if the data is not in the
-     *                   correct format.
-     */
-    private static List<GameCharacter> readGameCharactersData(String fileName) throws Exception {
-        File file = new File(fileName);
-        if (!file.exists()) {
-            throw new Exception("File " + fileName + " not found");
-        }
-        Scanner scanner = new Scanner(file);
-        String data = "";
-        while (scanner.hasNextLine()) {
-            data += scanner.nextLine();
-        }
-        List<GameCharacter> gameCharacters = new ArrayList<>();
-        JSONArray jsonArray = new JSONArray(data);
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject gameCharacterJson = jsonArray.getJSONObject(i);
-            GameCharacter gameCharacter = new GameCharacter(
-                    UUID.fromString(gameCharacterJson.getString("id")),
-                    gameCharacterJson.getInt("number"),
-                    gameCharacterJson.getString("name"),
-                    gameCharacterJson.getInt("tier"),
-                    gameCharacterJson.getInt("mythology"),
-                    gameCharacterJson.getString("file_name"),
-                    gameCharacterJson.getInt("price"),
-                    gameCharacterJson.getInt("stars"),
-                    gameCharacterJson.getInt("north"),
-                    gameCharacterJson.getInt("north_east"),
-                    gameCharacterJson.getInt("south_east"),
-                    gameCharacterJson.getInt("south"),
-                    gameCharacterJson.getInt("south_west"),
-                    gameCharacterJson.getInt("north_west"));
-            gameCharacters.add(gameCharacter);
-        }
-        scanner.close();
-        return gameCharacters;
-    }
+    /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 }

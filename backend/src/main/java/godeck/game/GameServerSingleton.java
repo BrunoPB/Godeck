@@ -102,18 +102,16 @@ public class GameServerSingleton {
      * @param user The user to get the number and port.
      * @return The user number and port for the given user. Null if the user is not
      *         in any game.
+     * @throws IllegalArgumentException If the user is not in any game.
      */
-    public UserNumberAndPort getUserNumberAndPort(User user) {
-        if (user == null) {
-            throw new IllegalArgumentException("User cannot be null.");
-        }
+    public UserNumberAndPort getUserNumberAndPort(User user) throws IllegalArgumentException {
         for (GameInstance t : threads) {
             UserNumberAndPort userNumberAndPort = t.getUserNumberAndPort(user);
             if (userNumberAndPort != null) {
                 return userNumberAndPort;
             }
         }
-        return null;
+        throw new IllegalArgumentException("User not found in any game.");
     }
 
     /**
@@ -153,15 +151,10 @@ public class GameServerSingleton {
      * 
      * @param user0 User number 0.
      * @param user1 User number 1.
-     * @throws IllegalArgumentException If any user is null.
+     * @throws IllegalStateException If there is no available port.
      */
-    public void startNewGame(User user0, User user1) throws IllegalArgumentException {
-        if (user0 == null || user1 == null) {
-            throw new IllegalArgumentException("User can not be null.");
-        }
-
+    public void startNewGame(User user0, User user1) throws IllegalStateException {
         int port = findAvailablePort();
-
         GameInstance gameInstance = new GameInstance();
         threads.add(gameInstance);
         gameInstance.setupGame(user0, user1, port);

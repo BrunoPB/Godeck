@@ -155,11 +155,9 @@ public class GameInstance extends GodeckThread {
      * @param move The last move executed.
      * @throws IOException If the clients could not be synchronized.
      */
-    private void synchronizeClients(String test) throws IOException {
+    private void synchronizeClients(String test) throws IOException { // TODO: Implement synchronizeClients
         out0.flush();
         out1.flush();
-        out0.writeBytes("DebugTest:" + test + "\n");
-        out1.writeBytes("DebugTest:" + test + "\n");
     }
 
     /**

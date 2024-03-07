@@ -146,7 +146,7 @@ public class Printer {
     public static void printError(String message) {
         String type = formatTypeMessage("error", TextFormatting.COLOR_RED);
         String time = formatTimeMessage();
-        String fileTrace = formatStackTrace(5);
+        String fileTrace = formatStackTrace();
         print(type + "\tat " + time + " from " + fileTrace + "\t\t: " + message);
         print("\t{" + TextFormatting.COLOR_RED + "Thread" + TextFormatting.RESET + "} " + formatThreadMessage());
         StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();

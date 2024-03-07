@@ -9,7 +9,8 @@ var stop_timer = false
 var need_host_confirmation = false
 
 func _ready():
-	queue_system.queue_finished.connect(check_queue)
+	if not queue_system.queue_finished.is_connected(check_queue):
+		queue_system.queue_finished.connect(check_queue)
 	queue_system.initiate_queue()
 	await queue_system.queue_finished
 

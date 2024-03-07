@@ -18,7 +18,15 @@ public class ErrorHandler {
      * @param e The exception.
      */
     public static void message(Exception e) {
-        System.err.println(e.getMessage());
-        e.printStackTrace();
+        Printer.printError(e.getMessage());
+    }
+
+    /**
+     * Prints a message as an error. Also prints it's stack trace.
+     * 
+     * @param e The message
+     */
+    public static void message(String e) {
+        Printer.printError(e);
     }
 }

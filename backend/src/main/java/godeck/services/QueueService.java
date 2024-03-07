@@ -79,7 +79,7 @@ public class QueueService {
         try {
             port = futurePort.get(QUEUE_TIMEOUT_S, TimeUnit.SECONDS);
         } catch (Exception e) {
-            ErrorHandler.message(e);
+            ErrorHandler.message(new Exception("Queue timeout!"));
             return new QueueResponse(false, 0, "Queue timeout!");
         }
 

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import godeck.models.GodeckThread;
 import godeck.utils.ErrorHandler;
+import godeck.utils.Printer;
 import godeck.utils.ThreadUtils;
 
 /**
@@ -95,7 +96,7 @@ public class GameClient extends GodeckThread {
         } else if (command.equals("Lose")) {
             gameInstance.declareSurrender(number);
         } else if (command.equals("DebugTest")) {
-            System.out.println("DebugTest: \"" + parameter + "\"");
+            Printer.printDebug("Client Message: \"" + parameter + "\"");
         } else {
             throw new IllegalArgumentException("Unknown command from Client.");
         }

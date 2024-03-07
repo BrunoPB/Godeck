@@ -7,6 +7,7 @@ import godeck.database.DatabaseInicialization;
 import godeck.game.GameServerSingleton;
 import godeck.queue.QueueSingleton;
 import godeck.queue.QueueSystem;
+import godeck.utils.Printer;
 
 @SpringBootApplication
 public class Main {
@@ -26,10 +27,16 @@ public class Main {
 		queueSystem.start();
 	}
 
-	public static void main(String[] args) {
+	private static void runGodeckServer(String[] args) {
 		SpringApplication.run(Main.class, args);
+		Printer.godeckStart();
 		startSingletons();
 		startDatabases();
 		runQueueSystem();
+		Printer.printInfo("Godeck server started successfully!");
+	}
+
+	public static void main(String[] args) {
+		runGodeckServer(args);
 	}
 }

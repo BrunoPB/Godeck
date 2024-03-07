@@ -179,7 +179,6 @@ public class DatabaseInicialization {
     // TODO: This is just a test. Remove it later when oAuth is implemented
     @SuppressWarnings("null")
     public static void test_initializeUser() {
-        System.out.println("Initializing test users...");
         Random random = new Random();
         Iterable<GameCharacter> chars = gameCharacterService.findAll();
         List<String> emails = new ArrayList<String>();
@@ -187,6 +186,9 @@ public class DatabaseInicialization {
         emails.add("berenice@email.com");
         emails.add("catarina@email.com");
         emails.add("dorival@email.com");
+        emails.add("euclides@email.com");
+        emails.add("fagner@email.com");
+        emails.add("gerson@email.com");
         for (String email : emails) {
             List<User> users = userRepository.findByEmail(email);
             if (users.size() > 0) {
@@ -203,10 +205,8 @@ public class DatabaseInicialization {
             deck.addAll(pickRandomGameCharacters(collection, 7));
             User user = new User(id, email.substring(0, email.indexOf("@")), email, gold, crystals, deck,
                     collection);
-            System.out.println("Saving user " + user.getName() + " to database...");
             userRepository.save(user);
         }
-        System.out.println("All users initialized successfully!");
     }
 
     private static List<GameCharacter> pickRandomGameCharacters(Set<GameCharacter> list, int n) {

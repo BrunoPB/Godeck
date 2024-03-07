@@ -5,7 +5,8 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import godeck.game.GameServerSingleton;
-import godeck.models.User;
+import godeck.models.GodeckThread;
+import godeck.models.QueueItem;
 import godeck.utils.ErrorHandler;
 import godeck.utils.ThreadUtils;
 
@@ -18,10 +19,7 @@ import godeck.utils.ThreadUtils;
  * @author Bruno Pena Baeta
  */
 @Component
-public class QueueSystem extends Thread {
-    // Properties
-    private boolean exit = false;
-
+public class QueueSystem extends GodeckThread {
     // Constructors
 
     /**
@@ -49,15 +47,20 @@ public class QueueSystem extends Thread {
      * Starts a new game with the first two users in the queue. If the game is
      * started, removes the users from the queue.
      * 
-     * @throws IllegalStateException If there are not enough users in the queue to
-     *                               start a game or there are no available ports to
-     *                               start the game.
+     * @throws IllegalArgumentException If there are not enough users in the queue
+     *                                  to start a game.
      */
-    private void startGame() throws IllegalStateException {
-        List<User> users = QueueSingleton.getInstance().getNFirstUsers(2);
-        GameServerSingleton.getInstance().startNewGame(users.get(0), users.get(1));
-        QueueSingleton.getInstance().dequeue(users.get(1));
-        QueueSingleton.getInstance().dequeue(users.get(0));
+    private void startGame() throws IllegalArgumentException {
+        List<QueueItem> items = QueueSingleton.getInstance().getNFirstItems(2);
+        try {
+            GameServerSingleton.getInstance().startNewGame(items.get(0), items.get(1));
+        } catch (IllegalStateException e) {
+            ErrorHandler.message(e);
+            items.get(0).futurePort.completeExceptionally(e);
+            items.get(1).futurePort.completeExceptionally(e);
+        }
+        QueueSingleton.getInstance().dequeue(items.get(1).user);
+        QueueSingleton.getInstance().dequeue(items.get(0).user);
     }
 
     // Public Methods
@@ -70,22 +73,15 @@ public class QueueSystem extends Thread {
      */
     @Override
     public void run() {
-        while (!exit) {
+        while (!super.exit) {
             if (hasGameToStart()) {
                 try {
                     startGame();
-                } catch (IllegalStateException e) {
+                } catch (IllegalArgumentException e) {
                     ErrorHandler.message(e);
                 }
             }
             ThreadUtils.sleep(10);
         }
-    }
-
-    /**
-     * Kills the thread. It will stop running the run method.
-     */
-    public void kill() {
-        exit = true;
     }
 }

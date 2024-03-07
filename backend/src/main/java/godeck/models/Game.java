@@ -1,6 +1,7 @@
 package godeck.models;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.stereotype.Component;
 
@@ -19,7 +20,8 @@ public class Game {
     private boolean board;
     private int turn;
     private int round;
-    public boolean test_gameover; // TODO: Delete this later
+    private int gameWinner;
+    public CompletableFuture<Void> over;
 
     // Constructors
 
@@ -29,7 +31,7 @@ public class Game {
         this.board = false;
         this.turn = 0;
         this.round = 0;
-        this.test_gameover = false; // TODO: Delete this later
+        this.over = new CompletableFuture<Void>();
     }
 
     // Public Methods
@@ -41,11 +43,12 @@ public class Game {
     public void executeMove(int user, boolean move) {
     }
 
-    public boolean isGameOver() { // TODO: This is just a test
-        return test_gameover;
+    public void executeSurrender(int user) {
+        this.gameWinner = user == 0 ? 1 : 0;
+        this.over.complete(null);
     }
 
     public int getGameWinner() { // TODO: Implement getGameWinner
-        return 0;
+        return gameWinner;
     }
 }

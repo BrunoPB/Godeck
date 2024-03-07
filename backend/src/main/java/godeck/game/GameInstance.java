@@ -7,15 +7,14 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.stereotype.Component;
 
 import godeck.models.Game;
-import godeck.models.GameMove;
+import godeck.models.GodeckThread;
 import godeck.models.User;
-import godeck.models.UserNumberAndPort;
 import godeck.utils.ErrorHandler;
-import godeck.utils.ThreadUtils;
 
 /**
  * Represents a game between 2 players. Has game and server information.
@@ -25,11 +24,9 @@ import godeck.utils.ThreadUtils;
  * @author Bruno Pena Baeta
  */
 @Component
-public class GameInstance extends Thread {
+public class GameInstance extends GodeckThread {
     // Properties
 
-    private User user0;
-    private User user1;
     private int port;
     private Game game;
     private GameClient user0Client;
@@ -37,8 +34,6 @@ public class GameInstance extends Thread {
     private ServerSocket server;
     private DataOutputStream out0;
     private DataOutputStream out1;
-    private boolean client1Ready;
-    private boolean client2Ready;
     private Socket socket0;
     private Socket socket1;
     private DataInputStream in0;
@@ -109,19 +104,16 @@ public class GameInstance extends Thread {
         user1Client.setupGameClient(1, this, in1);
         user0Client.start();
         user1Client.start();
-        while (!client1Ready || !client2Ready) {
-            ThreadUtils.sleep(10);
-        }
+        CompletableFuture.allOf(user0Client.ready, user1Client.ready).join();
         sendClientNumber();
     }
 
     /**
-     * Main game loop. Waits for the game to be over.
+     * Main game loop. Waits for the game to be over. Then takes the necessary
+     * actions.
      */
     private void gameLoop() {
-        while (!game.isGameOver()) {
-            ThreadUtils.sleep(10);
-        }
+        game.over.join();
     }
 
     /**
@@ -195,8 +187,7 @@ public class GameInstance extends Thread {
     private void stopClients() {
         user0Client.kill();
         user1Client.kill();
-        while (user0Client.isAlive() || user1Client.isAlive()) {
-        }
+        CompletableFuture.allOf(user0Client.killed, user1Client.killed).join();
     }
 
     // Public Methods
@@ -209,47 +200,8 @@ public class GameInstance extends Thread {
      * @param port  The port to be used.
      */
     public void setupGame(User user0, User user1, int port) {
-        this.user0 = user0;
-        this.user1 = user1;
         this.port = port;
-        client1Ready = false;
-        client2Ready = false;
         game = new Game(user0.getDeck(), user1.getDeck());
-    }
-
-    /**
-     * Gets the user number and port for a given user.
-     * 
-     * @param user The user to get the number and port for.
-     * @return The user number and port. Null if the user is not in the game.
-     */
-    public UserNumberAndPort getUserNumberAndPort(User user) {
-        UserNumberAndPort userNumberAndPort = new UserNumberAndPort();
-        if (user.getId().equals(user0.getId())) {
-            userNumberAndPort.number = 0;
-        } else if (user.getId().equals(user1.getId())) {
-            userNumberAndPort.number = 1;
-        } else {
-            return null;
-        }
-        userNumberAndPort.port = port;
-        return userNumberAndPort;
-    }
-
-    /**
-     * Prepares a client to start the game. Mark the client as ready.
-     * 
-     * @param number The client number.
-     * @throws IllegalArgumentException If the client number is invalid.
-     */
-    public void prepareClient(int number) throws IllegalArgumentException {
-        if (number == 0) {
-            client1Ready = true;
-        } else if (number == 1) {
-            client2Ready = true;
-        } else {
-            throw new IllegalArgumentException("Invalid client number " + number + ".");
-        }
     }
 
     /**
@@ -276,12 +228,13 @@ public class GameInstance extends Thread {
      * @param player The number of the player surrendering.
      */
     public void declareSurrender(int player) {
-        game.test_gameover = true;
+        game.executeSurrender(player);
     }
 
     /**
      * Prepares, runs and closes the game instance.
      */
+    @Override
     public void run() {
         try {
             setupGameServer();
@@ -292,6 +245,22 @@ public class GameInstance extends Thread {
             closeServer();
         } catch (Exception e) {
             ErrorHandler.message(e);
+        }
+    }
+
+    /**
+     * Kills the game clients, ends the game and closes the server.
+     */
+    @Override
+    public void kill() {
+        try {
+            stopClients();
+            endGame();
+            closeServer();
+        } catch (IOException e) {
+            ErrorHandler.message(e);
+        } finally {
+            super.killed.complete(null);
         }
     }
 }

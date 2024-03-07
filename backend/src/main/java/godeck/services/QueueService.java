@@ -1,18 +1,19 @@
 package godeck.services;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import godeck.game.GameServerSingleton;
+import godeck.models.QueueItem;
 import godeck.models.QueueResponse;
 import godeck.models.User;
-import godeck.models.UserNumberAndPort;
 import godeck.queue.QueueSingleton;
 import godeck.repositories.UserRepository;
 import godeck.utils.ErrorHandler;
-import godeck.utils.ThreadUtils;
 
 /**
  * Service for handling queue manipulations from the controller http requests.
@@ -21,7 +22,13 @@ import godeck.utils.ThreadUtils;
  */
 @Service
 public class QueueService {
+    // Properties
+
+    @Value("${queue_timeout_s}")
+    private int QUEUE_TIMEOUT_S;
     private UserRepository userRepository;
+
+    // Constructors
 
     /**
      * Main constructor. Uses Autowire to inject the UserRepository.
@@ -32,6 +39,8 @@ public class QueueService {
     public QueueService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
+
+    // Private Methods
 
     /**
      * Returns the user from the database by its id. If the user does not exist, it
@@ -48,35 +57,7 @@ public class QueueService {
         return userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found!"));
     }
 
-    /**
-     * Waits while the user is in the queue. It is used by the queue method to wait
-     * until the user is dequeued or the game is found.
-     * 
-     * @param user The user that is in the queue.
-     */
-    private void waitWhileUserIsInQueue(User user) {
-        while (QueueSingleton.getInstance().isInQueue(user)) {
-            ThreadUtils.sleep(10);
-        }
-    }
-
-    /**
-     * Returns the queue response for the user. It is used by the queue method to
-     * return the response to the http request.
-     * 
-     * @param user The user that is in the queue.
-     * @return The queue response for the user.
-     */
-    private QueueResponse getQueueResponseForUser(User user) {
-        UserNumberAndPort userNumberAndPort;
-        try {
-            userNumberAndPort = GameServerSingleton.getInstance().getUserNumberAndPort(user);
-        } catch (IllegalArgumentException e) {
-            ErrorHandler.message(e);
-            return new QueueResponse(false, 0, "No game found!");
-        }
-        return new QueueResponse(true, userNumberAndPort.port, "Game found on port " + userNumberAndPort.port + "!");
-    }
+    // Public Methods
 
     /**
      * Queues the user for a game. It adds the user to the queue and waits until the
@@ -88,9 +69,21 @@ public class QueueService {
      */
     public QueueResponse queue(String stringUserId) {
         User user = getUserById(stringUserId);
-        QueueSingleton.getInstance().queue(user);
-        waitWhileUserIsInQueue(user);
-        return getQueueResponseForUser(user);
+
+        CompletableFuture<Integer> futurePort = new CompletableFuture<Integer>();
+
+        QueueSingleton.getInstance().queue(new QueueItem(user, futurePort));
+
+        int port = 0;
+
+        try {
+            port = futurePort.get(QUEUE_TIMEOUT_S, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            ErrorHandler.message(e);
+            return new QueueResponse(false, 0, "Queue timeout!");
+        }
+
+        return new QueueResponse(true, port, "Game found!");
     }
 
     /**
@@ -104,6 +97,6 @@ public class QueueService {
     public QueueResponse dequeue(String stringUserId) {
         User user = getUserById(stringUserId);
         QueueSingleton.getInstance().dequeue(user);
-        return new QueueResponse(false, 0, "User " + user.getId() + "removed from queue!");
+        return new QueueResponse(false, 0, "User removed from queue!");
     }
 }

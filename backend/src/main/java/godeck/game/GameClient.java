@@ -1,11 +1,13 @@
 package godeck.game;
 
 import java.io.DataInputStream;
+import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
 
+import godeck.models.GodeckThread;
 import godeck.utils.ErrorHandler;
 import godeck.utils.ThreadUtils;
 
@@ -16,13 +18,13 @@ import godeck.utils.ThreadUtils;
  * @author Bruno Pena Baeta
  */
 @Component
-public class GameClient extends Thread {
+public class GameClient extends GodeckThread {
     // Properties
 
     private int number;
     private DataInputStream in;
     private GameInstance gameInstance;
-    private boolean exit;
+    public CompletableFuture<Boolean> ready = new CompletableFuture<Boolean>();
 
     // Constructors
 
@@ -42,7 +44,7 @@ public class GameClient extends Thread {
         byte byteChar = 0;
         char charChar = 0;
         if (in.available() > 0) {
-            while (!exit) {
+            while (!super.exit) {
                 byteChar = in.readByte();
                 charChar = (char) byteChar;
                 if (charChar == '\n') {
@@ -87,7 +89,7 @@ public class GameClient extends Thread {
         String command = msg.split(":")[0];
         String parameter = msg.split(":")[1];
         if (command.equals("Ready")) {
-            gameInstance.prepareClient(number);
+            ready.complete(Boolean.parseBoolean(parameter));
         } else if (command.equals("GameMove")) {
             sendMove(parameter);
         } else if (command.equals("Lose")) {
@@ -123,7 +125,6 @@ public class GameClient extends Thread {
         this.number = number;
         this.gameInstance = gameInstance;
         this.in = in;
-        this.exit = false;
     }
 
     /**
@@ -131,19 +132,12 @@ public class GameClient extends Thread {
      * executes the corresponding command.
      */
     public void run() {
-        while (!exit) {
+        while (!super.exit) {
             try {
                 getMessagesFromClient();
             } catch (Exception e) {
                 ErrorHandler.message(e);
             }
         }
-    }
-
-    /**
-     * Kills the game client. Stops the thread.
-     */
-    public void kill() {
-        exit = true;
     }
 }

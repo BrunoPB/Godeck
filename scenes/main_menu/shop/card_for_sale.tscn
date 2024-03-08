@@ -1,0 +1,50 @@
+[gd_scene load_steps=2 format=3 uid="uid://cenugw3w8vl0i"]
+
+[ext_resource type="Texture2D" uid="uid://b4rqph1ne81en" path="res://assets/placeholders/Boitata.jpg" id="1_mkhyu"]
+
+[node name="CardForSale" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -215.0
+offset_bottom = -360.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="CardName" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.1
+text = "Boitata"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CardRarity" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.1
+theme_override_colors/font_color = Color(0, 0.792157, 0.698039, 1)
+text = "Raro"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CenterContainer" type="CenterContainer" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="CardTexture" type="TextureRect" parent="VBoxContainer/CenterContainer"]
+custom_minimum_size = Vector2(50, 75)
+layout_mode = 2
+texture = ExtResource("1_mkhyu")
+expand_mode = 4
+
+[node name="CardPrice" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.2
+theme_override_font_sizes/font_size = 10
+text = "20"
+horizontal_alignment = 1

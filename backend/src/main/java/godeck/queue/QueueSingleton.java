@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import godeck.models.QueueItem;
 import godeck.models.User;
 
 /**
@@ -21,7 +22,7 @@ public class QueueSingleton {
     // Properties
 
     private static QueueSingleton instance = null;
-    private static List<User> usersQueue = new LinkedList<User>();
+    private static List<QueueItem> queue = new LinkedList<QueueItem>();
 
     // Constructors
 
@@ -49,11 +50,11 @@ public class QueueSingleton {
     /**
      * Adds a user to the queue.
      * 
-     * @param user The user to be added to the queue.
+     * @param qi The queue item that represents the user to be added to the queue.
      * @return True if the user was added to the queue, false otherwise.
      */
-    public boolean queue(User user) {
-        return usersQueue.add(user);
+    public boolean queue(QueueItem qi) {
+        return queue.add(qi);
     }
 
     /**
@@ -63,7 +64,13 @@ public class QueueSingleton {
      * @return True if the user was removed from the queue, false otherwise.
      */
     public boolean dequeue(User user) {
-        return usersQueue.remove(user);
+        List<QueueItem> queueCopy = new LinkedList<QueueItem>(queue);
+        for (QueueItem qi : queueCopy) {
+            if (qi.user.equals(user)) {
+                return queue.remove(qi);
+            }
+        }
+        return false;
     }
 
     /**
@@ -73,8 +80,13 @@ public class QueueSingleton {
      * @return True if the user is in the queue, false otherwise.
      */
     public boolean isInQueue(User user) {
-        List<User> usersQueueCopy = new LinkedList<User>(usersQueue);
-        return usersQueueCopy.contains(user);
+        List<QueueItem> queueCopy = new LinkedList<QueueItem>(queue);
+        for (QueueItem qi : queueCopy) {
+            if (qi.user.equals(user)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -83,29 +95,33 @@ public class QueueSingleton {
      * @return The size of the queue.
      */
     public int getQueueSize() {
-        List<User> usersQueueCopy = new LinkedList<User>(usersQueue);
-        return usersQueueCopy.size();
+        List<QueueItem> queueCopy = new LinkedList<QueueItem>(queue);
+        return queueCopy.size();
     }
 
     /**
-     * Gets the first n users in the queue.
+     * Gets the first n items in the queue.
      * 
-     * @param n The number of users to be returned.
-     * @return The first n users in the queue.
+     * @param n The number of items to be returned.
+     * @return The first n items in the queue.
+     * @throws IllegalArgumentException If there are not enough items in the queue.
      */
-    public List<User> getNFirstUsers(int n) {
-        List<User> usersQueueCopy = new LinkedList<User>(usersQueue);
-        return usersQueueCopy.subList(0, n);
+    public List<QueueItem> getNFirstItems(int n) throws IllegalArgumentException {
+        List<QueueItem> queueCopy = new LinkedList<QueueItem>(queue);
+        if (n > queueCopy.size()) {
+            throw new IllegalArgumentException("Not enough items in the queue.");
+        }
+        return queueCopy.subList(0, n);
     }
 
     /**
-     * Gets a copy of the users queue. This method is used to avoid the queue being
+     * Gets a copy of the queue. This method is used to avoid the queue being
      * modified from outside the class.
      * 
-     * @return A copy of the users queue.
+     * @return A copy of the queue.
      */
-    public List<User> getQueue() {
-        List<User> usersQueueCopy = new LinkedList<User>(usersQueue);
-        return usersQueueCopy;
+    public List<QueueItem> getQueue() {
+        List<QueueItem> queueCopy = new LinkedList<QueueItem>(queue);
+        return queueCopy;
     }
 }

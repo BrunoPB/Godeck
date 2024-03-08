@@ -10,8 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import godeck.models.Port;
-import godeck.models.User;
-import godeck.models.UserNumberAndPort;
+import godeck.models.QueueItem;
 
 /**
  * Singleton class that manages the game server. It is responsible for creating
@@ -95,28 +94,6 @@ public class GameServerSingleton {
     // Public Methods
 
     /**
-     * Returns the user number and port for a given user. It iterates through the
-     * list of game instances and returns the user number and port for the given
-     * user.
-     * 
-     * @param user The user to get the number and port.
-     * @return The user number and port for the given user. Null if the user is not
-     *         in any game.
-     */
-    public UserNumberAndPort getUserNumberAndPort(User user) {
-        if (user == null) {
-            throw new IllegalArgumentException("User cannot be null.");
-        }
-        for (GameInstance t : threads) {
-            UserNumberAndPort userNumberAndPort = t.getUserNumberAndPort(user);
-            if (userNumberAndPort != null) {
-                return userNumberAndPort;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Sets the availability of a port. It iterates through the list of ports and
      * sets the availability of the given port.
      * 
@@ -151,20 +128,17 @@ public class GameServerSingleton {
      * Starts a new game instance. It creates a new game instance and starts it. It
      * also adds the game instance to the list of threads.
      * 
-     * @param user0 User number 0.
-     * @param user1 User number 1.
-     * @throws IllegalArgumentException If any user is null.
+     * @param item0 User number 0.
+     * @param item0 User number 1.
+     * @throws IllegalStateException If there is no available port.
      */
-    public void startNewGame(User user0, User user1) throws IllegalArgumentException {
-        if (user0 == null || user1 == null) {
-            throw new IllegalArgumentException("User can not be null.");
-        }
-
+    public void startNewGame(QueueItem item0, QueueItem item1) throws IllegalStateException {
         int port = findAvailablePort();
-
         GameInstance gameInstance = new GameInstance();
         threads.add(gameInstance);
-        gameInstance.setupGame(user0, user1, port);
+        gameInstance.setupGame(item0.user, item1.user, port);
         gameInstance.start();
+        item0.futurePort.complete(port);
+        item1.futurePort.complete(port);
     }
 }

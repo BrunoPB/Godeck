@@ -1,10 +1,16 @@
 package godeck.game;
 
 import java.io.DataInputStream;
+import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
+
+import godeck.models.GodeckThread;
+import godeck.utils.ErrorHandler;
+import godeck.utils.Printer;
+import godeck.utils.ThreadUtils;
 
 /**
  * Represents a client in a game. Receives messages from the server and sends
@@ -13,13 +19,13 @@ import org.springframework.stereotype.Component;
  * @author Bruno Pena Baeta
  */
 @Component
-public class GameClient extends Thread {
+public class GameClient extends GodeckThread {
     // Properties
 
     private int number;
     private DataInputStream in;
     private GameInstance gameInstance;
-    private boolean exit;
+    public CompletableFuture<Boolean> ready = new CompletableFuture<Boolean>();
 
     // Constructors
 
@@ -31,30 +37,25 @@ public class GameClient extends Thread {
 
     /**
      * Waits for messages from the client and decodes them.
+     * 
+     * @throws Exception If the message could not be received or decoded.
      */
-    private void getMessagesFromClient() {
-        try {
-            while (!exit) {
-                String msg = "";
-                byte byteChar = 0;
-                char charChar = 0;
-                if (in.available() > 0) {
-                    while (!exit) {
-                        byteChar = in.readByte();
-                        charChar = (char) byteChar;
-                        if (charChar == '\n') {
-                            break;
-                        }
-                        msg += charChar;
-                    }
-                    decodeMessage(preProcessMessage(msg));
+    private void getMessagesFromClient() throws Exception {
+        String msg = "";
+        byte byteChar = 0;
+        char charChar = 0;
+        if (in.available() > 0) {
+            while (!super.exit) {
+                byteChar = in.readByte();
+                charChar = (char) byteChar;
+                if (charChar == '\n') {
+                    break;
                 }
-                Thread.sleep(10);
+                msg += charChar;
             }
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            e.printStackTrace();
+            decodeMessage(preProcessMessage(msg));
         }
+        ThreadUtils.sleep(10);
     }
 
     // Private Methods
@@ -65,8 +66,9 @@ public class GameClient extends Thread {
      * 
      * @param msg The message from the client.
      * @return The message after pre-processing.
+     * @throws IllegalArgumentException If the message is unknown.
      */
-    private String preProcessMessage(String msg) {
+    private String preProcessMessage(String msg) throws IllegalArgumentException {
         Pattern regex = Pattern.compile("[a-zA-Z0-9]+[:][a-zA-Z0-9 ]+"); // TODO: Update regex when GameMove is
                                                                          // implemented
         Matcher matcher = regex.matcher(msg);
@@ -82,19 +84,19 @@ public class GameClient extends Thread {
      * with the parameter.
      * 
      * @param msg The pre-processed message from the client.
-     * @throws Exception If the command is unknown.
+     * @throws IllegalArgumentException If the command is unknown.
      */
-    private void decodeMessage(String msg) throws Exception {
+    private void decodeMessage(String msg) throws IllegalArgumentException {
         String command = msg.split(":")[0];
         String parameter = msg.split(":")[1];
         if (command.equals("Ready")) {
-            gameInstance.prepareClient(number);
+            ready.complete(Boolean.parseBoolean(parameter));
         } else if (command.equals("GameMove")) {
             sendMove(parameter);
         } else if (command.equals("Lose")) {
             gameInstance.declareSurrender(number);
         } else if (command.equals("DebugTest")) {
-            System.out.println("DebugTest: \"" + parameter + "\"");
+            Printer.printDebug("Client Message: \"" + parameter + "\"");
         } else {
             throw new IllegalArgumentException("Unknown command from Client.");
         }
@@ -124,7 +126,6 @@ public class GameClient extends Thread {
         this.number = number;
         this.gameInstance = gameInstance;
         this.in = in;
-        this.exit = false;
     }
 
     /**
@@ -132,13 +133,12 @@ public class GameClient extends Thread {
      * executes the corresponding command.
      */
     public void run() {
-        getMessagesFromClient();
-    }
-
-    /**
-     * Kills the game client. Stops the thread.
-     */
-    public void kill() {
-        exit = true;
+        while (!super.exit) {
+            try {
+                getMessagesFromClient();
+            } catch (Exception e) {
+                ErrorHandler.message(e);
+            }
+        }
     }
 }

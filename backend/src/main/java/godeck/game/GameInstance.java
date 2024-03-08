@@ -3,16 +3,18 @@ package godeck.game;
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.CompletableFuture;
 
 import org.springframework.stereotype.Component;
 
 import godeck.models.Game;
-import godeck.models.GameMove;
+import godeck.models.GodeckThread;
 import godeck.models.User;
-import godeck.models.UserNumberAndPort;
+import godeck.utils.ErrorHandler;
 
 /**
  * Represents a game between 2 players. Has game and server information.
@@ -22,11 +24,9 @@ import godeck.models.UserNumberAndPort;
  * @author Bruno Pena Baeta
  */
 @Component
-public class GameInstance extends Thread {
+public class GameInstance extends GodeckThread {
     // Properties
 
-    private User user0;
-    private User user1;
     private int port;
     private Game game;
     private GameClient user0Client;
@@ -34,8 +34,6 @@ public class GameInstance extends Thread {
     private ServerSocket server;
     private DataOutputStream out0;
     private DataOutputStream out1;
-    private boolean client1Ready;
-    private boolean client2Ready;
     private Socket socket0;
     private Socket socket1;
     private DataInputStream in0;
@@ -55,8 +53,8 @@ public class GameInstance extends Thread {
      * Allocates a port for the game server, connects the clients and initiates data
      * streams.
      * 
-     * @throws Exception If the server could not be created or the clients could
-     *                   not connect.
+     * @throws Exception If the server could not be created or the
+     *                   clients could not connect.
      */
     private void setupGameServer() throws Exception {
         GameServerSingleton.getInstance().setPortAvailbility(port, false);
@@ -73,7 +71,7 @@ public class GameInstance extends Thread {
                 out0.writeBytes("Error:Opponent could not connect.\n");
             }
             closeServer();
-            throw new Exception("Opponent could not connect.");
+            throw new SocketTimeoutException("Opponent could not connect.");
         }
         initiateDataStreams();
     }
@@ -81,9 +79,9 @@ public class GameInstance extends Thread {
     /**
      * Initiates the server data input and output streams.
      * 
-     * @throws Exception If the data streams could not be initiated.
+     * @throws IOException If the data input stream could not read the first byte.
      */
-    private void initiateDataStreams() throws Exception {
+    private void initiateDataStreams() throws IOException {
         in0 = new DataInputStream(new BufferedInputStream(socket0.getInputStream()));
         in1 = new DataInputStream(new BufferedInputStream(socket1.getInputStream()));
         in0.readByte();
@@ -96,40 +94,34 @@ public class GameInstance extends Thread {
      * Starts both game clients, waits for them to be ready and sends their
      * respective numbers.
      * 
-     * @throws Exception If the clients could not be started or if they could not be
-     *                   synchronized.
+     * @throws IOException If the clients could not be started or if they could not
+     *                     be synchronized.
      */
-    private void setupGameClients() throws Exception {
+    private void setupGameClients() throws IOException {
         user0Client = new GameClient();
         user0Client.setupGameClient(0, this, in0);
         user1Client = new GameClient();
         user1Client.setupGameClient(1, this, in1);
         user0Client.start();
         user1Client.start();
-        while (!client1Ready || !client2Ready) {
-            Thread.sleep(10);
-        }
+        CompletableFuture.allOf(user0Client.ready, user1Client.ready).join();
         sendClientNumber();
     }
 
     /**
-     * Main game loop. Waits for the game to be over.
-     * 
-     * @throws Exception
+     * Main game loop. Waits for the game to be over. Then takes the necessary
+     * actions.
      */
-    private void gameLoop() throws Exception {
-        while (!game.isGameOver()) {
-            Thread.sleep(10);
-        }
+    private void gameLoop() {
+        game.over.join();
     }
 
     /**
      * Closes the server and all sockets and data streams.
      * 
-     * @throws Exception If the server or any of the sockets or data streams could
-     *                   not be closed.
+     * @throws IOException If the server could not be closed.
      */
-    private void closeServer() throws Exception {
+    private void closeServer() throws IOException {
         if (in0 != null)
             in0.close();
         if (in1 != null)
@@ -150,9 +142,9 @@ public class GameInstance extends Thread {
     /**
      * Sends the client numbers to the respective clients.
      * 
-     * @throws Exception If the client numbers could not be sent.
+     * @throws IOException If the client numbers could not be sent.
      */
-    private void sendClientNumber() throws Exception {
+    private void sendClientNumber() throws IOException {
         out0.writeBytes("UserNumber:0\n");
         out1.writeBytes("UserNumber:1\n");
     }
@@ -161,22 +153,19 @@ public class GameInstance extends Thread {
      * Synchronizes both clients with the current game state.
      * 
      * @param move The last move executed.
-     * @throws Exception If the clients could not be synchronized.
+     * @throws IOException If the clients could not be synchronized.
      */
-    private void synchronizeClients(String test) throws Exception {
+    private void synchronizeClients(String test) throws IOException { // TODO: Implement synchronizeClients
         out0.flush();
         out1.flush();
-        out0.writeBytes("DebugTest:" + test + "\n");
-        out1.writeBytes("DebugTest:" + test + "\n");
     }
 
     /**
      * Ends the game and sends the result to both clients.
      * 
-     * @throws Exception If the game could not be ended or if the result could not
-     *                   be sent.
+     * @throws IOException If the result could not be sent.
      */
-    private void endGame() throws Exception { // TODO: Implement endGame
+    private void endGame() throws IOException { // TODO: Implement endGame
         int winner = game.getGameWinner();
         if (winner == 0) {
             out0.writeBytes("GameEnd:SurrenderOpponent\n");
@@ -185,7 +174,8 @@ public class GameInstance extends Thread {
             out0.writeBytes("GameEnd:SurrenderPlayer\n");
             out1.writeBytes("GameEnd:SurrenderOpponent\n");
         } else {
-            throw new IllegalArgumentException("Invalid winner " + winner + ".");
+            out0.writeBytes("GameEnd:SurrenderOpponent\n");
+            out1.writeBytes("GameEnd:SurrenderOpponent\n");
         }
     }
 
@@ -195,8 +185,7 @@ public class GameInstance extends Thread {
     private void stopClients() {
         user0Client.kill();
         user1Client.kill();
-        while (user0Client.isAlive() || user1Client.isAlive()) {
-        }
+        CompletableFuture.allOf(user0Client.killed, user1Client.killed).join();
     }
 
     // Public Methods
@@ -209,47 +198,8 @@ public class GameInstance extends Thread {
      * @param port  The port to be used.
      */
     public void setupGame(User user0, User user1, int port) {
-        this.user0 = user0;
-        this.user1 = user1;
         this.port = port;
-        client1Ready = false;
-        client2Ready = false;
         game = new Game(user0.getDeck(), user1.getDeck());
-    }
-
-    /**
-     * Gets the user number and port for a given user.
-     * 
-     * @param user The user to get the number and port for.
-     * @return The user number and port. Null if the user is not in the game.
-     */
-    public UserNumberAndPort getUserNumberAndPort(User user) {
-        UserNumberAndPort userNumberAndPort = new UserNumberAndPort();
-        if (user.getId().equals(user0.getId())) {
-            userNumberAndPort.number = 0;
-        } else if (user.getId().equals(user1.getId())) {
-            userNumberAndPort.number = 1;
-        } else {
-            return null;
-        }
-        userNumberAndPort.port = port;
-        return userNumberAndPort;
-    }
-
-    /**
-     * Prepares a client to start the game. Mark the client as ready.
-     * 
-     * @param number The client number.
-     * @throws Exception If the client number is invalid.
-     */
-    public void prepareClient(int number) throws Exception {
-        if (number == 0) {
-            client1Ready = true;
-        } else if (number == 1) {
-            client2Ready = true;
-        } else {
-            throw new IllegalArgumentException("Invalid number " + number + ".");
-        }
     }
 
     /**
@@ -266,7 +216,7 @@ public class GameInstance extends Thread {
             synchronizeClients(test);
             // }
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            ErrorHandler.message(e);
         }
     }
 
@@ -276,12 +226,13 @@ public class GameInstance extends Thread {
      * @param player The number of the player surrendering.
      */
     public void declareSurrender(int player) {
-        game.test_gameover = true;
+        game.executeSurrender(player);
     }
 
     /**
      * Prepares, runs and closes the game instance.
      */
+    @Override
     public void run() {
         try {
             setupGameServer();
@@ -291,7 +242,23 @@ public class GameInstance extends Thread {
             endGame();
             closeServer();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            ErrorHandler.message(e);
+        }
+    }
+
+    /**
+     * Kills the game clients, ends the game and closes the server.
+     */
+    @Override
+    public void kill() {
+        try {
+            stopClients();
+            endGame();
+            closeServer();
+        } catch (IOException e) {
+            ErrorHandler.message(e);
+        } finally {
+            super.killed.complete(null);
         }
     }
 }

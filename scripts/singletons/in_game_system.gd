@@ -40,6 +40,10 @@ func send_move(move:String):
 	tcp_stream.poll()
 	tcp_stream.put_string("GameMove:" + move + "\n")
 
+func send_debug(s:String):
+	tcp_stream.poll()
+	tcp_stream.put_string("DebugTest:" + s + "\n")
+
 func declare_surrender():
 	tcp_stream.poll()
 	tcp_stream.put_string("Lose:Surrender\n")

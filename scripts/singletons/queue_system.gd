@@ -14,7 +14,8 @@ func _ready():
 
 func initiate_queue():
 	http.cancel_request()
-	http.request_completed.connect(emit_game_found)
+	if not http.request_completed.is_connected(emit_game_found):
+		http.request_completed.connect(emit_game_found)
 	http.request(queue_endpoint,PackedStringArray(),HTTPClient.METHOD_POST,user.id)
 
 func emit_game_found(result, response_code, headers, body):

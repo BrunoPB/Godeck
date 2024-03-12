@@ -5,6 +5,7 @@ extends PanelContainer
 @onready var node_utils = get_node("/root/NodeUtils")
 @onready var home_screen_scene = preload("res://scenes/main_menu/home_screen.tscn")
 @onready var deck_builder_screen_scene = preload("res://scenes/main_menu/deck_builder/deck_builder_screen.tscn")
+@onready var shop_screen_scene = preload("res://scenes/main_menu/shop/shop_screen.tscn")
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -23,7 +24,7 @@ func change_menu_screen(screen):
 			content_area.add_child(home_screen_scene.instantiate())
 			get_node(main_menu_paths["home_button"]).button_pressed = true
 		menu_screen_enum.SHOP:
-			content_area.add_child(home_screen_scene.instantiate())
+			content_area.add_child(shop_screen_scene.instantiate())
 			get_node(main_menu_paths["shop_button"]).button_pressed = true
 		menu_screen_enum.DECKBUILDER:
 			content_area.add_child(deck_builder_screen_scene.instantiate())

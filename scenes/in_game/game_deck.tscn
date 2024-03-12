@@ -1,0 +1,19 @@
+[gd_scene load_steps=2 format=3 uid="uid://b6sblvsbyf6fh"]
+
+[ext_resource type="TileSet" uid="uid://dojx5pr233v17" path="res://scenes/in_game/placeholderTM.tres" id="1_wanqc"]
+
+[node name="GameDeck" type="Control"]
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BoardTileMap" type="TileMap" parent="."]
+position = Vector2(-157, -69)
+tile_set = ExtResource("1_wanqc")
+format = 2
+layer_0/tile_data = PackedInt32Array(2, 2, 0, 3, 2, 0, 4, 2, 0, 65539, 2, 0, 0, 2, 0, 65537, 2, 0, 1, 2, 0)

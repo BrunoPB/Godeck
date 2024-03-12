@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://bbad5njb8qd5"]
+[gd_scene load_steps=4 format=3 uid="uid://bbad5njb8qd5"]
 
 [ext_resource type="Script" path="res://scripts/screens/in_game.gd" id="1_bfebq"]
+[ext_resource type="PackedScene" uid="uid://bfxxdravdqauy" path="res://scenes/in_game/game_board.tscn" id="2_bqyl3"]
+[ext_resource type="PackedScene" uid="uid://b6sblvsbyf6fh" path="res://scenes/in_game/game_deck.tscn" id="3_roj0i"]
 
 [node name="InGameScene" type="PanelContainer"]
 anchors_preset = 15
@@ -10,7 +12,90 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_bfebq")
 
+[node name="GameContents" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Header" type="HBoxContainer" parent="GameContents"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.2
+
+[node name="EnemyInfo" type="VBoxContainer" parent="GameContents/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.43
+
+[node name="Enemy" type="Label" parent="GameContents/Header/EnemyInfo"]
+layout_mode = 2
+size_flags_vertical = 3
+text = "Enemy Name"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Rank" type="Label" parent="GameContents/Header/EnemyInfo"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Rank"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Spacer" type="Control" parent="GameContents/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Timer" type="Label" parent="GameContents/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+theme_override_font_sizes/font_size = 30
+text = "0:00"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MainArea" type="HBoxContainer" parent="GameContents"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Score" type="Control" parent="GameContents/MainArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ProgressBar" type="ProgressBar" parent="GameContents/MainArea/Score"]
+layout_mode = 0
+offset_right = 24.0
+offset_bottom = 368.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+step = 1.0
+value = 50.0
+fill_mode = 3
+show_percentage = false
+
+[node name="CenterContainer" type="CenterContainer" parent="GameContents/MainArea"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_stretch_ratio = 10.0
+use_top_left = true
+
+[node name="GameBoard" parent="GameContents/MainArea/CenterContainer" instance=ExtResource("2_bqyl3")]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_stretch_ratio = 10.0
+
+[node name="Spacer" type="Control" parent="GameContents/MainArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Deck" type="Control" parent="GameContents"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.3
+
+[node name="GameDeck" parent="GameContents/Deck" instance=ExtResource("3_roj0i")]
+layout_mode = 1
+scale = Vector2(0.71, 0.71)
+
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
+visible = false
 layout_mode = 2
 
 [node name="msg" type="Button" parent="VBoxContainer"]

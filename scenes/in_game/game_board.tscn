@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://bfxxdravdqauy"]
+[gd_scene load_steps=2 format=3 uid="uid://4siccd2gogu7"]
 
-[ext_resource type="TileSet" uid="uid://dojx5pr233v17" path="res://scenes/in_game/placeholderTM.tres" id="1_flyxo"]
+[ext_resource type="TileSet" uid="uid://c74h3bevk713r" path="res://scenes/in_game/placeholderTM.tres" id="1_flyxo"]
 
 [node name="GameBoard" type="PanelContainer"]
 anchors_preset = 5
@@ -13,4 +13,4 @@ grow_horizontal = 2
 position = Vector2(-100, 0)
 tile_set = ExtResource("1_flyxo")
 format = 2
-layer_0/tile_data = PackedInt32Array(0, 131074, 0, 1, 131074, 0, 2, 131074, 0, 65537, 131074, 0, 65536, 131074, 0, 131072, 131074, 0, 196608, 131074, 0, 196609, 131074, 0, 131073, 131074, 0, 131074, 131074, 0, 196610, 131074, 0, 262145, 131074, 0, 65538, 131074, 0)
+layer_0/tile_data = PackedInt32Array(0, 131074, 0, 2, 131074, 0, 65537, 131074, 0, 65536, 131074, 0, 131072, 131074, 0, 196608, 131074, 0, 196609, 131074, 0, 131073, 131074, 0, 131074, 131074, 0, 196610, 131074, 0, 262145, 131074, 0, 65538, 131074, 0, 1, 131074, 0)

@@ -28,6 +28,8 @@ public class GameServerSingleton {
     private static int minTCPPort;
     @Value("${max_tcp_port}")
     private static int maxTCPPort;
+    @Value("${turn_timeout_s}")
+    private static int turnTimeout;
     private static GameServerSingleton instance = null;
     private Set<GameInstance> threads = new HashSet<GameInstance>();
     private List<Port> ports = new ArrayList<Port>();
@@ -38,14 +40,16 @@ public class GameServerSingleton {
      * Main constructor. Should never be called, this is a singleton. Uses Autowire
      * to inject the min and max TCP ports.
      * 
-     * @param min The minimum TCP port.
-     * @param max The maximum TCP port.
+     * @param min     The minimum TCP port.
+     * @param max     The maximum TCP port.
+     * @param timeout The turn timeout.
      */
     @Autowired
     private GameServerSingleton(@Value("${min_tcp_port}") int min,
-            @Value("${max_tcp_port}") int max) {
+            @Value("${max_tcp_port}") int max, @Value("${turn_timeout_s}") int timeout) {
         minTCPPort = min;
         maxTCPPort = max;
+        turnTimeout = timeout;
         setupPorts();
     }
 
@@ -57,7 +61,7 @@ public class GameServerSingleton {
      */
     public static GameServerSingleton getInstance() {
         if (instance == null) {
-            instance = new GameServerSingleton(minTCPPort, maxTCPPort);
+            instance = new GameServerSingleton(minTCPPort, maxTCPPort, turnTimeout);
         }
         return instance;
     }
@@ -136,7 +140,7 @@ public class GameServerSingleton {
         int port = findAvailablePort();
         GameInstance gameInstance = new GameInstance();
         threads.add(gameInstance);
-        gameInstance.setupGame(item0.user, item1.user, port);
+        gameInstance.setupGame(item0.user, item1.user, port, turnTimeout);
         gameInstance.start();
         item0.futurePort.complete(port);
         item1.futurePort.complete(port);

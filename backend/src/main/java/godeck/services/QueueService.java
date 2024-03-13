@@ -9,8 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import godeck.models.QueueItem;
-import godeck.models.QueueResponse;
 import godeck.models.User;
+import godeck.models.view_models.QueueResponse;
 import godeck.queue.QueueSingleton;
 import godeck.repositories.UserRepository;
 import godeck.utils.ErrorHandler;

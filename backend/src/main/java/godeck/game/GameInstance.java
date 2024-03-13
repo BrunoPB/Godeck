@@ -11,9 +11,13 @@ import java.util.concurrent.CompletableFuture;
 
 import org.springframework.stereotype.Component;
 
+import godeck.models.EndGameInfo;
 import godeck.models.Game;
+import godeck.models.GameMove;
 import godeck.models.GodeckThread;
 import godeck.models.User;
+import godeck.models.view_models.Opponent;
+import godeck.models.view_models.UserGame;
 import godeck.utils.ErrorHandler;
 
 /**
@@ -27,8 +31,11 @@ import godeck.utils.ErrorHandler;
 public class GameInstance extends GodeckThread {
     // Properties
 
+    private int turnTimeout;
     private int port;
     private Game game;
+    private UserGame user0game;
+    private UserGame user1game;
     private GameClient user0Client;
     private GameClient user1Client;
     private ServerSocket server;
@@ -105,15 +112,135 @@ public class GameInstance extends GodeckThread {
         user0Client.start();
         user1Client.start();
         CompletableFuture.allOf(user0Client.ready, user1Client.ready).join();
-        sendClientNumber();
+        sendInitialInfoToClients();
+    }
+
+    /**
+     * Sends the client numbers to the respective clients.
+     * 
+     * @throws IOException If the client numbers could not be sent.
+     */
+    private void sendClientNumber() throws IOException {
+        out0.flush();
+        out1.flush();
+        out0.writeBytes("UserNumber:0\n");
+        out1.writeBytes("UserNumber:1\n");
+    }
+
+    /**
+     * Sends the opponent information to the respective clients.
+     * 
+     * @throws IOException If the opponent information could not be sent.
+     */
+    private void sendOpponentInfo() throws IOException {
+        out0.flush();
+        out1.flush();
+        out0.writeBytes("OpponentInfo:" + user0game.getOpponent().toJSONString() + "\n");
+        out1.writeBytes("OpponentInfo:" + user1game.getOpponent().toJSONString() + "\n");
+    }
+
+    /**
+     * Sends the decks to the respective clients.
+     * 
+     * @throws IOException If the decks could not be sent.
+     */
+    private void sendClientDeck() throws IOException {
+        out0.flush();
+        out1.flush();
+        out0.writeBytes("Deck:" + user0game.getDeckJSONString() + "\n");
+        out1.writeBytes("Deck:" + user1game.getDeckJSONString() + "\n");
+    }
+
+    /**
+     * Sends the boards to the respective clients.
+     * 
+     * @throws IOException If the boards could not be sent.
+     */
+    private void sendClientBoard() throws IOException {
+        out0.flush();
+        out1.flush();
+        out0.writeBytes("Board:" + user0game.getBoardJSONString() + "\n");
+        out1.writeBytes("Board:" + user1game.getBoardJSONString() + "\n");
+    }
+
+    /**
+     * Sends the turn timeout to the respective clients.
+     * 
+     * @throws IOException If the turn timeout could not be sent.
+     */
+    private void sendClientTimer() throws IOException {
+        out0.flush();
+        out1.flush();
+        out0.writeBytes("Timer:" + turnTimeout + "\n");
+        out1.writeBytes("Timer:" + turnTimeout + "\n");
+    }
+
+    /**
+     * Sends the game confirmation to the respective clients. The game confirmation
+     * is a message that tells the clients that the game is ready to start.
+     * 
+     * @throws IOException If the game confirmation could not be sent.
+     */
+    private void sendGameConfirmation() throws IOException {
+        out0.flush();
+        out1.flush();
+        out0.writeBytes("GameStart:true\n");
+        out1.writeBytes("GameStart:true\n");
+    }
+
+    /**
+     * Sends all the initial information the clients need to start the game.
+     * 
+     * @throws IOException If the information could not be sent.
+     */
+    private void sendInitialInfoToClients() throws IOException {
+        try {
+            sendClientNumber();
+            Thread.sleep(100);
+            sendOpponentInfo();
+            Thread.sleep(100);
+            sendClientDeck();
+            Thread.sleep(100);
+            sendClientBoard();
+            Thread.sleep(100);
+            sendClientTimer();
+            Thread.sleep(100);
+            sendGameConfirmation();
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            ErrorHandler.message(e);
+        }
+    }
+
+    /**
+     * Synchronizes both clients with the current game state.
+     * 
+     * @param move The move that was last executed.
+     * 
+     * @throws IOException If the clients could not be synchronized.
+     */
+    private void synchronizeClients(GameMove move) throws IOException {
+        try {
+            sendClientBoard();
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            ErrorHandler.message(e);
+        }
     }
 
     /**
      * Main game loop. Waits for the game to be over. Then takes the necessary
-     * actions.
+     * actions. Also starts and verify the turn timer.
+     * 
+     * @throws Exception If some error occurs during the game loop.
      */
-    private void gameLoop() {
-        game.over.join();
+    private void gameLoop() throws Exception {
+        GameTimer timer = game.startTimer(turnTimeout + 2);
+        CompletableFuture.anyOf(timer.timeOver, game.over).thenAccept((result) -> {
+            if (result.equals("Timeout")) {
+                game.notifyTimeout();
+            }
+        }).join();
     }
 
     /**
@@ -140,43 +267,18 @@ public class GameInstance extends GodeckThread {
     }
 
     /**
-     * Sends the client numbers to the respective clients.
-     * 
-     * @throws IOException If the client numbers could not be sent.
-     */
-    private void sendClientNumber() throws IOException {
-        out0.writeBytes("UserNumber:0\n");
-        out1.writeBytes("UserNumber:1\n");
-    }
-
-    /**
-     * Synchronizes both clients with the current game state.
-     * 
-     * @param move The last move executed.
-     * @throws IOException If the clients could not be synchronized.
-     */
-    private void synchronizeClients(String test) throws IOException { // TODO: Implement synchronizeClients
-        out0.flush();
-        out1.flush();
-    }
-
-    /**
      * Ends the game and sends the result to both clients.
      * 
      * @throws IOException If the result could not be sent.
      */
     private void endGame() throws IOException { // TODO: Implement endGame
         int winner = game.getGameWinner();
-        if (winner == 0) {
-            out0.writeBytes("GameEnd:SurrenderOpponent\n");
-            out1.writeBytes("GameEnd:SurrenderPlayer\n");
-        } else if (winner == 1) {
-            out0.writeBytes("GameEnd:SurrenderPlayer\n");
-            out1.writeBytes("GameEnd:SurrenderOpponent\n");
-        } else {
-            out0.writeBytes("GameEnd:SurrenderOpponent\n");
-            out1.writeBytes("GameEnd:SurrenderOpponent\n");
-        }
+        String reason = game.getEndGameReason();
+        EndGameInfo endGameInfo = new EndGameInfo(winner, reason, 0, 0);
+        out0.flush();
+        out1.flush();
+        out0.writeBytes("GameEnd:" + endGameInfo.toJSONString() + "\n");
+        out1.writeBytes("GameEnd:" + endGameInfo.toJSONString() + "\n");
     }
 
     /**
@@ -193,13 +295,17 @@ public class GameInstance extends GodeckThread {
     /**
      * Sets up a new game.
      * 
-     * @param user0 User number 0.
-     * @param user1 User number 1.
-     * @param port  The port to be used.
+     * @param user0       User number 0.
+     * @param user1       User number 1.
+     * @param port        The port to be used.
+     * @param turnTimeout The turn timeout.
      */
-    public void setupGame(User user0, User user1, int port) {
+    public void setupGame(User user0, User user1, int port, int turnTimeout) {
         this.port = port;
+        this.turnTimeout = turnTimeout;
         game = new Game(user0.getDeck(), user1.getDeck());
+        user0game = new UserGame(user0.getDeck(), 0, true, new Opponent(user1.getName()));
+        user1game = new UserGame(user1.getDeck(), 1, false, new Opponent(user0.getName()));
     }
 
     /**
@@ -213,7 +319,7 @@ public class GameInstance extends GodeckThread {
         try {
             // if (verifyMove(player, move)) {
             // game.executeMove(player, move);
-            synchronizeClients(test);
+            // synchronizeClients(move);
             // }
         } catch (Exception e) {
             ErrorHandler.message(e);

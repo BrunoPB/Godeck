@@ -69,8 +69,7 @@ public class GameClient extends GodeckThread {
      * @throws IllegalArgumentException If the message is unknown.
      */
     private String preProcessMessage(String msg) throws IllegalArgumentException {
-        Pattern regex = Pattern.compile("[a-zA-Z0-9]+[:][a-zA-Z0-9 ]+"); // TODO: Update regex when GameMove is
-                                                                         // implemented
+        Pattern regex = Pattern.compile("[a-zA-Z0-9]+[:].*$");
         Matcher matcher = regex.matcher(msg);
         if (matcher.find()) {
             String result = matcher.group();

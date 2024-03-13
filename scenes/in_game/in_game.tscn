@@ -1,8 +1,8 @@
 [gd_scene load_steps=4 format=3 uid="uid://bbad5njb8qd5"]
 
 [ext_resource type="Script" path="res://scripts/screens/in_game.gd" id="1_bfebq"]
-[ext_resource type="PackedScene" uid="uid://bfxxdravdqauy" path="res://scenes/in_game/game_board.tscn" id="2_bqyl3"]
-[ext_resource type="PackedScene" uid="uid://b6sblvsbyf6fh" path="res://scenes/in_game/game_deck.tscn" id="3_roj0i"]
+[ext_resource type="PackedScene" uid="uid://4siccd2gogu7" path="res://scenes/in_game/game_board.tscn" id="2_bqyl3"]
+[ext_resource type="PackedScene" uid="uid://bs063djicrilu" path="res://scenes/in_game/game_deck.tscn" id="3_roj0i"]
 
 [node name="InGameScene" type="PanelContainer"]
 anchors_preset = 15
@@ -39,9 +39,11 @@ text = "Rank"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="Spacer" type="Control" parent="GameContents/Header"]
+[node name="Surrender" type="Button" parent="GameContents/Header"]
 layout_mode = 2
 size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Surrender"
 
 [node name="Timer" type="Label" parent="GameContents/Header"]
 layout_mode = 2
@@ -88,25 +90,62 @@ size_flags_horizontal = 3
 [node name="Deck" type="Control" parent="GameContents"]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 0.3
+size_flags_stretch_ratio = 0.4
 
 [node name="GameDeck" parent="GameContents/Deck" instance=ExtResource("3_roj0i")]
 layout_mode = 1
-scale = Vector2(0.71, 0.71)
+scale = Vector2(0.9, 0.9)
 
-[node name="VBoxContainer" type="VBoxContainer" parent="."]
+[node name="PopUpBackground" type="PanelContainer" parent="."]
 visible = false
 layout_mode = 2
 
-[node name="msg" type="Button" parent="VBoxContainer"]
+[node name="PopUpLayout" type="VBoxContainer" parent="PopUpBackground"]
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
-text = "SEND A MESSAGE TO THE SERVER"
 
-[node name="Surrender" type="Button" parent="VBoxContainer"]
+[node name="Title" type="Label" parent="PopUpBackground/PopUpLayout"]
 layout_mode = 2
-size_flags_vertical = 3
-text = "SURRENDER"
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 20
+theme_override_font_sizes/font_size = 30
+horizontal_alignment = 1
+vertical_alignment = 1
 
-[connection signal="pressed" from="VBoxContainer/msg" to="." method="_on_button_pressed"]
-[connection signal="pressed" from="VBoxContainer/Surrender" to="." method="_on_surrender_pressed"]
+[node name="Reason" type="Label" parent="PopUpBackground/PopUpLayout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 20
+theme_override_font_sizes/font_size = 30
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Gold" type="Label" parent="PopUpBackground/PopUpLayout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 20
+theme_override_font_sizes/font_size = 30
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Ranking" type="Label" parent="PopUpBackground/PopUpLayout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 20
+theme_override_font_sizes/font_size = 30
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Ok" type="Button" parent="PopUpBackground/PopUpLayout"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_vertical = 10
+text = "OK"
+
+[connection signal="pressed" from="GameContents/Header/Surrender" to="." method="_on_surrender_pressed"]
+[connection signal="pressed" from="PopUpBackground/PopUpLayout/Ok" to="." method="_on_endgame_popup_ok_pressed"]

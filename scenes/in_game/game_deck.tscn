@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://b6sblvsbyf6fh"]
+[gd_scene load_steps=3 format=3 uid="uid://bs063djicrilu"]
 
-[ext_resource type="TileSet" uid="uid://dojx5pr233v17" path="res://scenes/in_game/placeholderTM.tres" id="1_wanqc"]
+[ext_resource type="TileSet" uid="uid://c74h3bevk713r" path="res://scenes/in_game/placeholderTM.tres" id="1_wanqc"]
+[ext_resource type="Script" path="res://scripts/screens/game_deck.gd" id="1_x13vl"]
 
 [node name="GameDeck" type="Control"]
 layout_mode = 3
@@ -11,8 +12,9 @@ anchor_right = 0.5
 anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
+script = ExtResource("1_x13vl")
 
-[node name="BoardTileMap" type="TileMap" parent="."]
+[node name="DeckTiles" type="TileMap" parent="."]
 position = Vector2(-157, -69)
 tile_set = ExtResource("1_wanqc")
 format = 2

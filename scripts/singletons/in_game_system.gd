@@ -1,12 +1,12 @@
 extends Node
 
 var socket_port : int = 0
-var user_number : int = 2
 var status : int = 0
 var msg : String = ""
 var tcp_stream : StreamPeerTCP = StreamPeerTCP.new()
+var game : Game = Game.new()
 
-signal game_end
+signal game_end(info : EndGameInfo)
 signal game_confirmation
 
 func _ready():
@@ -17,7 +17,9 @@ func _process(delta):
 
 func preprocess_message():
 	var regex : RegEx = RegEx.new()
-	regex.compile("[a-zA-Z0-9]+[:][a-zA-Z0-9 ]+")
+	var commandRegex = "[a-zA-Z0-9]+" 
+	var parameterRegex = ".*$"
+	regex.compile(commandRegex + "[:]" + parameterRegex)
 	msg = regex.search(msg).get_string()
 
 func establish_connection():
@@ -90,9 +92,18 @@ func decode_host_message(from_host : Array):
 		match command:
 			"GameMove":
 				pass
+			"GameStart":
+				game_confirmation.emit(parameter == "true")
 			"UserNumber":
-				user_number = int(parameter)
-				game_confirmation.emit(true)
+				game.number = int(parameter)
+			"OpponentInfo":
+				game.set_opponent(parameter)
+			"Deck":
+				game.set_deck(parameter)
+			"Board":
+				game.set_board(parameter)
+			"Timer":
+				game.time_limit = int(parameter)
 			"Error":
 				# TODO: Error handling
 				disconnect_from_server()
@@ -100,7 +111,9 @@ func decode_host_message(from_host : Array):
 				push_error(parameter)
 			"GameEnd":
 				disconnect_from_server()
-				game_end.emit()
+				var info = EndGameInfo.new()
+				info.set_from_string(parameter)
+				game_end.emit(info)
 			"DebugTest":
 				print("DebugTest: \"" + parameter + "\"")
 		msg = ""

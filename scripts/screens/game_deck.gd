@@ -1,26 +1,44 @@
 extends Control
 
 @onready var card_utils = get_node("/root/CardUtils")
-@onready var user = get_node("/root/User")
+@onready var dictionary_utils = get_node("/root/DictionaryUtils")
+@onready var node_utils = get_node("/root/NodeUtils")
 @onready var deck_tiles = $DeckTiles
+var deck : Array
 
-var points_dict = {0: Vector2(0,0), 1: Vector2(1,0), 
-				   2: Vector2(2,0), 3: Vector2(3,0), 
-				   4: Vector2(4,0), 5: Vector2(1,1), 
-				   6: Vector2(3,1)
-				  }
+signal card_selected(index : int)
+
+var points_dict : Dictionary = {0: Vector2i(0,0), 1: Vector2i(1,0), 
+								2: Vector2i(2,0), 3: Vector2i(3,0), 
+								4: Vector2i(4,0), 5: Vector2i(1,1), 
+								6: Vector2i(3,1)
+								}
 
 func _ready():
-	build_deck()
+	pass
 
 func build_deck():
-	for i in range(7):
-		deck_tiles.set_cell(0, points_dict.get(i), 0, Vector2i(0,0), 1)
+	for i in points_dict:
+		deck_tiles.set_cell(0, points_dict[i], 0, Vector2i(0,0), 1)
 	deck_tiles.update_internals()
-	for i in range(7):
-		set_card_to_cell(deck_tiles.get_child(i), user.deck[i])
+	for i in points_dict:
+		if deck[i].exists:
+			set_card_to_cell(deck_tiles.get_child(i), deck[i])
+		else:
+			deck_tiles.set_cell(0, points_dict[i], 1, Vector2i(0,0))
+	deck_tiles.update_internals()
 
-func set_card_to_cell(cell, card : Card):
-	cell.card_data = card
+func set_card_to_cell(cell, card : InGameCard):
+	cell.card_data = card.card
 	cell.panel_position = Vector2(-40,-33.5)
 	cell.update_all()
+
+func get_card_data_from_index(index : int) -> Card:
+	return deck_tiles.get_child(index).card_data
+
+func _input(event):
+	if Input.is_action_just_pressed("click"):
+		var clicked_tile : Vector2i = deck_tiles.local_to_map(get_local_mouse_position())
+		if dictionary_utils.dictionary_has_item(points_dict,clicked_tile):
+			var index = points_dict.find_key(clicked_tile)
+			card_selected.emit(index)

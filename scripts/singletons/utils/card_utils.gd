@@ -1,5 +1,12 @@
 extends Node
 
+func convert_dictionary_to_in_game_card(dictionary : Dictionary) -> InGameCard:
+	var in_game_card = InGameCard.new()
+	in_game_card.card_owner = dictionary.cardOwner
+	in_game_card.current_dominator = dictionary.cardDominator
+	in_game_card.card = convert_dictionary_to_card(dictionary.card)
+	return in_game_card
+
 func convert_dictionary_to_card(dictionary : Dictionary) -> Card:
 	var card : Card = Card.new()
 	card.id = dictionary.id

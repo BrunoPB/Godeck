@@ -6,9 +6,9 @@
 [sub_resource type="TileSetScenesCollectionSource" id="TileSetScenesCollectionSource_fqgsb"]
 scenes/1/scene = ExtResource("1_qpep7")
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_l1iol"]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_rc8rp"]
 texture = ExtResource("1_apsui")
-margins = Vector2i(7, 6)
+margins = Vector2i(6, 6)
 separation = Vector2i(13, 23)
 texture_region_size = Vector2i(80, 69)
 0:0/0 = 0
@@ -25,5 +25,5 @@ tile_shape = 3
 tile_layout = 1
 tile_offset_axis = 1
 tile_size = Vector2i(80, 69)
-sources/2 = SubResource("TileSetAtlasSource_l1iol")
 sources/0 = SubResource("TileSetScenesCollectionSource_fqgsb")
+sources/1 = SubResource("TileSetAtlasSource_rc8rp")

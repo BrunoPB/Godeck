@@ -1,5 +1,6 @@
 package godeck.models;
 
+import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 /**
@@ -16,13 +17,15 @@ public class InGameCard {
     private int cardOwner;
     private int currentDominator;
     private GameCharacter card;
+    private boolean exists;
 
     // Constructors
 
     /**
-     * Default constructor.
+     * Default constructor. Used to create a card that does not exist.
      */
     public InGameCard() {
+        exists = false;
     }
 
     /**
@@ -35,6 +38,15 @@ public class InGameCard {
         this.cardOwner = cardOwner;
         this.currentDominator = cardOwner;
         this.card = card;
+        this.exists = true;
+    }
+
+    public InGameCard(String jsonString) {
+        JSONObject card = new JSONObject(jsonString);
+        this.cardOwner = card.getInt("cardOwner");
+        this.currentDominator = card.getInt("currentDominator");
+        this.card = new GameCharacter(card.getJSONObject("card").toString());
+        this.exists = card.getBoolean("exists");
     }
 
     // Getters and Setters
@@ -51,6 +63,10 @@ public class InGameCard {
         return this.card;
     }
 
+    public boolean exists() {
+        return this.exists;
+    }
+
     public void setCardOwner(int cardOwner) {
         this.cardOwner = cardOwner;
     }
@@ -63,6 +79,10 @@ public class InGameCard {
         this.card = card;
     }
 
+    public void setExistance(boolean exists) {
+        this.exists = exists;
+    }
+
     // Public Methods
 
     /**
@@ -71,8 +91,12 @@ public class InGameCard {
      * @return The JSON representation of the card in the game.
      */
     public String toJSONString() {
-        return "{\"cardOwner\":" + this.cardOwner + ",\"currentDominator\":" + this.currentDominator + ",\"card\":"
-                + this.card.toJSONString() + "}";
+        if (exists) {
+            return "{\"cardOwner\":" + this.cardOwner + ",\"currentDominator\":" + this.currentDominator + ",\"card\":"
+                    + this.card.toJSONString() + ",\"exists\":" + this.exists + "}";
+        }
+        return "{\"cardOwner\":" + null + ",\"currentDominator\":" + null + ",\"card\":"
+                + null + ",\"exists\":" + this.exists + "}";
     }
 
 }

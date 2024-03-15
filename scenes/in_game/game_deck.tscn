@@ -1,21 +1,15 @@
-[gd_scene load_steps=3 format=3 uid="uid://bs063djicrilu"]
+[gd_scene load_steps=4 format=3 uid="uid://bs063djicrilu"]
 
 [ext_resource type="TileSet" uid="uid://c74h3bevk713r" path="res://scenes/in_game/placeholderTM.tres" id="1_wanqc"]
 [ext_resource type="Script" path="res://scripts/screens/game_deck.gd" id="1_x13vl"]
 
-[node name="GameDeck" type="Control"]
-layout_mode = 3
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-grow_horizontal = 2
-grow_vertical = 2
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2cme8"]
+
+[node name="GameDeck" type="PanelContainer"]
+theme_override_styles/panel = SubResource("StyleBoxEmpty_2cme8")
 script = ExtResource("1_x13vl")
 
 [node name="DeckTiles" type="TileMap" parent="."]
-position = Vector2(-157, -69)
 tile_set = ExtResource("1_wanqc")
 format = 2
-layer_0/tile_data = PackedInt32Array(2, 2, 0, 3, 2, 0, 4, 2, 0, 65539, 2, 0, 0, 2, 0, 65537, 2, 0, 1, 2, 0)
+layer_0/tile_data = PackedInt32Array(0, 1, 0, 1, 1, 0, 2, 1, 0, 3, 1, 0, 4, 1, 0, 65539, 1, 0, 65537, 1, 0)

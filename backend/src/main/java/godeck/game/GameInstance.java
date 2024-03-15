@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.stereotype.Component;
@@ -15,6 +16,7 @@ import godeck.models.EndGameInfo;
 import godeck.models.Game;
 import godeck.models.GameMove;
 import godeck.models.GodeckThread;
+import godeck.models.InGameCard;
 import godeck.models.User;
 import godeck.models.view_models.Opponent;
 import godeck.models.view_models.UserGame;
@@ -128,6 +130,23 @@ public class GameInstance extends GodeckThread {
     }
 
     /**
+     * Sends the game turn to the respective clients.
+     * 
+     * @throws IOException If the game turn could not be sent.
+     */
+    private void sendGameTurn() throws IOException {
+        out0.flush();
+        out1.flush();
+        if (game.getTurn() == 0) {
+            out0.writeBytes("GameTurn:true\n");
+            out1.writeBytes("GameTurn:false\n");
+        } else {
+            out0.writeBytes("GameTurn:false\n");
+            out1.writeBytes("GameTurn:true\n");
+        }
+    }
+
+    /**
      * Sends the opponent information to the respective clients.
      * 
      * @throws IOException If the opponent information could not be sent.
@@ -189,6 +208,19 @@ public class GameInstance extends GodeckThread {
     }
 
     /**
+     * Sends an update message to the clients. The update message tells the clients
+     * they should update their game state.
+     * 
+     * @throws IOException If the update message could not be sent.
+     */
+    private void sendClientUpdate() throws IOException {
+        out0.flush();
+        out1.flush();
+        out0.writeBytes("Update:true\n");
+        out1.writeBytes("Update:true\n");
+    }
+
+    /**
      * Sends all the initial information the clients need to start the game.
      * 
      * @throws IOException If the information could not be sent.
@@ -196,6 +228,8 @@ public class GameInstance extends GodeckThread {
     private void sendInitialInfoToClients() throws IOException {
         try {
             sendClientNumber();
+            Thread.sleep(100);
+            sendGameTurn();
             Thread.sleep(100);
             sendOpponentInfo();
             Thread.sleep(100);
@@ -221,11 +255,27 @@ public class GameInstance extends GodeckThread {
      */
     private void synchronizeClients(GameMove move) throws IOException {
         try {
+            sendClientTimer();
+            Thread.sleep(100);
+            sendGameTurn();
+            Thread.sleep(100);
+            sendClientDeck();
+            Thread.sleep(100);
             sendClientBoard();
+            Thread.sleep(100);
+            sendClientUpdate();
             Thread.sleep(100);
         } catch (InterruptedException e) {
             ErrorHandler.message(e);
         }
+    }
+
+    /**
+     * Updates the game state of both users.
+     */
+    private void updateUsersGameState() {
+        user0game.updateGameState(game.getDeck0(), game.getBoard(), game.getTurn() == 0);
+        user1game.updateGameState(game.getDeck1(), game.getBoard(), game.getTurn() == 1);
     }
 
     /**
@@ -303,9 +353,11 @@ public class GameInstance extends GodeckThread {
     public void setupGame(User user0, User user1, int port, int turnTimeout) {
         this.port = port;
         this.turnTimeout = turnTimeout;
-        game = new Game(user0.getDeck(), user1.getDeck());
-        user0game = new UserGame(user0.getDeck(), 0, true, new Opponent(user1.getName()));
-        user1game = new UserGame(user1.getDeck(), 1, false, new Opponent(user0.getName()));
+        List<InGameCard> deck0 = user0.getDeck().stream().map((card) -> new InGameCard(0, card)).toList();
+        List<InGameCard> deck1 = user1.getDeck().stream().map((card) -> new InGameCard(1, card)).toList();
+        game = new Game(deck0, deck1);
+        user0game = new UserGame(game.getBoard(), user0.getDeck(), 0, true, new Opponent(user1.getName()));
+        user1game = new UserGame(game.getBoard(), user1.getDeck(), 1, false, new Opponent(user0.getName()));
     }
 
     /**
@@ -315,12 +367,15 @@ public class GameInstance extends GodeckThread {
      * @param player The number of the player executing the move.
      * @param move   The move to be executed.
      */
-    public void tryMove(int player, String test) { // TODO: Implement tryMove
+    public void tryMove(int player, GameMove move) {
         try {
-            // if (verifyMove(player, move)) {
-            // game.executeMove(player, move);
-            // synchronizeClients(move);
-            // }
+            if (game.verifyMove(player, move)) {
+                game.executeMove(move);
+                game.resetTimer();
+                updateUsersGameState();
+                synchronizeClients(move);
+                game.checkEndGame();
+            }
         } catch (Exception e) {
             ErrorHandler.message(e);
         }

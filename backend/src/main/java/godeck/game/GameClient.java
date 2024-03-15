@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
 
+import godeck.models.GameMove;
 import godeck.models.GodeckThread;
 import godeck.utils.ErrorHandler;
 import godeck.utils.Printer;
@@ -86,8 +87,9 @@ public class GameClient extends GodeckThread {
      * @throws IllegalArgumentException If the command is unknown.
      */
     private void decodeMessage(String msg) throws IllegalArgumentException {
-        String command = msg.split(":")[0];
-        String parameter = msg.split(":")[1];
+        int index = msg.indexOf(":");
+        String command = msg.substring(0, index);
+        String parameter = msg.substring(index + 1);
         if (command.equals("Ready")) {
             ready.complete(Boolean.parseBoolean(parameter));
         } else if (command.equals("GameMove")) {
@@ -106,10 +108,9 @@ public class GameClient extends GodeckThread {
      * 
      * @param msg The move string to be sent.
      */
-    private void sendMove(String msg) { // TODO: Implement this
-        // GameMove move = new GameMove(msg);
-        // gameInstance.tryMove(number, move);
-        gameInstance.tryMove(number, msg);
+    private void sendMove(String msg) {
+        GameMove move = new GameMove(msg);
+        gameInstance.tryMove(number, move);
     }
 
     // Public Methods

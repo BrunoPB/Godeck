@@ -1,7 +1,7 @@
 package godeck.models.view_models;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import org.springframework.stereotype.Component;
 
@@ -20,7 +20,7 @@ import godeck.models.InGameCard;
 public class UserGame {
     // Properties
 
-    private List<List<InGameCard>> board;
+    private Vector<Vector<InGameCard>> board;
     private List<InGameCard> deck;
     private int number;
     private boolean turn;
@@ -37,30 +37,14 @@ public class UserGame {
     /**
      * Main constructor.
      * 
-     * @param board    The board of the game.
-     * @param deck     The deck of the player.
-     * @param number   The number of the player.
-     * @param turn     If it is the player's turn.
-     * @param opponent The opponent of the player.
-     */
-    public UserGame(List<List<InGameCard>> board, List<InGameCard> deck, int number, boolean turn, Opponent opponent) {
-        this.board = board;
-        this.deck = deck;
-        this.number = number;
-        this.turn = turn;
-        this.opponent = opponent;
-    }
-
-    /**
-     * Constructor that initializes the UserGame from the user's deck.
-     * 
      * @param userDeck The deck of the player.
      * @param number   The number of the player.
      * @param turn     If it is the player's turn.
      * @param opponent The opponent of the player.
      */
-    public UserGame(List<GameCharacter> userDeck, int number, boolean turn, Opponent opponent) {
-        this.board = new ArrayList<List<InGameCard>>();
+    public UserGame(Vector<Vector<InGameCard>> board, List<GameCharacter> userDeck, int number, boolean turn,
+            Opponent opponent) {
+        this.board = board;
         this.number = number;
         this.deck = userDeck.stream().map(card -> new InGameCard(0, card)).toList();
         this.turn = turn;
@@ -69,7 +53,7 @@ public class UserGame {
 
     // Getters and Setters
 
-    public List<List<InGameCard>> getBoard() {
+    public Vector<Vector<InGameCard>> getBoard() {
         return this.board;
     }
 
@@ -89,7 +73,7 @@ public class UserGame {
         return this.opponent;
     }
 
-    public void setBoard(List<List<InGameCard>> board) {
+    public void setBoard(Vector<Vector<InGameCard>> board) {
         this.board = board;
     }
 
@@ -110,6 +94,19 @@ public class UserGame {
     }
 
     // Public Methods
+
+    /**
+     * Updates player's game state.
+     * 
+     * @param deck  The deck of the player.
+     * @param board The board of the game.
+     * @param turn  If it is the player's turn.
+     */
+    public void updateGameState(List<InGameCard> deck, Vector<Vector<InGameCard>> board, boolean turn) {
+        this.deck = deck;
+        this.board = board;
+        this.turn = turn;
+    }
 
     /**
      * Returns the JSON representation of the user's deck in the game.
@@ -138,7 +135,11 @@ public class UserGame {
         for (List<InGameCard> row : this.board) {
             boardString += "[";
             for (InGameCard card : row) {
-                boardString += card.toJSONString() + ",";
+                if (card != null) {
+                    boardString += card.toJSONString() + ",";
+                } else {
+                    boardString += "null,";
+                }
             }
             if (boardString.length() > 1) {
                 boardString = boardString.substring(0, boardString.length() - 1);

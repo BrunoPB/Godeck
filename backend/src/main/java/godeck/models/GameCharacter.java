@@ -2,6 +2,8 @@ package godeck.models;
 
 import java.util.UUID;
 
+import org.json.JSONObject;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -88,6 +90,24 @@ public class GameCharacter {
         this.south = south;
         this.southWest = southWest;
         this.northWest = northWest;
+    }
+
+    public GameCharacter(String jsonString) {
+        JSONObject character = new JSONObject(jsonString);
+        this.id = UUID.fromString(character.getString("id"));
+        this.number = character.getInt("number");
+        this.name = character.getString("name");
+        this.tier = character.getInt("tier");
+        this.mythology = character.getInt("mythology");
+        this.fileName = character.getString("fileName");
+        this.price = character.getInt("price");
+        this.stars = character.getInt("stars");
+        this.north = character.getInt("north");
+        this.northEast = character.getInt("northEast");
+        this.southEast = character.getInt("southEast");
+        this.south = character.getInt("south");
+        this.southWest = character.getInt("southWest");
+        this.northWest = character.getInt("northWest");
     }
 
     // Getters and Setters

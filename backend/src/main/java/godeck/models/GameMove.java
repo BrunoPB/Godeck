@@ -1,5 +1,6 @@
 package godeck.models;
 
+import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 /**
@@ -12,33 +13,31 @@ public class GameMove {
     // Properties
 
     private int player;
-    private Coordinates initialCoords;
-    private Coordinates finalCoords;
-    private GameCharacter character;
+    private int deckIndex;
+    private Coordinates coords;
+    private InGameCard card;
 
     // Constructors
 
+    /**
+     * Default constructor.
+     */
     public GameMove() {
     }
 
-    public GameMove(int player, Coordinates initialCoords, Coordinates finalCoords) {
+    public GameMove(int player, int deckIndex, Coordinates coords, InGameCard character) {
         this.player = player;
-        this.initialCoords = initialCoords;
-        this.finalCoords = finalCoords;
+        this.coords = coords;
+        this.card = character;
     }
 
-    public GameMove(int player, Coordinates initialCoords, Coordinates finalCoords, GameCharacter character) {
-        this.player = player;
-        this.initialCoords = initialCoords;
-        this.finalCoords = finalCoords;
-        this.character = character;
-    }
-
-    public GameMove(String stringMove) { // TODO: Improve this
-        String[] move = stringMove.split(" ");
-        this.player = Integer.parseInt(move[0]);
-        this.initialCoords = new Coordinates(Integer.parseInt(move[1]), Integer.parseInt(move[2]));
-        this.finalCoords = new Coordinates(Integer.parseInt(move[3]), Integer.parseInt(move[4]));
+    public GameMove(String stringMove) {
+        JSONObject move = new JSONObject(stringMove);
+        this.player = move.getInt("player");
+        this.deckIndex = move.getInt("deckIndex");
+        this.coords = new Coordinates(move.getJSONObject("coords").getInt("x"),
+                move.getJSONObject("coords").getInt("y"));
+        this.card = new InGameCard(move.getJSONObject("card").toString());
     }
 
     // Getters and Setters
@@ -47,38 +46,38 @@ public class GameMove {
         return player;
     }
 
-    public Coordinates getInitialCoords() {
-        return initialCoords;
+    public int getDeckIndex() {
+        return deckIndex;
     }
 
-    public Coordinates getFinalCoords() {
-        return finalCoords;
+    public Coordinates getCoords() {
+        return coords;
     }
 
-    public GameCharacter getCharacter() {
-        return character;
+    public InGameCard getCard() {
+        return card;
     }
 
     public void setPlayer(int player) {
         this.player = player;
     }
 
-    public void setInitialCoords(Coordinates initialCoords) {
-        this.initialCoords = initialCoords;
+    public void setDeckIndex(int deckIndex) {
+        this.deckIndex = deckIndex;
     }
 
-    public void setFinalCoords(Coordinates finalCoords) {
-        this.finalCoords = finalCoords;
+    public void setCoords(Coordinates coords) {
+        this.coords = coords;
     }
 
-    public void setCharacter(GameCharacter character) {
-        this.character = character;
+    public void setCard(InGameCard character) {
+        this.card = character;
     }
 
     // Public Methods
 
-    public String toString() {
-        return "GameMove [player=" + player + ", initialCoords=" + initialCoords + ", finalCoords=" + finalCoords
-                + ", character=" + character + "]";
+    public String toJSONString() {
+        return "{\"player\":" + player + ",\"deckIndex\":" + deckIndex + ",\"coords\":" + coords.toJSONString()
+                + ",\"card\":" + card.toJSONString() + "}";
     }
 }

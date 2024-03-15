@@ -8,6 +8,8 @@ var game : Game = Game.new()
 
 signal game_end(info : EndGameInfo)
 signal game_confirmation
+signal should_update_gui
+signal restart_timer
 
 func _ready():
 	pass
@@ -38,9 +40,9 @@ func establish_connection():
 func disconnect_from_server():
 	tcp_stream.disconnect_from_host()
 
-func send_move(move:String):
+func send_move(move:GameMove):
 	tcp_stream.poll()
-	tcp_stream.put_string("GameMove:" + move + "\n")
+	tcp_stream.put_string("GameMove:" + move.toJSONString() + "\n")
 
 func send_debug(s:String):
 	tcp_stream.poll()
@@ -96,6 +98,8 @@ func decode_host_message(from_host : Array):
 				game_confirmation.emit(parameter == "true")
 			"UserNumber":
 				game.number = int(parameter)
+			"GameTurn":
+				game.turn = (parameter == "true")
 			"OpponentInfo":
 				game.set_opponent(parameter)
 			"Deck":
@@ -104,6 +108,9 @@ func decode_host_message(from_host : Array):
 				game.set_board(parameter)
 			"Timer":
 				game.time_limit = int(parameter)
+				restart_timer.emit()
+			"Update":
+				should_update_gui.emit()
 			"Error":
 				# TODO: Error handling
 				disconnect_from_server()

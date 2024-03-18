@@ -77,7 +77,6 @@ func board_clicked(coords : Vector2i):
 		igm.card_owner = game.number
 		igm.current_dominator = game.number
 		igm.card = card_data
-		game.place_card_at(igm, coords)
 		var move : GameMove = GameMove.new(game.number, selected_card_index, coords, igm)
 		ingame_system.send_move(move)
 

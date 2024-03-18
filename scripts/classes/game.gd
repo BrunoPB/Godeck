@@ -38,6 +38,3 @@ func set_opponent(opponent_string : String):
 	var json = JSON.new()
 	json.parse(opponent_string)
 	opponent.opponent_name = json.data.name
-
-func place_card_at(card : InGameCard, coord : Vector2i):
-	pass

@@ -13,8 +13,8 @@ var points_dict : Dictionary = {0: Vector2i(0,0), 1: Vector2i(1,0), 2: Vector2i(
 
 signal board_clicked(coord : Vector2i)
 
+## BUG MIGHT HERE!
 func build_board():
-	print(tilemap.get_child_count())
 	for i in points_dict:
 		tilemap.set_cell(0, points_dict[i], 0, Vector2i(0,0), 1)
 	tilemap.update_internals()
@@ -22,15 +22,16 @@ func build_board():
 		var col = points_dict[i].x
 		var row = points_dict[i].y
 		var in_game_card : InGameCard = board[col][row]
-		if in_game_card.exists:
-			set_card_to_cell(tilemap.get_child(i), in_game_card)
-		else:
-			tilemap.set_cell(0, points_dict[i], 1, Vector2i(0,0))
+		set_card_to_cell(tilemap.get_child(i), in_game_card)
 	tilemap.update_internals()
 
 func set_card_to_cell(cell, in_game_card : InGameCard):
-	cell.card_data = in_game_card.card
 	cell.panel_position = Vector2(-40,-33.5)
+	if in_game_card.exists:
+		cell.card_data = in_game_card.card
+		cell.exists = true
+	else:
+		cell.exists = false
 	cell.update_all()
 
 func _input(event):

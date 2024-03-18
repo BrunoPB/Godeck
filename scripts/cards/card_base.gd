@@ -4,6 +4,7 @@ extends Node2D
 var card_data : Card = Card.new()
 var radius : int = 40
 var panel_position : Vector2 = Vector2(0,0)
+var exists : bool = true
 
 func _ready():
 	pass
@@ -21,12 +22,24 @@ func update_size():
 	pass
 
 func update_texture():
-	pass
+	var tex = Texture2D.new()
+	if exists:
+		$Layout/CardHex.texture = load("res://assets/placeholders/Boitata.jpg")
+	else:
+		$Layout/CardHex.texture = tex.create_placeholder()
 
 func update_stats():
-	get_node(paths["stats"] + "/North").text = str(card_data.north)
-	get_node(paths["stats"] + "/NorthSide/NorthWest").text = str(card_data.north_west)
-	get_node(paths["stats"] + "/NorthSide/NorthEast").text = str(card_data.north_east)
-	get_node(paths["stats"] + "/SouthSide/SouthWest").text = str(card_data.south_west)
-	get_node(paths["stats"] + "/SouthSide/SouthEast").text = str(card_data.south_east)
-	get_node(paths["stats"] + "/South").text = str(card_data.south)
+	if exists:
+		get_node(paths["stats"] + "/North").text = str(card_data.north)
+		get_node(paths["stats"] + "/NorthSide/NorthWest").text = str(card_data.north_west)
+		get_node(paths["stats"] + "/NorthSide/NorthEast").text = str(card_data.north_east)
+		get_node(paths["stats"] + "/SouthSide/SouthWest").text = str(card_data.south_west)
+		get_node(paths["stats"] + "/SouthSide/SouthEast").text = str(card_data.south_east)
+		get_node(paths["stats"] + "/South").text = str(card_data.south)
+	else:
+		get_node(paths["stats"] + "/North").text = ""
+		get_node(paths["stats"] + "/NorthSide/NorthWest").text = ""
+		get_node(paths["stats"] + "/NorthSide/NorthEast").text = ""
+		get_node(paths["stats"] + "/SouthSide/SouthWest").text = ""
+		get_node(paths["stats"] + "/SouthSide/SouthEast").text = ""
+		get_node(paths["stats"] + "/South").text = ""

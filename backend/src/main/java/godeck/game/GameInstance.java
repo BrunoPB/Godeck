@@ -321,7 +321,7 @@ public class GameInstance extends GodeckThread {
      * 
      * @throws IOException If the result could not be sent.
      */
-    private void endGame() throws IOException { // TODO: Implement endGame
+    private void endGame() throws IOException {
         int winner = game.getGameWinner();
         String reason = game.getEndGameReason();
         EndGameInfo endGameInfo = new EndGameInfo(winner, reason, 0, 0);

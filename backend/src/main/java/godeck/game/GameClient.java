@@ -90,6 +90,7 @@ public class GameClient extends GodeckThread {
         int index = msg.indexOf(":");
         String command = msg.substring(0, index);
         String parameter = msg.substring(index + 1);
+        parameter = fixSpecialCharactersBugFromGodot(parameter);
         if (command.equals("Ready")) {
             ready.complete(Boolean.parseBoolean(parameter));
         } else if (command.equals("GameMove")) {
@@ -101,6 +102,19 @@ public class GameClient extends GodeckThread {
         } else {
             throw new IllegalArgumentException("Unknown command from Client.");
         }
+    }
+
+    /**
+     * This method is used to decode a message from Godot that has a bug with
+     * special characters. This method can also be found in Godot client. Once
+     * Godot fixes this bug, this method can be removed.
+     * Issue #61756
+     * 
+     * @param m The message to be fixed.
+     * @return The fixed message.
+     */
+    private String fixSpecialCharactersBugFromGodot(String m) {
+        return java.net.URLDecoder.decode(m, java.nio.charset.StandardCharsets.UTF_8);
     }
 
     /**

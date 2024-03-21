@@ -1,33 +1,34 @@
 extends PanelContainer
 
 @onready var dictionary_utils = get_node("/root/DictionaryUtils")
-@onready var node_utils = get_node("/root/NodeUtils")
+@onready var tilemap_utils = get_node("/root/TilemapUtils")
+@onready var ingame_system = get_node("/root/InGameSystem")
 @onready var tilemap = $BoardTileMap
 var board: Array
 var points_dict : Dictionary = {0: Vector2i(0,0), 1: Vector2i(1,0), 2: Vector2i(2,0),
 								3: Vector2i(0,1), 4: Vector2i(1,1), 5: Vector2i(2,1),
 								6: Vector2i(0,2), 7: Vector2i(1,2), 8: Vector2i(2,2),
-								9: Vector2i(0,3), 10 : Vector2i(1,3), 11: Vector2i(2,3),
+								9: Vector2i(0,3), 10: Vector2i(1,3), 11: Vector2i(2,3),
 												12: Vector2i(1,4)
-								}
+						 		}
 
 signal board_clicked(coord : Vector2i)
 
-## BUG MIGHT HERE!
 func build_board():
-	for i in points_dict:
-		tilemap.set_cell(0, points_dict[i], 0, Vector2i(0,0), 1)
-	tilemap.update_internals()
+	tilemap_utils.build_empty_in_coords(tilemap, points_dict)
 	for i in points_dict:
 		var col = points_dict[i].x
 		var row = points_dict[i].y
 		var in_game_card : InGameCard = board[col][row]
-		set_card_to_cell(tilemap.get_child(i), in_game_card)
+		var tile = tilemap_utils.get_tile(tilemap, points_dict[i])
+		set_card_to_cell(tile, in_game_card)
 	tilemap.update_internals()
 
 func set_card_to_cell(cell, in_game_card : InGameCard):
 	cell.panel_position = Vector2(-40,-33.5)
 	if in_game_card.exists:
+		cell.in_board = true
+		cell.dominated = (ingame_system.game.number == in_game_card.current_dominator)
 		cell.card_data = in_game_card.card
 		cell.exists = true
 	else:

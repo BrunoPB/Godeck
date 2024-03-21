@@ -14,4 +14,4 @@ func _init(_player : int, _deck_index : int, _coords : Vector2i, _card : InGameC
 	card = _card
 
 func toJSONString() -> String:
-	return "{\"player\":" + str(player) + ",\"deckIndex\":" + str(deck_index) + ",\"coords\":" + "{\"x\":" + str(coords.x) + ",\"y\":" + str(coords.y) + "}" + ",\"card\":" + card.toJSONString() + "}";
+	return "{\"player\":" + str(player) + ",\"deckIndex\":" + str(deck_index) + ",\"coords\":" + "{\"x\":" + str(coords.x) + ",\"y\":" + str(coords.y) + "}" + ",\"card\":" + card.toJSONString() + "}"

@@ -34,6 +34,12 @@ polygon = PackedVector2Array(20, 0, 60, 0, 80, 34, 60, 69, 20, 69, 0, 34)
 build_mode = 1
 polygon = PackedVector2Array(20, 0, 60, 0, 80, 34, 60, 69, 20, 69, 0, 34)
 
+[node name="Border" type="Line2D" parent="Layout/CardHex"]
+points = PackedVector2Array(20, 0, 60, 0, 80, 34, 60, 69, 20, 69, 0, 34)
+closed = true
+width = 3.0
+joint_mode = 2
+
 [node name="Stats" type="VBoxContainer" parent="Layout"]
 layout_mode = 2
 theme_override_constants/separation = 0

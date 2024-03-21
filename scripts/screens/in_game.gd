@@ -67,6 +67,7 @@ func update_gui():
 
 func select_card(card_index : int):
 	if selected_card_index != card_index:
+		$GameContents/Deck/GameDeck.update_selected(card_index, selected_card_index)
 		selected_card_index = card_index
 
 func board_clicked(coords : Vector2i):
@@ -79,9 +80,12 @@ func board_clicked(coords : Vector2i):
 		igm.card = card_data
 		var move : GameMove = GameMove.new(game.number, selected_card_index, coords, igm)
 		ingame_system.send_move(move)
+		$GameContents/Deck/GameDeck.update_selected(-1, selected_card_index)
+		selected_card_index = -1
 
 func end_game(info : EndGameInfo):
 	stop_timer = true
+	$GameContents/Deck/GameDeck.update_selected(-1, selected_card_index)
 	$PopUpBackground.visible = true
 	if info.winner == game.number:
 		$PopUpBackground/PopUpLayout/Title.text = "VICTORY!"

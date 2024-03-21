@@ -54,7 +54,7 @@ public class GameMove {
         return coords;
     }
 
-    public InGameCard getCard() {
+    public InGameCard getInGameCard() {
         return card;
     }
 
@@ -70,7 +70,7 @@ public class GameMove {
         this.coords = coords;
     }
 
-    public void setCard(InGameCard character) {
+    public void setInGameCard(InGameCard character) {
         this.card = character;
     }
 

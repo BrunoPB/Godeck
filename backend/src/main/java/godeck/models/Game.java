@@ -43,7 +43,7 @@ public class Game {
      * @param deck0 The deck of player 0.
      * @param deck1 The deck of player 1.
      */
-    public Game(List<InGameCard> deck0, List<InGameCard> deck1) { // TODO: Implement Game
+    public Game(List<InGameCard> deck0, List<InGameCard> deck1) {
         this.deck0 = deck0;
         this.deck1 = deck1;
         buildInitialBoard();
@@ -152,6 +152,116 @@ public class Game {
     }
 
     /**
+     * Executes the domination of the cards around by the given move.
+     * 
+     * @param move The move that caused the domination.
+     */
+    private void executeDomination(GameMove move) {
+        Coordinates coords = move.getCoords();
+        int column = coords.x;
+        int row = coords.y;
+        InGameCard cardData = move.getInGameCard();
+        int player = move.getPlayer();
+
+        int value;
+        InGameCard compareCard = null;
+
+        // North
+        try {
+            compareCard = board.get(column).get(row - 1);
+            if (compareCard.exists()) {
+                value = cardData.getCard().getNorth();
+                if (value > compareCard.getCard().getSouth()) {
+                    compareCard.setCurrentDominator(player);
+                }
+            }
+        } catch (IndexOutOfBoundsException e) {
+        } catch (NullPointerException e) {
+        }
+
+        // North East
+        try {
+            if (column % 2 == 0) {
+                compareCard = board.get(column + 1).get(row);
+            } else {
+                compareCard = board.get(column + 1).get(row - 1);
+            }
+            if (compareCard != null && compareCard.exists()) {
+                value = cardData.getCard().getNorthEast();
+                if (value > compareCard.getCard().getSouthWest()) {
+                    compareCard.setCurrentDominator(player);
+                }
+            }
+        } catch (IndexOutOfBoundsException e) {
+        } catch (NullPointerException e) {
+        }
+
+        // South East
+        try {
+            if (column % 2 == 0) {
+                compareCard = board.get(column + 1).get(row + 1);
+            } else {
+                compareCard = board.get(column + 1).get(row);
+            }
+            if (compareCard != null && compareCard.exists()) {
+                value = cardData.getCard().getSouthEast();
+                if (value > compareCard.getCard().getNorthWest()) {
+                    compareCard.setCurrentDominator(player);
+                }
+            }
+        } catch (IndexOutOfBoundsException e) {
+        } catch (NullPointerException e) {
+        }
+
+        // South
+        try {
+            compareCard = board.get(column).get(row + 1);
+            if (compareCard.exists()) {
+                value = cardData.getCard().getSouth();
+                if (value > compareCard.getCard().getNorth()) {
+                    compareCard.setCurrentDominator(player);
+                }
+            }
+        } catch (IndexOutOfBoundsException e) {
+        } catch (NullPointerException e) {
+        }
+
+        // South West
+        try {
+            if (column % 2 == 0) {
+                compareCard = board.get(column - 1).get(row + 1);
+            } else {
+                compareCard = board.get(column - 1).get(row);
+            }
+            if (compareCard != null && compareCard.exists()) {
+                value = cardData.getCard().getSouthWest();
+                if (value > compareCard.getCard().getNorthEast()) {
+                    compareCard.setCurrentDominator(player);
+                }
+            }
+        } catch (IndexOutOfBoundsException e) {
+        } catch (NullPointerException e) {
+        }
+
+        // North West
+        try {
+            if (column % 2 == 0) {
+                compareCard = board.get(column - 1).get(row);
+            } else {
+                compareCard = board.get(column - 1).get(row - 1);
+            }
+            if (compareCard != null && compareCard.exists()) {
+                value = cardData.getCard().getNorthWest();
+                if (value > compareCard.getCard().getSouthEast()) {
+                    compareCard.setCurrentDominator(player);
+                }
+            }
+        } catch (IndexOutOfBoundsException e) {
+        } catch (NullPointerException e) {
+        }
+    }
+
+    /**
      * Ends the game with the given reason.
      * 
      * @param reason The reason the game ended.
@@ -225,8 +335,24 @@ public class Game {
      * @param move   The move to verify.
      * @return True if the move is valid. False otherwise.
      */
-    public boolean verifyMove(int player, GameMove move) { // TODO: Implement validations
-        return player == move.getPlayer() && this.turn == player;
+    public boolean verifyMove(int player, GameMove move) {
+        try {
+            if (this.turn != player)
+                return false;
+            if (player != move.getPlayer())
+                return false;
+            if (player == 0 && !this.deck0.get(move.getDeckIndex()).exists())
+                return false;
+            if (player == 1 && !this.deck1.get(move.getDeckIndex()).exists())
+                return false;
+            if (this.board.get(move.getCoords().x).get(move.getCoords().y) == null)
+                return false;
+            if (this.board.get(move.getCoords().x).get(move.getCoords().y).exists())
+                return false;
+            return true;
+        } catch (IndexOutOfBoundsException e) {
+            return false;
+        }
     }
 
     /**
@@ -235,7 +361,7 @@ public class Game {
      * @param move The move to execute.
      */
     public void executeMove(GameMove move) {
-        InGameCard card = move.getCard();
+        InGameCard card = move.getInGameCard();
         Coordinates coords = move.getCoords();
         this.board.get(coords.x).set(coords.y, card);
         if (move.getPlayer() == 0) {
@@ -245,6 +371,7 @@ public class Game {
             this.deck1.get(move.getDeckIndex()).setExistance(false);
             turn = 0;
         }
+        executeDomination(move);
     }
 
     /**

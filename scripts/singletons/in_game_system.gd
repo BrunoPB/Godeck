@@ -31,26 +31,37 @@ func establish_connection():
 			push_error("An error has occurred while establishing connection to the server. Error: " + str(e))
 			return false
 		check_connection_status()
-		tcp_stream.put_string("Ready:true\n")
+		send_tcp("Ready:true")
 		return true
 	else:
 		push_error("Set socket port first.")
 		return false
+
+func send_tcp(m : String):
+	var encoded_msg = fix_special_characters_bug_from_godot(m)
+	tcp_stream.put_string(encoded_msg + "\n")
+
+## This method is used to deal with a Godot bug where special characters
+## in strings are not sent by StreamPeerTCP.
+## "Unicode parsing error: Invalid unicode codepoint (ea), cannot represent as ASCII/Latin-1"
+## Issue #61756
+func fix_special_characters_bug_from_godot(s : String):
+	return s.uri_encode()
 
 func disconnect_from_server():
 	tcp_stream.disconnect_from_host()
 
 func send_move(move:GameMove):
 	tcp_stream.poll()
-	tcp_stream.put_string("GameMove:" + move.toJSONString() + "\n")
+	send_tcp("GameMove:" + move.toJSONString())
 
 func send_debug(s:String):
 	tcp_stream.poll()
-	tcp_stream.put_string("DebugTest:" + s + "\n")
+	send_tcp("DebugTest:" + s)
 
 func declare_surrender():
 	tcp_stream.poll()
-	tcp_stream.put_string("Lose:Surrender\n")
+	send_tcp("Lose:Surrender")
 
 func check_connection_status():
 	tcp_stream.poll()
@@ -81,11 +92,11 @@ func listen_to_host():
 func decode_host_message(from_host : Array):
 	var end : bool = false
 	for byte in from_host:
-		var char : String = char(byte)
-		if char == "\n":
+		var char_s : String = char(byte)
+		if char_s == "\n":
 			end = true
 			break
-		msg += char
+		msg += char_s
 	if end:
 		preprocess_message()
 		var index = msg.find(":")

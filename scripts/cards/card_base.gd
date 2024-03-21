@@ -2,6 +2,9 @@ extends Node2D
 
 @onready var paths = get_node("/root/Constants").card_base_paths
 var card_data : Card = Card.new()
+var in_board : bool = false
+var dominated : bool
+var selected : bool = false
 var radius : int = 40
 var panel_position : Vector2 = Vector2(0,0)
 var exists : bool = true
@@ -13,6 +16,7 @@ func update_all():
 	update_panel_position()
 	update_size()
 	update_texture()
+	update_border()
 	update_stats()
 
 func update_panel_position():
@@ -28,18 +32,28 @@ func update_texture():
 	else:
 		$Layout/CardHex.texture = tex.create_placeholder()
 
+func update_border():
+	if not exists:
+		$Layout/CardHex/Border.visible = false
+		return
+	var color : Color
+	if selected:
+		color = Color.WHITE_SMOKE
+	elif in_board and dominated:
+		color = Color.WEB_GREEN
+	elif in_board and not dominated:
+		color = Color.DARK_RED
+	$Layout/CardHex/Border.default_color = color
+	$Layout/CardHex/Border.visible = true
+
 func update_stats():
-	if exists:
-		get_node(paths["stats"] + "/North").text = str(card_data.north)
-		get_node(paths["stats"] + "/NorthSide/NorthWest").text = str(card_data.north_west)
-		get_node(paths["stats"] + "/NorthSide/NorthEast").text = str(card_data.north_east)
-		get_node(paths["stats"] + "/SouthSide/SouthWest").text = str(card_data.south_west)
-		get_node(paths["stats"] + "/SouthSide/SouthEast").text = str(card_data.south_east)
-		get_node(paths["stats"] + "/South").text = str(card_data.south)
-	else:
-		get_node(paths["stats"] + "/North").text = ""
-		get_node(paths["stats"] + "/NorthSide/NorthWest").text = ""
-		get_node(paths["stats"] + "/NorthSide/NorthEast").text = ""
-		get_node(paths["stats"] + "/SouthSide/SouthWest").text = ""
-		get_node(paths["stats"] + "/SouthSide/SouthEast").text = ""
-		get_node(paths["stats"] + "/South").text = ""
+	get_node(paths["stats"] + "/North").text = str(card_data.north) if exists else ""
+	get_node(paths["stats"] + "/NorthSide/NorthWest").text = str(card_data.north_west) if exists else ""
+	get_node(paths["stats"] + "/NorthSide/NorthEast").text = str(card_data.north_east) if exists else ""
+	get_node(paths["stats"] + "/SouthSide/SouthWest").text = str(card_data.south_west) if exists else ""
+	get_node(paths["stats"] + "/SouthSide/SouthEast").text = str(card_data.south_east) if exists else ""
+	get_node(paths["stats"] + "/South").text = str(card_data.south) if exists else ""
+
+func set_selection(v : bool = true):
+	selected = v
+	z_index = 99 if v else 0

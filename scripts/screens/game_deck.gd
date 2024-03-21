@@ -1,8 +1,7 @@
 extends Control
 
-@onready var card_utils = get_node("/root/CardUtils")
 @onready var dictionary_utils = get_node("/root/DictionaryUtils")
-@onready var node_utils = get_node("/root/NodeUtils")
+@onready var tilemap_utils = get_node("/root/TilemapUtils")
 @onready var deck_tiles = $DeckTiles
 var deck : Array
 
@@ -18,24 +17,34 @@ func _ready():
 	pass
 
 func build_deck():
+	tilemap_utils.build_empty_in_coords(deck_tiles, points_dict)
 	for i in points_dict:
-		deck_tiles.set_cell(0, points_dict[i], 0, Vector2i(0,0), 1)
-	deck_tiles.update_internals()
-	for i in points_dict:
-		set_card_to_cell(deck_tiles.get_child(i), deck[i])
+		var tile = tilemap_utils.get_tile(deck_tiles, points_dict[i])
+		set_card_to_cell(tile, deck[i])
 	deck_tiles.update_internals()
 
 func set_card_to_cell(cell, card : InGameCard):
 	cell.panel_position = Vector2(-40,-33.5)
 	if card.exists:
+		cell.in_board = false
 		cell.card_data = card.card
 		cell.exists = true
 	else:
+		cell.set_selection(false)
 		cell.exists = false
 	cell.update_all()
 
+func update_selected(new_index : int = -1, old_index : int = -1):
+	if old_index != -1:
+		var cell = tilemap_utils.get_tile(deck_tiles, points_dict[old_index])
+		cell.set_selection(false)
+	if new_index != -1:
+		var cell = tilemap_utils.get_tile(deck_tiles, points_dict[new_index])
+		cell.set_selection(true)
+	build_deck()
+
 func get_card_data_from_index(index : int) -> Card:
-	return deck_tiles.get_child(index).card_data
+	return tilemap_utils.get_tile(deck_tiles, points_dict[index]).card_data
 
 func has_card(coords : Vector2i) -> bool:
 	return dictionary_utils.dictionary_has_item(points_dict,coords)

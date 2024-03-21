@@ -70,38 +70,14 @@ public class GameClient extends GodeckThread {
      * @throws IllegalArgumentException If the message is unknown.
      */
     private String preProcessMessage(String msg) throws IllegalArgumentException {
+        String fixedMessage = fixSpecialCharactersBugFromGodot(msg);
         Pattern regex = Pattern.compile("[a-zA-Z0-9]+[:].*$");
-        Matcher matcher = regex.matcher(msg);
+        Matcher matcher = regex.matcher(fixedMessage);
         if (matcher.find()) {
             String result = matcher.group();
             return result;
         }
-        throw new IllegalArgumentException("Unknown message from Client.");
-    }
-
-    /**
-     * Decodes the message from the client and executes the corresponding command
-     * with the parameter.
-     * 
-     * @param msg The pre-processed message from the client.
-     * @throws IllegalArgumentException If the command is unknown.
-     */
-    private void decodeMessage(String msg) throws IllegalArgumentException {
-        int index = msg.indexOf(":");
-        String command = msg.substring(0, index);
-        String parameter = msg.substring(index + 1);
-        parameter = fixSpecialCharactersBugFromGodot(parameter);
-        if (command.equals("Ready")) {
-            ready.complete(Boolean.parseBoolean(parameter));
-        } else if (command.equals("GameMove")) {
-            sendMove(parameter);
-        } else if (command.equals("Lose")) {
-            gameInstance.declareSurrender(number);
-        } else if (command.equals("DebugTest")) {
-            Printer.printDebug("Client Message: \"" + parameter + "\"");
-        } else {
-            throw new IllegalArgumentException("Unknown command from Client.");
-        }
+        throw new IllegalArgumentException("Unknown message from Client. Message: " + msg);
     }
 
     /**
@@ -115,6 +91,30 @@ public class GameClient extends GodeckThread {
      */
     private String fixSpecialCharactersBugFromGodot(String m) {
         return java.net.URLDecoder.decode(m, java.nio.charset.StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Decodes the message from the client and executes the corresponding command
+     * with the parameter.
+     * 
+     * @param msg The pre-processed message from the client.
+     * @throws IllegalArgumentException If the command is unknown.
+     */
+    private void decodeMessage(String msg) throws IllegalArgumentException {
+        int index = msg.indexOf(":");
+        String command = msg.substring(0, index);
+        String parameter = msg.substring(index + 1);
+        if (command.equals("Ready")) {
+            ready.complete(Boolean.parseBoolean(parameter));
+        } else if (command.equals("GameMove")) {
+            sendMove(parameter);
+        } else if (command.equals("Lose")) {
+            gameInstance.declareSurrender(number);
+        } else if (command.equals("DebugTest")) {
+            Printer.printDebug("Client Message: \"" + parameter + "\"");
+        } else {
+            throw new IllegalArgumentException("Unknown command from Client.");
+        }
     }
 
     /**

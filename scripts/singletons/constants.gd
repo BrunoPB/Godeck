@@ -30,13 +30,24 @@ var deck_builder_paths = {
 var card_base_paths = {
 	"panel" : "Layout",
 	"hex" : "Layout/CardHex",
-	"stats" : "Layout/Stats"
+	"stats" : "Layout/Stats",
+	"border" : "Layout/CardHex/Border"
 }
 
 var queue_screen_paths = {
 	"time_label" : "VerticalLayout/TimeLabel",
 	"background" : "BackgroundImage",
 	"cancel_button" : "VerticalLayout/CancelButton"
+}
+
+var ingame_paths = {
+	"timer" : "GameContents/Header/Timer",
+	"deck" : "GameContents/Deck/GameDeck",
+	"board" : "GameContents/MainArea/CenterContainer/GameBoard",
+	"turn_label" : "GameContents/Turn",
+	"opponent_name" : "GameContents/Header/EnemyInfo/Opponent",
+	"popup_background" : "PopUpBackground",
+	"popup" : "PopUpBackground/PopUpLayout"
 }
 
 ## ENUMS ##

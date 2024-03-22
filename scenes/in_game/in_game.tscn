@@ -38,7 +38,7 @@ size_flags_vertical = 4
 size_flags_stretch_ratio = 1.43
 alignment = 1
 
-[node name="Enemy" type="Label" parent="GameContents/Header/EnemyInfo"]
+[node name="Opponent" type="Label" parent="GameContents/Header/EnemyInfo"]
 layout_mode = 2
 size_flags_vertical = 1
 text = "Enemy Name"

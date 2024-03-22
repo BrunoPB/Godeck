@@ -2,7 +2,7 @@ extends Node
 
 @onready var user = get_node("/root/User")
 @onready var address = get_node("/root/Address")
-@onready var card_utils = get_node("/root/CardUtils")
+@onready var json_utils = get_node("/root/JsonUtils")
 
 # TODO: Implement completed function, with iOS API and Android API
 func login():
@@ -41,19 +41,5 @@ func start_user(result, response_code, headers, body):
 	if response_code != 200:
 		push_error("Failed getting user data. Code " + str(response_code))
 		return
-	var json = JSON.new()
-	json.parse(body.get_string_from_utf8())
-	var user_data = json.data
-	user.id = user_data.id
-	user.username = user_data.name
-	user.email = user_data.email
-	user.gold = user_data.gold
-	user.crystals = user_data.crystals
-	var collection = []
-	for card in user_data.collection:
-		collection.append(card_utils.convert_dictionary_to_card(card))
-	user.collection = collection
-	var deck = []
-	for card in user_data.deck:
-		deck.append(card_utils.convert_dictionary_to_card(card))
-	user.deck = deck
+	var user_data = json_utils.get_object_from_string(body.get_string_from_utf8())
+	user.start_user(user_data)

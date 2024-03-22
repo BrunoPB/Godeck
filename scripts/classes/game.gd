@@ -2,8 +2,6 @@ extends Node
 
 class_name Game
 
-@onready var card_utils = get_node("/root/CardUtils")
-
 var board : Array
 var deck : Array
 var turn : bool
@@ -19,9 +17,10 @@ func set_board(board_string : String):
 		board.append(r)
 	var json = JSON.new()
 	json.parse(board_string)
-	for col in json.data.size():
-		for row in json.data[col].size():
-			var item = json.data[col][row]
+	var data =  json.data
+	for col in data.size():
+		for row in data[col].size():
+			var item = data[col][row]
 			if item == null:
 				board[col][row] = null
 			else:
@@ -31,10 +30,12 @@ func set_deck(deck_string : String):
 	deck = []
 	var json = JSON.new()
 	json.parse(deck_string)
-	for card in json.data:
+	var data =  json.data
+	for card in data:
 		deck.append(InGameCard.new(card))
 
 func set_opponent(opponent_string : String):
 	var json = JSON.new()
 	json.parse(opponent_string)
-	opponent.opponent_name = json.data.name
+	var data =  json.data
+	opponent.opponent_name = data.name

@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dluf4iwodo23l"]
 
 [ext_resource type="Texture2D" uid="uid://b4rqph1ne81en" path="res://assets/placeholders/Boitata.jpg" id="1_6w30m"]
-[ext_resource type="Script" path="res://scripts/cards/card_base.gd" id="1_lsxs2"]
+[ext_resource type="Script" path="res://scripts/screens/card_base.gd" id="1_lsxs2"]
 [ext_resource type="Theme" uid="uid://b4hxxtkojagog" path="res://themes/deck_builder_themes/card_numbers_theme.tres" id="2_ys4vj"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6f5ra"]

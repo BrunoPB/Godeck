@@ -28,9 +28,9 @@ func update_size():
 func update_texture():
 	var tex = Texture2D.new()
 	if exists:
-		$Layout/CardHex.texture = load("res://assets/placeholders/Boitata.jpg")
+		get_node(paths["hex"]).texture = load("res://assets/placeholders/Boitata.jpg")
 	else:
-		$Layout/CardHex.texture = tex.create_placeholder()
+		get_node(paths["hex"]).texture = tex.create_placeholder()
 
 func update_border():
 	var color : Color
@@ -42,7 +42,7 @@ func update_border():
 		color = Color.WEB_GREEN
 	elif in_board and not dominated:
 		color = Color.DARK_RED
-	$Layout/CardHex/Border.default_color = color
+	get_node(paths["border"]).default_color = color
 
 func update_stats():
 	get_node(paths["stats"] + "/North").text = str(card_data.north) if exists else ""

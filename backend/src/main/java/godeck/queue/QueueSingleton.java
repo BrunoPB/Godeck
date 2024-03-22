@@ -53,7 +53,7 @@ public class QueueSingleton {
      * @param qi The queue item that represents the user to be added to the queue.
      * @return True if the user was added to the queue, false otherwise.
      */
-    public boolean queue(QueueItem qi) {
+    public synchronized boolean queue(QueueItem qi) {
         return queue.add(qi);
     }
 
@@ -63,7 +63,7 @@ public class QueueSingleton {
      * @param user The user to be removed from the queue.
      * @return True if the user was removed from the queue, false otherwise.
      */
-    public boolean dequeue(User user) {
+    public synchronized boolean dequeue(User user) {
         List<QueueItem> queueCopy = new LinkedList<QueueItem>(queue);
         for (QueueItem qi : queueCopy) {
             if (qi.user.equals(user)) {

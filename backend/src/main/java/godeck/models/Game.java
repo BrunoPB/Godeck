@@ -1,7 +1,6 @@
 package godeck.models;
 
-import java.util.List;
-import java.util.Vector;
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.stereotype.Component;
@@ -18,9 +17,9 @@ import godeck.game.GameTimer;
 public class Game {
     // Properties
 
-    private List<InGameCard> deck0;
-    private List<InGameCard> deck1;
-    private Vector<Vector<InGameCard>> board;
+    private ArrayList<InGameCard> deck0;
+    private ArrayList<InGameCard> deck1;
+    private ArrayList<ArrayList<InGameCard>> board;
     private int turn;
     private int round;
     private int gameWinner;
@@ -42,7 +41,7 @@ public class Game {
      * @param deck0 The deck of player 0.
      * @param deck1 The deck of player 1.
      */
-    public Game(List<InGameCard> deck0, List<InGameCard> deck1) {
+    public Game(ArrayList<InGameCard> deck0, ArrayList<InGameCard> deck1) {
         this.deck0 = deck0;
         this.deck1 = deck1;
         buildInitialBoard();
@@ -55,27 +54,27 @@ public class Game {
 
     // Getters and Setters
 
-    public List<InGameCard> getDeck0() {
+    public ArrayList<InGameCard> getDeck0() {
         return deck0;
     }
 
-    public void setDeck0(List<InGameCard> deck0) {
+    public void setDeck0(ArrayList<InGameCard> deck0) {
         this.deck0 = deck0;
     }
 
-    public List<InGameCard> getDeck1() {
+    public ArrayList<InGameCard> getDeck1() {
         return deck1;
     }
 
-    public void setDeck1(List<InGameCard> deck1) {
+    public void setDeck1(ArrayList<InGameCard> deck1) {
         this.deck1 = deck1;
     }
 
-    public Vector<Vector<InGameCard>> getBoard() {
+    public ArrayList<ArrayList<InGameCard>> getBoard() {
         return board;
     }
 
-    public void setBoard(Vector<Vector<InGameCard>> board) {
+    public void setBoard(ArrayList<ArrayList<InGameCard>> board) {
         this.board = board;
     }
 
@@ -109,9 +108,9 @@ public class Game {
      * Builds the initial game board.
      */
     private void buildInitialBoard() {
-        this.board = new Vector<Vector<InGameCard>>();
+        this.board = new ArrayList<ArrayList<InGameCard>>();
         for (int col = 0; col < 3; col++) {
-            Vector<InGameCard> data = new Vector<InGameCard>();
+            ArrayList<InGameCard> data = new ArrayList<InGameCard>();
             for (int row = 0; row < 5; row++) {
                 if ((col == 0 && row == 4) || (col == 2 && row == 4)) {
                     data.add(null);
@@ -130,7 +129,7 @@ public class Game {
     private void calculateGameWinner() {
         int p0 = 0;
         int p1 = 0;
-        for (Vector<InGameCard> col : this.board) {
+        for (ArrayList<InGameCard> col : this.board) {
             for (InGameCard card : col) {
                 if (card != null && card.exists()) {
                     if (card.getCurrentDominator() == 0) {
@@ -306,7 +305,7 @@ public class Game {
      * @return True if the game is over. False otherwise.
      */
     public boolean checkEndGame() {
-        for (Vector<InGameCard> col : this.board) {
+        for (ArrayList<InGameCard> col : this.board) {
             for (InGameCard card : col) {
                 if (card != null && !card.exists()) {
                     return false;
@@ -390,7 +389,7 @@ public class Game {
      */
     public String getBoardJSONString() {
         String boardString = "[";
-        for (Vector<InGameCard> row : this.board) {
+        for (ArrayList<InGameCard> row : this.board) {
             boardString += "[";
             for (InGameCard card : row) {
                 if (card != null) {

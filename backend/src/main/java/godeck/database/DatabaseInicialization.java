@@ -198,7 +198,7 @@ public class DatabaseInicialization {
             Integer gold = random.nextInt(10000);
             Integer crystals = random.nextInt(100);
             Set<GameCharacter> collection = new HashSet<GameCharacter>();
-            List<GameCharacter> deck = new ArrayList<GameCharacter>();
+            ArrayList<GameCharacter> deck = new ArrayList<GameCharacter>(7);
             for (GameCharacter character : chars) {
                 collection.add(character);
             }

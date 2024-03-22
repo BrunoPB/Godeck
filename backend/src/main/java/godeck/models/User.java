@@ -38,7 +38,7 @@ public class User {
     private Integer crystals;
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_deck", joinColumns = @JoinColumn(name = "game_character_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private List<GameCharacter> deck = new ArrayList<>();
+    private List<GameCharacter> deck = new ArrayList<GameCharacter>();
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "user_collection", joinColumns = @JoinColumn(name = "game_character_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<GameCharacter> collection = new HashSet<>();
@@ -149,7 +149,7 @@ public class User {
         this.crystals = crystals;
     }
 
-    public void setDeck(ArrayList<GameCharacter> deck) {
+    public void setDeck(List<GameCharacter> deck) {
         this.deck = deck;
     }
 

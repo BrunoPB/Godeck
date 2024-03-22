@@ -1,15 +1,15 @@
 package godeck.game;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.net.ServerSocket;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import godeck.models.Port;
 import godeck.models.QueueItem;
 
 /**
@@ -32,7 +32,7 @@ public class GameServerSingleton {
     private static int turnTimeout;
     private static GameServerSingleton instance = null;
     private Set<GameInstance> threads = new HashSet<GameInstance>();
-    private List<Port> ports = new ArrayList<Port>();
+    private ArrayList<Integer> ports = new ArrayList<Integer>();
 
     // Constructors
 
@@ -73,8 +73,25 @@ public class GameServerSingleton {
      * minimum to the maximum TCP port.
      */
     private void setupPorts() {
+        ports = new ArrayList<Integer>((maxTCPPort - minTCPPort) + 1);
         for (int i = minTCPPort; i <= maxTCPPort; i++) {
-            ports.add(new Port(i));
+            ports.add(i);
+        }
+    }
+
+    /**
+     * Checks if a port is available. It tries to bind to the port and returns true
+     * if it is available.
+     * 
+     * @param port The port to check.
+     * @return True if the port is available. False otherwise.
+     */
+    private synchronized boolean isPortAvailable(int port) {
+        try {
+            new ServerSocket(port).close();
+            return true;
+        } catch (IOException e) {
+            return false;
         }
     }
 
@@ -85,11 +102,10 @@ public class GameServerSingleton {
      * @return The available port.
      * @throws IllegalStateException If there is no available port.
      */
-    private int findAvailablePort() throws IllegalStateException {
-        List<Port> portsCopy = new ArrayList<Port>(this.ports);
-        for (Port p : portsCopy) {
-            if (p.availbility) {
-                return p.port;
+    private synchronized int findAvailablePort() throws IllegalStateException {
+        for (int port : ports) {
+            if (isPortAvailable(port)) {
+                return port;
             }
         }
         throw new IllegalStateException("No available port.");
@@ -98,34 +114,17 @@ public class GameServerSingleton {
     // Public Methods
 
     /**
-     * Sets the availability of a port. It iterates through the list of ports and
-     * sets the availability of the given port.
-     * 
-     * @param port        The port to set the availability.
-     * @param availbility The availability of the port.
-     */
-    public void setPortAvailbility(int port, boolean availbility) {
-        for (Port p : ports) {
-            if (p.port == port) {
-                p.availbility = availbility;
-                return;
-            }
-        }
-    }
-
-    /**
      * Checks if there is an available port for a new game instance.
      * 
      * @return True if there is an available port. False otherwise.
      */
-    public boolean hasAvailablePort() {
-        List<Port> portsCopy = new ArrayList<Port>(this.ports);
-        for (Port p : portsCopy) {
-            if (p.availbility) {
-                return true;
-            }
+    public synchronized boolean hasAvailablePort() {
+        try {
+            findAvailablePort();
+            return true;
+        } catch (IllegalStateException e) {
+            return false;
         }
-        return false;
     }
 
     /**
@@ -136,7 +135,7 @@ public class GameServerSingleton {
      * @param item0 User number 1.
      * @throws IllegalStateException If there is no available port.
      */
-    public void startNewGame(QueueItem item0, QueueItem item1) throws IllegalStateException {
+    public synchronized void startNewGame(QueueItem item0, QueueItem item1) throws IllegalStateException {
         int port = findAvailablePort();
         GameInstance gameInstance = new GameInstance();
         threads.add(gameInstance);

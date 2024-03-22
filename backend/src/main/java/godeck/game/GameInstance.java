@@ -7,8 +7,9 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
@@ -66,7 +67,6 @@ public class GameInstance extends GodeckThread {
      *                   clients could not connect.
      */
     private void setupGameServer() throws Exception {
-        GameServerSingleton.getInstance().setPortAvailbility(port, false);
         server = new ServerSocket(port);
         server.setSoTimeout(5000); // 5 seconds timeout
         try {
@@ -313,7 +313,6 @@ public class GameInstance extends GodeckThread {
             socket1.close();
         if (server != null)
             server.close();
-        GameServerSingleton.getInstance().setPortAvailbility(port, true);
     }
 
     /**
@@ -353,11 +352,13 @@ public class GameInstance extends GodeckThread {
     public void setupGame(User user0, User user1, int port, int turnTimeout) {
         this.port = port;
         this.turnTimeout = turnTimeout;
-        List<InGameCard> deck0 = user0.getDeck().stream().map((card) -> new InGameCard(0, card)).toList();
-        List<InGameCard> deck1 = user1.getDeck().stream().map((card) -> new InGameCard(1, card)).toList();
+        ArrayList<InGameCard> deck0 = user0.getDeck().stream().map((card) -> new InGameCard(0, card))
+                .collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<InGameCard> deck1 = user1.getDeck().stream().map((card) -> new InGameCard(1, card))
+                .collect(Collectors.toCollection(ArrayList::new));
         game = new Game(deck0, deck1);
-        user0game = new UserGame(game.getBoard(), user0.getDeck(), 0, true, new Opponent(user1.getName()));
-        user1game = new UserGame(game.getBoard(), user1.getDeck(), 1, false, new Opponent(user0.getName()));
+        user0game = new UserGame(game.getBoard(), deck0, 0, true, new Opponent(user1.getName()));
+        user1game = new UserGame(game.getBoard(), deck1, 1, false, new Opponent(user0.getName()));
     }
 
     /**

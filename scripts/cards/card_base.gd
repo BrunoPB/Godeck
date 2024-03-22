@@ -33,18 +33,16 @@ func update_texture():
 		$Layout/CardHex.texture = tex.create_placeholder()
 
 func update_border():
-	if not exists:
-		$Layout/CardHex/Border.visible = false
-		return
 	var color : Color
-	if selected:
+	if not exists:
+		color = Color.BLACK
+	elif selected:
 		color = Color.WHITE_SMOKE
 	elif in_board and dominated:
 		color = Color.WEB_GREEN
 	elif in_board and not dominated:
 		color = Color.DARK_RED
 	$Layout/CardHex/Border.default_color = color
-	$Layout/CardHex/Border.visible = true
 
 func update_stats():
 	get_node(paths["stats"] + "/North").text = str(card_data.north) if exists else ""

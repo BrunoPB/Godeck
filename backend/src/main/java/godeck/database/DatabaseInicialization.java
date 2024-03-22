@@ -85,7 +85,7 @@ public class DatabaseInicialization {
      *                   the file.
      */
     private static List<GameCharacter> readGameCharactersDataFromFile(String fileName) throws Exception {
-        String data = Files.readString(Path.of(fileName)); // TODO: Check this
+        String data = Files.readString(Path.of(fileName));
         JSONArray jsonArray = new JSONArray(data);
         List<GameCharacter> gameCharacters = getGameCharactersFromJSON(jsonArray);
         return gameCharacters;

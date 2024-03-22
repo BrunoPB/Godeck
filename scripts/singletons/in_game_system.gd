@@ -103,8 +103,6 @@ func decode_host_message(from_host : Array):
 		var command = msg.substr(0,index)
 		var parameter = msg.substr(index+1,msg.length())
 		match command:
-			"GameMove":
-				pass
 			"GameStart":
 				game_confirmation.emit(parameter == "true")
 			"UserNumber":
@@ -122,16 +120,16 @@ func decode_host_message(from_host : Array):
 				restart_timer.emit()
 			"Update":
 				should_update_gui.emit()
-			"Error":
-				# TODO: Error handling
-				disconnect_from_server()
-				get_tree().change_scene_to_file("res://scenes/main_menu/main_menu.tscn")
-				push_error(parameter)
 			"GameEnd":
 				disconnect_from_server()
 				var info = EndGameInfo.new()
 				info.set_from_string(parameter)
 				game_end.emit(info)
+			"Error":
+				# TODO: Error handling
+				disconnect_from_server()
+				get_tree().change_scene_to_file("res://scenes/main_menu/main_menu.tscn")
+				push_error(parameter)
 			"DebugTest":
 				print("DebugTest: \"" + parameter + "\"")
 		msg = ""

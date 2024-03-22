@@ -216,8 +216,8 @@ public class GameInstance extends GodeckThread {
     private void sendClientUpdate() throws IOException {
         out0.flush();
         out1.flush();
-        out0.writeBytes("Update:true\n");
-        out1.writeBytes("Update:true\n");
+        out0.writeBytes("Update:\n");
+        out1.writeBytes("Update:\n");
     }
 
     /**

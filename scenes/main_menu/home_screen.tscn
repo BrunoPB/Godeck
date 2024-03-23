@@ -25,11 +25,13 @@ layout_mode = 2
 alignment = 1
 
 [node name="Username" type="Label" parent="VerticalLayout/Infos/InfosLayout/FirstRow"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "???"
 
 [node name="EloPic" type="TextureRect" parent="VerticalLayout/Infos/InfosLayout/FirstRow"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 texture = ExtResource("2_yh5oe")
@@ -41,11 +43,13 @@ layout_mode = 2
 alignment = 1
 
 [node name="Gold" type="Label" parent="VerticalLayout/Infos/InfosLayout/SecondRow"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 text = "???"
 
 [node name="Crystals" type="Label" parent="VerticalLayout/Infos/InfosLayout/SecondRow"]
+unique_name_in_owner = true
 layout_mode = 2
 text = "???"
 

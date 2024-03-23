@@ -25,4 +25,5 @@ size_flags_vertical = 8
 theme_override_styles/panel = SubResource("StyleBoxEmpty_1w00s")
 
 [node name="ProgressBar" type="ProgressBar" parent="ProgressBarArea"]
+unique_name_in_owner = true
 layout_mode = 2

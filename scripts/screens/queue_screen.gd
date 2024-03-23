@@ -2,7 +2,11 @@ extends PanelContainer
 
 @onready var ingame_system = get_node("/root/InGameSystem")
 @onready var queue_system = get_node("/root/QueueSystem")
-@onready var paths = get_node("/root/Constants").queue_screen_paths
+
+@onready var s_time_label =  %VerticalLayout/TimeLabel
+@onready var s_background =  %BackgroundImage
+@onready var s_cancel_button =  %VerticalLayout/CancelButton
+
 var delta_time = 0
 var queue_time_seconds : int = 0
 var stop_timer = false
@@ -27,7 +31,7 @@ func update_time(delta):
 		var seconds = queue_time_seconds%60
 		var minutes = queue_time_seconds/60
 		var time_string : String = "%01d:%02d" % [minutes, seconds]
-		get_node(paths["time_label"]).text = time_string
+		s_time_label.text = time_string
 
 func check_queue(game_found):
 	if(game_found):
@@ -38,7 +42,7 @@ func check_queue(game_found):
 func prepare_game():
 	if ingame_system.establish_connection():
 		need_host_confirmation = true
-		get_node(paths["cancel_button"]).disabled = true
+		s_cancel_button.disabled = true
 		stop_timer = true
 		ingame_system.game_confirmation.connect(start_game)
 		await ingame_system.game_confirmation

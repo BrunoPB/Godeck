@@ -20,6 +20,7 @@ script = ExtResource("1_bfebq")
 layout_mode = 2
 
 [node name="Turn" type="Label" parent="GameContents"]
+unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 20
 text = "TURN"
@@ -39,6 +40,7 @@ size_flags_stretch_ratio = 1.43
 alignment = 1
 
 [node name="Opponent" type="Label" parent="GameContents/Header/EnemyInfo"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 1
 text = "Enemy Name"
@@ -59,6 +61,7 @@ size_flags_vertical = 4
 text = "Surrender"
 
 [node name="Timer" type="Label" parent="GameContents/Header"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 30
@@ -94,6 +97,7 @@ size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxEmpty_vx7h6")
 
 [node name="GameBoard" parent="GameContents/MainArea/CenterContainer" instance=ExtResource("2_bqyl3")]
+unique_name_in_owner = true
 layout_mode = 2
 
 [node name="Deck" type="PanelContainer" parent="GameContents"]
@@ -103,13 +107,16 @@ size_flags_stretch_ratio = 0.4
 theme_override_styles/panel = SubResource("StyleBoxEmpty_x5xpp")
 
 [node name="GameDeck" parent="GameContents/Deck" instance=ExtResource("3_roj0i")]
+unique_name_in_owner = true
 layout_mode = 2
 
 [node name="PopUpBackground" type="PanelContainer" parent="."]
+unique_name_in_owner = true
 visible = false
 layout_mode = 2
 
 [node name="PopUpLayout" type="VBoxContainer" parent="PopUpBackground"]
+unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3

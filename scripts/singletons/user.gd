@@ -1,7 +1,5 @@
 extends Node
 
-@onready var card_utils = get_node("/root/CardUtils")
-
 var id : String
 var username : String
 var email : String
@@ -18,9 +16,9 @@ func start_user(dict : Dictionary):
 	crystals = dict.crystals
 	var collection = []
 	for card in dict.collection:
-		collection.append(card_utils.convert_dictionary_to_card(card))
+		collection.append(Card_Utils.convert_dictionary_to_card(card))
 	collection = collection
 	var deck = []
 	for card in dict.deck:
-		deck.append(card_utils.convert_dictionary_to_card(card))
+		deck.append(Card_Utils.convert_dictionary_to_card(card))
 	deck = deck

@@ -1,7 +1,5 @@
 extends PanelContainer
 
-@onready var dictionary_utils = get_node("/root/DictionaryUtils")
-@onready var tilemap_utils = get_node("/root/TilemapUtils")
 @onready var ingame_system = get_node("/root/InGameSystem")
 @onready var tilemap = $BoardTileMap
 var board: Array
@@ -15,12 +13,12 @@ var points_dict : Dictionary = {0: Vector2i(0,0), 1: Vector2i(1,0), 2: Vector2i(
 signal board_clicked(coord : Vector2i)
 
 func build_board():
-	tilemap_utils.build_empty_in_coords(tilemap, points_dict)
+	Tilemap_Utils.build_empty_in_coords(tilemap, points_dict)
 	for i in points_dict:
 		var col = points_dict[i].x
 		var row = points_dict[i].y
 		var in_game_card : InGameCard = board[col][row]
-		var tile = tilemap_utils.get_tile(tilemap, points_dict[i])
+		var tile = Tilemap_Utils.get_tile(tilemap, points_dict[i])
 		set_card_to_cell(tile, in_game_card)
 	tilemap.update_internals()
 
@@ -38,5 +36,5 @@ func set_card_to_cell(cell, in_game_card : InGameCard):
 func _input(event):
 	if Input.is_action_just_pressed("click"):
 		var clicked_tile : Vector2i = tilemap.local_to_map(get_local_mouse_position())
-		if dictionary_utils.dictionary_has_item(points_dict,clicked_tile):
+		if Dictionary_Utils.dictionary_has_item(points_dict,clicked_tile):
 			board_clicked.emit(clicked_tile)

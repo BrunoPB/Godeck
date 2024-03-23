@@ -2,8 +2,6 @@ extends Node
 
 @onready var in_game_system = get_node("/root/InGameSystem")
 @onready var user = get_node("/root/User")
-@onready var address = get_node("/root/Address")
-@onready var json_utils = get_node("/root/JsonUtils")
 var queue_endpoint
 var http = HTTPRequest.new()
 
@@ -11,7 +9,7 @@ signal queue_finished(game_found)
 
 func _ready():
 	add_child(http)
-	queue_endpoint = address.BASE_URL+"/queue"
+	queue_endpoint = Address.BASE_URL+"/queue"
 
 func initiate_queue():
 	http.cancel_request()
@@ -23,7 +21,7 @@ func emit_game_found(result, response_code, headers, body):
 	if response_code != 200 or result != OK:
 		push_error("Failed starting game. Code " + str(response_code))
 		return
-	var response = json_utils.get_object_from_string(body.get_string_from_utf8())
+	var response = JSON_Utils.get_object_from_string(body.get_string_from_utf8())
 	if bool(response.status) == false:
 		push_error("An error occurred when starting the game. " + str(response.message))
 		cancel_queue()

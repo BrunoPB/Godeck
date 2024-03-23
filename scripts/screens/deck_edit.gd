@@ -1,7 +1,5 @@
 extends CanvasItem
 
-@onready var card_utils = get_node("/root/CardUtils")
-@onready var tilemap_utils = get_node("/root/TilemapUtils")
 @onready var user = get_node("/root/User")
 @onready var cards_tilemap = $TileMap
 
@@ -15,9 +13,9 @@ func _ready():
 	build_deck()
 
 func build_deck():
-	tilemap_utils.build_empty_in_coords(cards_tilemap, points_dict)
+	Tilemap_Utils.build_empty_in_coords(cards_tilemap, points_dict)
 	for i in points_dict:
-		var tile = tilemap_utils.get_tile(cards_tilemap, points_dict[i])
+		var tile = Tilemap_Utils.get_tile(cards_tilemap, points_dict[i])
 		set_card_to_cell(tile, user.deck[i])
 	cards_tilemap.update_internals()
 

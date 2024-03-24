@@ -1,7 +1,7 @@
 extends PanelContainer
 
 @onready var ingame_system = get_node("/root/InGameSystem")
-@onready var tilemap = $BoardTileMap
+@onready var tilemap = %BoardTileMap
 var board: Array
 var points_dict : Dictionary = {0: Vector2i(0,0), 1: Vector2i(1,0), 2: Vector2i(2,0),
 								3: Vector2i(0,1), 4: Vector2i(1,1), 5: Vector2i(2,1),

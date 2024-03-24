@@ -1,7 +1,7 @@
 extends CanvasItem
 
 @onready var user = get_node("/root/User")
-@onready var cards_tilemap = $TileMap
+@onready var cards_tilemap = %TileMap
 
 var points_dict = {0: Vector2(0,0), 1: Vector2(1,0), 
 				   2: Vector2(2,0), 3: Vector2(0,1), 

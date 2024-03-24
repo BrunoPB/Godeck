@@ -3,9 +3,9 @@ extends PanelContainer
 @onready var ingame_system = get_node("/root/InGameSystem")
 @onready var queue_system = get_node("/root/QueueSystem")
 
-@onready var s_time_label =  %VerticalLayout/TimeLabel
-@onready var s_background =  %BackgroundImage
-@onready var s_cancel_button =  %VerticalLayout/CancelButton
+@onready var s_time_label = %TimeLabel
+@onready var s_background = %BackgroundImage
+@onready var s_cancel_button = %CancelButton
 
 var delta_time = 0
 var queue_time_seconds : int = 0

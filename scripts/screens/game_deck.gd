@@ -1,6 +1,6 @@
 extends Control
 
-@onready var deck_tiles = $DeckTiles
+@onready var deck_tiles = %DeckTiles
 var deck : Array
 
 signal card_selected(index : int)

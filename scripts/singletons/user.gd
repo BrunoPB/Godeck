@@ -14,11 +14,7 @@ func start_user(dict : Dictionary):
 	email = dict.email
 	gold = dict.gold
 	crystals = dict.crystals
-	var collection = []
 	for card in dict.collection:
 		collection.append(Card_Utils.convert_dictionary_to_card(card))
-	collection = collection
-	var deck = []
 	for card in dict.deck:
 		deck.append(Card_Utils.convert_dictionary_to_card(card))
-	deck = deck

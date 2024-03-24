@@ -5,18 +5,16 @@ extends PanelContainer
 @onready var deck_builder_screen_scene = preload("res://scenes/main_menu/deck_builder/deck_builder_screen.tscn")
 @onready var shop_screen_scene = preload("res://scenes/main_menu/shop/shop_screen.tscn")
 
-@onready var s_shop_button = %VerticalLayout/Menu/MenuLayout/ShopButton
-@onready var s_deck_builder_button = %VerticalLayout/Menu/MenuLayout/DeckBuilderButton
-@onready var s_home_button = %VerticalLayout/Menu/MenuLayout/HomeButton
-@onready var s_friends_button = %VerticalLayout/Menu/MenuLayout/FriendsButton
-@onready var s_events_button = %VerticalLayout/Menu/MenuLayout/EventsButton
-@onready var s_content_area = %VerticalLayout/ContentArea
+@onready var s_shop_button = %ShopButton
+@onready var s_deck_builder_button = %DeckBuilderButton
+@onready var s_home_button = %HomeButton
+@onready var s_friends_button = %FriendsButton
+@onready var s_events_button = %EventsButton
+@onready var s_content_area = %ContentArea
 
-# Called when the node enters the scene tree for the first time.
 func _ready():
 	change_menu_screen(menu_screen_enum.HOME)
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):
 	pass
 

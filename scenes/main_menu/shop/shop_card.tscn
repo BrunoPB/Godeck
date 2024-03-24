@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://cenugw3w8vl0i"]
+[gd_scene load_steps=3 format=3 uid="uid://bmgq373eq1yej"]
 
 [ext_resource type="Script" path="res://scripts/screens/shop_card.gd" id="1_bikqt"]
 [ext_resource type="Texture2D" uid="uid://b4rqph1ne81en" path="res://assets/placeholders/Boitata.jpg" id="2_gsypt"]

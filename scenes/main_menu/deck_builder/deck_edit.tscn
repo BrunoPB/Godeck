@@ -12,6 +12,7 @@ size_flags_horizontal = 3
 script = ExtResource("1_ildm6")
 
 [node name="TileMap" type="TileMap" parent="."]
+unique_name_in_owner = true
 position = Vector2(-100, 0)
 tile_set = ExtResource("2_0wo02")
 format = 2

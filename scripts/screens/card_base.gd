@@ -1,9 +1,9 @@
 extends Node2D
 
 @onready var s_panel : Node = %Layout
-@onready var s_hex : Node = %Layout/CardHex
-@onready var s_stats : Node = %Layout/Stats
-@onready var s_border : Node = %Layout/CardHex/Border
+@onready var s_hex : Node = %CardHex
+@onready var s_stats : Node = %Stats
+@onready var s_border : Node = %Border
 
 var card_data : Card = Card.new()
 var in_board : bool = false
@@ -49,12 +49,13 @@ func update_border():
 	s_border.default_color = color
 
 func update_stats():
-	get_node(s_stats.get_tree_string() + "/North").text = str(card_data.north) if exists else ""
-	get_node(s_stats.get_tree_string() + "/NorthSide/NorthWest").text = str(card_data.north_west) if exists else ""
-	get_node(s_stats.get_tree_string() + "/NorthSide/NorthEast").text = str(card_data.north_east) if exists else ""
-	get_node(s_stats.get_tree_string() + "/SouthSide/SouthWest").text = str(card_data.south_west) if exists else ""
-	get_node(s_stats.get_tree_string() + "/SouthSide/SouthEast").text = str(card_data.south_east) if exists else ""
-	get_node(s_stats.get_tree_string() + "/South").text = str(card_data.south) if exists else ""
+	## FIND BUG HERE!
+	s_stats.get_node("North").text = str(card_data.north) if exists else ""
+	s_stats.get_node("NorthSide/NorthWest").text = str(card_data.north_west) if exists else ""
+	s_stats.get_node("NorthSide/NorthEast").text = str(card_data.north_east) if exists else ""
+	s_stats.get_node("SouthSide/SouthWest").text = str(card_data.south_west) if exists else ""
+	s_stats.get_node("SouthSide/SouthEast").text = str(card_data.south_east) if exists else ""
+	s_stats.get_node("South").text = str(card_data.south) if exists else ""
 
 func set_selection(v : bool = true):
 	selected = v

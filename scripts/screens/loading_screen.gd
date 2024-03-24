@@ -2,7 +2,7 @@ extends PanelContainer
 
 @onready var login_system = get_node("/root/LoginSystem")
 
-@onready var s_progress_bar = %ProgressBarArea/ProgressBar
+@onready var s_progress_bar = %ProgressBar
 
 func _ready():
 	s_progress_bar.value = 0

@@ -2,10 +2,10 @@ extends PanelContainer
 
 @onready var user = get_node("/root/User")
 
-@onready var s_username = %VerticalLayout/Infos/InfosLayout/FirstRow/Username
-@onready var s_elo = %VerticalLayout/Infos/InfosLayout/FirstRow/EloPic
-@onready var s_gold = %VerticalLayout/Infos/InfosLayout/SecondRow/Gold
-@onready var s_crystals = %VerticalLayout/Infos/InfosLayout/SecondRow/Crystals
+@onready var s_username = %Username
+@onready var s_elo = %EloPic
+@onready var s_gold = %Gold
+@onready var s_crystals = %Crystals
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

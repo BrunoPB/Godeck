@@ -2,13 +2,13 @@ extends PanelContainer
 
 @onready var ingame_system = get_node("/root/InGameSystem")
 
-@onready var s_timer = %GameContents/Header/Timer
-@onready var s_deck = %GameContents/Deck/GameDeck
-@onready var s_board = %GameContents/MainArea/CenterContainer/GameBoard
-@onready var s_turn_label = %GameContents/Turn
-@onready var s_opponent_name = %GameContents/Header/EnemyInfo/Opponent
+@onready var s_timer = %Timer
+@onready var s_deck = %GameDeck
+@onready var s_board = %GameBoard
+@onready var s_turn_label = %Turn
+@onready var s_opponent_name = %Opponent
 @onready var s_popup_background = %PopUpBackground
-@onready var s_popup = %PopUpBackground/PopUpLayout
+@onready var s_popup = %PopUpLayout
 
 var game : Game
 var delta_time = 0
@@ -96,12 +96,12 @@ func end_game(info : EndGameInfo):
 	s_deck.update_selected(-1, selected_card_index)
 	s_popup_background.visible = true
 	if info.winner == game.number:
-		get_node(s_popup.get_tree_string() + "/Title").text = "VICTORY!"
+		s_popup.get_node("Title").text = "VICTORY!"
 	else:
-		get_node(s_popup.get_tree_string() + "/Title").text = "DEFEAT!"
-	get_node(s_popup.get_tree_string() + "/Reason").text = info.reason
-	get_node(s_popup.get_tree_string() + "/Gold").text = "Gold: " + str(info.gold)
-	get_node(s_popup.get_tree_string() + "/Ranking").text = "Ranking: " + str(info.ranking)
+		s_popup.get_node("Title").text = "DEFEAT!"
+	s_popup.get_node("Reason").text = info.reason
+	s_popup.get_node("Gold").text = "Gold: " + str(info.gold)
+	s_popup.get_node("Ranking").text = "Ranking: " + str(info.ranking)
 
 func _on_button_pressed():
 	ingame_system.send_debug("The test message from client!")

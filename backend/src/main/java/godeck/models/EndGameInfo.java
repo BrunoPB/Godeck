@@ -2,15 +2,24 @@ package godeck.models;
 
 import org.springframework.stereotype.Component;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  * Class that represents the information a player should receive about the end
  * of a game.
  * 
  * Is a component. Can be accessed from anywhere in the application.
  * 
- * @author Bruno Pena
+ * @author Bruno Pena Baeta
  */
 @Component
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class EndGameInfo {
     // Properties
 
@@ -18,29 +27,6 @@ public class EndGameInfo {
     private String reason;
     private int gold;
     private int ranking;
-
-    // Constructors
-
-    /**
-     * Default constructor.
-     */
-    public EndGameInfo() {
-    }
-
-    /**
-     * Main constructor.
-     * 
-     * @param winner  The winner of the game.
-     * @param reason  The reason the game ended.
-     * @param gold    The gold the winner received.
-     * @param ranking The ranking of the winner.
-     */
-    public EndGameInfo(int winner, String reason, int gold, int ranking) {
-        this.winner = winner;
-        this.reason = reason;
-        this.gold = gold;
-        this.ranking = ranking;
-    }
 
     // Public Methods
 

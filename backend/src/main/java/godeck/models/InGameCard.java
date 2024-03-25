@@ -3,6 +3,11 @@ package godeck.models;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  * Class that represents a card in a game.
  * 
@@ -11,22 +16,19 @@ import org.springframework.stereotype.Component;
  * @author Bruno Pena Baeta
  */
 @Component
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class InGameCard {
     // Properties
 
     private int cardOwner;
     private int currentDominator;
     private GameCharacter card;
-    private boolean exists;
+    private boolean exists = false;
 
     // Constructors
-
-    /**
-     * Default constructor. Used to create a card that does not exist.
-     */
-    public InGameCard() {
-        exists = false;
-    }
 
     /**
      * Main constructor.
@@ -49,41 +51,11 @@ public class InGameCard {
         this.exists = card.getBoolean("exists");
     }
 
-    // Getters and Setters
-
-    public int getCardOwner() {
-        return this.cardOwner;
-    }
-
-    public int getCurrentDominator() {
-        return this.currentDominator;
-    }
-
-    public GameCharacter getCard() {
-        return this.card;
-    }
+    // Public Methods
 
     public boolean exists() {
         return this.exists;
     }
-
-    public void setCardOwner(int cardOwner) {
-        this.cardOwner = cardOwner;
-    }
-
-    public void setCurrentDominator(int currentDominator) {
-        this.currentDominator = currentDominator;
-    }
-
-    public void setCard(GameCharacter card) {
-        this.card = card;
-    }
-
-    public void setExistance(boolean exists) {
-        this.exists = exists;
-    }
-
-    // Public Methods
 
     /**
      * Returns the JSON representation of the card in the game.

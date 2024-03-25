@@ -4,6 +4,8 @@ import java.util.concurrent.CompletableFuture;
 
 import org.springframework.stereotype.Component;
 
+import lombok.NoArgsConstructor;
+
 /**
  * Godeck's custom Thread model class. Extends the Java Thread class and adds
  * the ability to kill the thread. It also has a CompletableFuture object that
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Component;
  * @author Bruno Pena Baeta
  */
 @Component
+@NoArgsConstructor
 public abstract class GodeckThread extends Thread {
     // Properties
 
@@ -19,12 +22,6 @@ public abstract class GodeckThread extends Thread {
     public CompletableFuture<Void> killed = new CompletableFuture<Void>();
 
     // Constructors
-
-    /**
-     * Creates a new GodeckThread.
-     */
-    public GodeckThread() {
-    }
 
     /**
      * Runs the thread.

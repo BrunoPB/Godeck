@@ -2,6 +2,11 @@ package godeck.models.view_models;
 
 import org.springframework.stereotype.Component;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 /**
  * Class that represents the information a player can receive about it's
  * opponent during a game.
@@ -11,37 +16,14 @@ import org.springframework.stereotype.Component;
  * @author Bruno Pena Baeta
  */
 @Component
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class Opponent {
     // Properties
 
     private String name;
-
-    // Constructors
-
-    /*
-     * Default constructor.
-     */
-    public Opponent() {
-    }
-
-    /*
-     * Main constructor.
-     * 
-     * @param name The name of the opponent.
-     */
-    public Opponent(String name) {
-        this.name = name;
-    }
-
-    // Getters and Setters
-
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     // Public Methods
 

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import godeck.models.QueueItem;
 import godeck.models.User;
+import lombok.NoArgsConstructor;
 
 /**
  * Singleton class that manages the queue of users waiting for a game. It is
@@ -18,6 +19,7 @@ import godeck.models.User;
  * @author Bruno Pena Baeta
  */
 @Component
+@NoArgsConstructor
 public class QueueSingleton {
     // Properties
 
@@ -25,12 +27,6 @@ public class QueueSingleton {
     private static List<QueueItem> queue = new LinkedList<QueueItem>();
 
     // Constructors
-
-    /**
-     * Main constructor. Should never be called, this is a singleton.
-     */
-    private QueueSingleton() {
-    }
 
     /**
      * Gets the instance of the queue singleton. If the instance does not exist, it

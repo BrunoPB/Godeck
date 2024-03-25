@@ -22,6 +22,7 @@ import godeck.models.User;
 import godeck.models.view_models.Opponent;
 import godeck.models.view_models.UserGame;
 import godeck.utils.ErrorHandler;
+import lombok.NoArgsConstructor;
 
 /**
  * Represents a game between 2 players. Has game and server information.
@@ -31,6 +32,7 @@ import godeck.utils.ErrorHandler;
  * @author Bruno Pena Baeta
  */
 @Component
+@NoArgsConstructor
 public class GameInstance extends GodeckThread {
     // Properties
 
@@ -48,14 +50,6 @@ public class GameInstance extends GodeckThread {
     private Socket socket1;
     private DataInputStream in0;
     private DataInputStream in1;
-
-    // Constructors
-
-    /**
-     * Creates a new game instance.
-     */
-    public GameInstance() {
-    }
 
     // Private Methods
 

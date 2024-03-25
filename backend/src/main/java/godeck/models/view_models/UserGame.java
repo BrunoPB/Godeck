@@ -5,6 +5,10 @@ import java.util.ArrayList;
 import org.springframework.stereotype.Component;
 
 import godeck.models.InGameCard;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Class that represents the information a player can receive about it's own
@@ -15,6 +19,10 @@ import godeck.models.InGameCard;
  * @author Bruno Pena Baeta
  */
 @Component
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class UserGame {
     // Properties
 
@@ -23,73 +31,6 @@ public class UserGame {
     private int number;
     private boolean turn;
     private Opponent opponent;
-
-    // Constructors
-
-    /**
-     * Default constructor.
-     */
-    public UserGame() {
-    }
-
-    /**
-     * Main constructor.
-     * 
-     * @param deck     The deck of the player.
-     * @param number   The number of the player.
-     * @param turn     If it is the player's turn.
-     * @param opponent The opponent of the player.
-     */
-    public UserGame(ArrayList<ArrayList<InGameCard>> board, ArrayList<InGameCard> deck, int number, boolean turn,
-            Opponent opponent) {
-        this.board = board;
-        this.number = number;
-        this.deck = deck;
-        this.turn = turn;
-        this.opponent = opponent;
-    }
-
-    // Getters and Setters
-
-    public ArrayList<ArrayList<InGameCard>> getBoard() {
-        return this.board;
-    }
-
-    public ArrayList<InGameCard> getDeck() {
-        return this.deck;
-    }
-
-    public int getNumber() {
-        return this.number;
-    }
-
-    public boolean getTurn() {
-        return this.turn;
-    }
-
-    public Opponent getOpponent() {
-        return this.opponent;
-    }
-
-    public void setBoard(ArrayList<ArrayList<InGameCard>> board) {
-        this.board = board;
-    }
-
-    public void setDeck(ArrayList<InGameCard> deck) {
-        this.deck = deck;
-    }
-
-    public void setNumber(int number) {
-        this.number = number;
-    }
-
-    public void setTurn(boolean turn) {
-        this.turn = turn;
-    }
-
-    public void setOpponent(Opponent opponent) {
-        this.opponent = opponent;
-    }
 
     // Public Methods
 

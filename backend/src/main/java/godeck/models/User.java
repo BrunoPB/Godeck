@@ -15,6 +15,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Represents a user. A user is a player of the game.
@@ -22,6 +26,10 @@ import jakarta.persistence.ManyToMany;
  * @author Bruno Pena Baeta
  */
 @Entity(name = "user")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class User {
     // Properties
 
@@ -46,34 +54,6 @@ public class User {
     // Constructors
 
     /**
-     * Default constructor.
-     */
-    public User() {
-    }
-
-    /**
-     * Main constructor.
-     * 
-     * @param id         User's id
-     * @param name       User's name
-     * @param email      User's email
-     * @param gold       User's gold
-     * @param crystals   User's crystals
-     * @param deck       User's deck
-     * @param collection User's collection
-     */
-    public User(UUID id, String name, String email, Integer gold, Integer crystals, List<GameCharacter> deck,
-            Set<GameCharacter> collection) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.gold = gold;
-        this.crystals = crystals;
-        this.deck = deck;
-        this.collection = collection;
-    }
-
-    /**
      * Constructor without id.
      * 
      * @param name       User's name
@@ -90,70 +70,6 @@ public class User {
         this.gold = gold;
         this.crystals = crystals;
         this.deck = deck;
-        this.collection = collection;
-    }
-
-    // Getters and Setters
-
-    public UUID getId() {
-        return id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public Integer getGold() {
-        return gold;
-    }
-
-    public Integer getCrystals() {
-        return crystals;
-    }
-
-    public List<GameCharacter> getDeck() {
-        return deck;
-    }
-
-    public Set<GameCharacter> getCollection() {
-        return collection;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public void setName(String name) {
-        if (name.length() > 15) {
-            throw new IllegalArgumentException("Name must be less than 15 characters");
-        }
-        this.name = name;
-    }
-
-    public void setEmail(String email) {
-        if (email.length() > 30) {
-            throw new IllegalArgumentException("Email must be less than 30 characters");
-        }
-        this.email = email;
-    }
-
-    public void setGold(Integer gold) {
-        this.gold = gold;
-    }
-
-    public void setCrystals(Integer crystals) {
-        this.crystals = crystals;
-    }
-
-    public void setDeck(List<GameCharacter> deck) {
-        this.deck = deck;
-    }
-
-    public void setCollection(HashSet<GameCharacter> collection) {
         this.collection = collection;
     }
 

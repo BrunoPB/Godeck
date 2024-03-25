@@ -12,6 +12,7 @@ import godeck.models.GodeckThread;
 import godeck.utils.ErrorHandler;
 import godeck.utils.Printer;
 import godeck.utils.ThreadUtils;
+import lombok.NoArgsConstructor;
 
 /**
  * Represents a client in a game. Receives messages from the server and sends
@@ -20,6 +21,7 @@ import godeck.utils.ThreadUtils;
  * @author Bruno Pena Baeta
  */
 @Component
+@NoArgsConstructor
 public class GameClient extends GodeckThread {
     // Properties
 
@@ -29,12 +31,6 @@ public class GameClient extends GodeckThread {
     public CompletableFuture<Boolean> ready = new CompletableFuture<Boolean>();
 
     // Constructors
-
-    /**
-     * Creates a new game client.
-     */
-    public GameClient() {
-    }
 
     /**
      * Waits for messages from the client and decodes them.

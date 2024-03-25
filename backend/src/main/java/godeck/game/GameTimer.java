@@ -5,6 +5,9 @@ import java.util.concurrent.CompletableFuture;
 import org.springframework.stereotype.Component;
 
 import godeck.models.GodeckThread;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Class that represents a game timer. It is responsible for counting the time
@@ -15,21 +18,17 @@ import godeck.models.GodeckThread;
  * @author Bruno Pena Baeta
  */
 @Component
+@NoArgsConstructor
+@Getter
+@Setter
 public class GameTimer extends GodeckThread {
     // Properties
 
-    private int time;
+    private int time = 0;
     private int timeLimit;
     public CompletableFuture<String> timeOver = new CompletableFuture<String>();
 
     // Constructors
-
-    /**
-     * Main constructor.
-     */
-    public GameTimer() {
-        this.time = 0;
-    }
 
     /**
      * Constructor that initializes the time limit to the given value.
@@ -39,24 +38,6 @@ public class GameTimer extends GodeckThread {
     public GameTimer(int timeLimit) {
         this.time = 0;
         this.timeLimit = timeLimit;
-    }
-
-    // Getters and Setters
-
-    public int getTimeLimit() {
-        return this.timeLimit;
-    }
-
-    public int getTime() {
-        return this.time;
-    }
-
-    public void setTimeLimit(int timeLimit) {
-        this.timeLimit = timeLimit;
-    }
-
-    public void setTime(int time) {
-        this.time = time;
     }
 
     // Public Methods

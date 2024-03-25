@@ -363,10 +363,10 @@ public class Game {
         Coordinates coords = move.getCoords();
         this.board.get(coords.x).set(coords.y, card);
         if (move.getPlayer() == 0) {
-            this.deck0.get(move.getDeckIndex()).setExistance(false);
+            this.deck0.get(move.getDeckIndex()).setExists(false);
             turn = 1;
         } else {
-            this.deck1.get(move.getDeckIndex()).setExistance(false);
+            this.deck1.get(move.getDeckIndex()).setExists(false);
             turn = 0;
         }
         executeDomination(move);

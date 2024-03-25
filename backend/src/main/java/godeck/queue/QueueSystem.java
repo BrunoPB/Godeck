@@ -9,6 +9,7 @@ import godeck.models.GodeckThread;
 import godeck.models.QueueItem;
 import godeck.utils.ErrorHandler;
 import godeck.utils.ThreadUtils;
+import lombok.NoArgsConstructor;
 
 /**
  * Thread that manages the queue of users waiting for a game. It is responsible
@@ -19,14 +20,8 @@ import godeck.utils.ThreadUtils;
  * @author Bruno Pena Baeta
  */
 @Component
+@NoArgsConstructor
 public class QueueSystem extends GodeckThread {
-    // Constructors
-
-    /**
-     * Main constructor. Should never be called, this is a thread.
-     */
-    public QueueSystem() {
-    }
 
     // Private Methods
 

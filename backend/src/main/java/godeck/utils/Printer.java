@@ -112,6 +112,24 @@ public class Printer {
     }
 
     /**
+     * Prints a message to the console.
+     * 
+     * @param number The number to be printed.
+     */
+    public static void print(int number) {
+        System.out.println(number);
+    }
+
+    /**
+     * Prints a message to the console.
+     * 
+     * @param bool The boolean to be printed.
+     */
+    public static void print(boolean bool) {
+        System.out.println(bool);
+    }
+
+    /**
      * Prints a message to the console. The message is formatted as an information
      * message.
      * 
@@ -125,6 +143,32 @@ public class Printer {
     }
 
     /**
+     * Prints a message to the console. The message is formatted as an information
+     * message.
+     * 
+     * @param number The number to be printed.
+     */
+    public static void printInfo(int number) {
+        String type = formatTypeMessage("info", TextFormatting.COLOR_BLUE);
+        String time = formatTimeMessage();
+        String fileTrace = formatStackTrace();
+        print(type + "\tat " + time + " from " + fileTrace + "\t\t: " + number);
+    }
+
+    /**
+     * Prints a message to the console. The message is formatted as an information
+     * message.
+     * 
+     * @param bool The boolean to be printed.
+     */
+    public static void printInfo(boolean bool) {
+        String type = formatTypeMessage("info", TextFormatting.COLOR_BLUE);
+        String time = formatTimeMessage();
+        String fileTrace = formatStackTrace();
+        print(type + "\tat " + time + " from " + fileTrace + "\t\t: " + bool);
+    }
+
+    /**
      * Prints a message to the console. The message is formatted as a warning
      * message.
      * 
@@ -135,6 +179,32 @@ public class Printer {
         String time = formatTimeMessage();
         String fileTrace = formatStackTrace();
         print(type + "\tat " + time + " from " + fileTrace + "\t\t: " + message);
+    }
+
+    /**
+     * Prints a message to the console. The message is formatted as a warning
+     * message.
+     * 
+     * @param number The number to be printed.
+     */
+    public static void printWarn(int number) {
+        String type = formatTypeMessage("warn", TextFormatting.COLOR_BROWN);
+        String time = formatTimeMessage();
+        String fileTrace = formatStackTrace();
+        print(type + "\tat " + time + " from " + fileTrace + "\t\t: " + number);
+    }
+
+    /**
+     * Prints a message to the console. The message is formatted as a warning
+     * message.
+     * 
+     * @param bool The boolean to be printed.
+     */
+    public static void printWarn(boolean bool) {
+        String type = formatTypeMessage("warn", TextFormatting.COLOR_BROWN);
+        String time = formatTimeMessage();
+        String fileTrace = formatStackTrace();
+        print(type + "\tat " + time + " from " + fileTrace + "\t\t: " + bool);
     }
 
     /**
@@ -162,6 +232,54 @@ public class Printer {
     }
 
     /**
+     * Prints a message to the console. The message is formatted as an error
+     * message.
+     * 
+     * @param number The number to be printed.
+     */
+    public static void printError(int number) {
+        String type = formatTypeMessage("error", TextFormatting.COLOR_RED);
+        String time = formatTimeMessage();
+        String fileTrace = formatStackTrace();
+        print(type + "\tat " + time + " from " + fileTrace + "\t\t: " + number);
+        print("\t{" + TextFormatting.COLOR_RED + "Thread" + TextFormatting.RESET + "} " + formatThreadMessage());
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        stackTrace = java.util.Arrays.copyOfRange(stackTrace, 2, stackTrace.length);
+        print("\t{" + TextFormatting.COLOR_RED + "Stack Trace" + TextFormatting.RESET + "}");
+        for (StackTraceElement stackTraceElement : stackTrace) {
+            if (stackTraceElement.toString().substring(0, 6).equals("godeck")) {
+                print("\t\t\t" + TextFormatting.UNDERLINE_RED + "at " + stackTraceElement + TextFormatting.RESET);
+            } else {
+                print("\t\t\tat " + stackTraceElement);
+            }
+        }
+    }
+
+    /**
+     * Prints a message to the console. The message is formatted as an error
+     * message.
+     * 
+     * @param bool The boolean to be printed.
+     */
+    public static void printError(boolean bool) {
+        String type = formatTypeMessage("error", TextFormatting.COLOR_RED);
+        String time = formatTimeMessage();
+        String fileTrace = formatStackTrace();
+        print(type + "\tat " + time + " from " + fileTrace + "\t\t: " + bool);
+        print("\t{" + TextFormatting.COLOR_RED + "Thread" + TextFormatting.RESET + "} " + formatThreadMessage());
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        stackTrace = java.util.Arrays.copyOfRange(stackTrace, 2, stackTrace.length);
+        print("\t{" + TextFormatting.COLOR_RED + "Stack Trace" + TextFormatting.RESET + "}");
+        for (StackTraceElement stackTraceElement : stackTrace) {
+            if (stackTraceElement.toString().substring(0, 6).equals("godeck")) {
+                print("\t\t\t" + TextFormatting.UNDERLINE_RED + "at " + stackTraceElement + TextFormatting.RESET);
+            } else {
+                print("\t\t\tat " + stackTraceElement);
+            }
+        }
+    }
+
+    /**
      * Prints a message to the console. The message is formatted as a debug message.
      * 
      * @param message The message to be printed.
@@ -171,5 +289,29 @@ public class Printer {
         String time = formatTimeMessage();
         String fileTrace = formatStackTrace();
         print(type + " at " + time + " from " + fileTrace + "\t\t: " + message);
+    }
+
+    /**
+     * Prints a message to the console. The message is formatted as a debug message.
+     * 
+     * @param number The number to be printed.
+     */
+    public static void printDebug(int number) {
+        String type = formatTypeMessage("debug", TextFormatting.COLOR_GREEN);
+        String time = formatTimeMessage();
+        String fileTrace = formatStackTrace();
+        print(type + " at " + time + " from " + fileTrace + "\t\t: " + number);
+    }
+
+    /**
+     * Prints a message to the console. The message is formatted as a debug message.
+     * 
+     * @param bool The boolean to be printed.
+     */
+    public static void printDebug(boolean bool) {
+        String type = formatTypeMessage("debug", TextFormatting.COLOR_GREEN);
+        String time = formatTimeMessage();
+        String fileTrace = formatStackTrace();
+        print(type + " at " + time + " from " + fileTrace + "\t\t: " + bool);
     }
 }

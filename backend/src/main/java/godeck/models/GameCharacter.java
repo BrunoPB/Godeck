@@ -2,8 +2,6 @@ package godeck.models;
 
 import java.util.UUID;
 
-import org.json.JSONObject;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -55,40 +53,7 @@ public class GameCharacter {
     @Column(name = "northWest", nullable = false)
     private int northWest;
 
-    // Constructors
-
-    public GameCharacter(String jsonString) {
-        JSONObject character = new JSONObject(jsonString);
-        this.id = UUID.fromString(character.getString("id"));
-        this.number = character.getInt("number");
-        this.name = character.getString("name");
-        this.tier = character.getInt("tier");
-        this.mythology = character.getInt("mythology");
-        this.fileName = character.getString("fileName");
-        this.price = character.getInt("price");
-        this.stars = character.getInt("stars");
-        this.north = character.getInt("north");
-        this.northEast = character.getInt("northEast");
-        this.southEast = character.getInt("southEast");
-        this.south = character.getInt("south");
-        this.southWest = character.getInt("southWest");
-        this.northWest = character.getInt("northWest");
-    }
-
     // Methods
-
-    /**
-     * Returns a JSON representation of the game character.
-     * 
-     * @return A JSON representation of the game character.
-     */
-    public String toJSONString() {
-        return "{\"id\" : \"" + id + "\", \"number\" : " + number + ", \"name\" : \"" + name + "\", \"tier\" : " + tier
-                + ", \"mythology\" : " + mythology + ", \"fileName\" : \"" + fileName + "\", \"price\" : " + price
-                + ", \"stars\" : " + stars + ", \"north\" : " + north + ", \"northEast\" : " + northEast
-                + ", \"southEast\" : " + southEast + ", \"south\" : " + south + ", \"southWest\" : " + southWest
-                + ", \"northWest\" : " + northWest + "}";
-    }
 
     @Override
     public boolean equals(Object obj) {

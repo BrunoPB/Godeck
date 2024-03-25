@@ -24,15 +24,4 @@ public class Opponent {
     // Properties
 
     private String name;
-
-    // Public Methods
-
-    /**
-     * Returns the JSON representation of the opponent.
-     * 
-     * @return The JSON representation of the opponent.
-     */
-    public String toJSONString() {
-        return "{\"name\":\"" + this.name + "\"}";
-    }
 }

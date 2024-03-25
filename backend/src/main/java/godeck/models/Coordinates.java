@@ -18,15 +18,4 @@ public class Coordinates {
 
     public int x;
     public int y;
-
-    // Public Methods
-
-    /**
-     * Returns the coordinates in a JSON format.
-     * 
-     * @return The coordinates in a JSON format.
-     */
-    public String toJSONString() {
-        return "{\"x\":" + this.x + ",\"y\":" + this.y + "}";
-    }
 }

@@ -6,6 +6,10 @@ import java.util.concurrent.CompletableFuture;
 import org.springframework.stereotype.Component;
 
 import godeck.game.GameTimer;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Represents a game. It is responsible for managing the game state,
@@ -13,6 +17,10 @@ import godeck.game.GameTimer;
  * 
  * @author Bruno Pena Baeta
  */
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 @Component
 public class Game {
     // Properties
@@ -30,12 +38,6 @@ public class Game {
     // Constructors
 
     /**
-     * Default constructor.
-     */
-    public Game() {
-    }
-
-    /**
      * Main constructor.
      * 
      * @param deck0 The deck of player 0.
@@ -50,56 +52,6 @@ public class Game {
         this.gameWinner = -1;
         this.timer = new GameTimer();
         this.over = new CompletableFuture<String>();
-    }
-
-    // Getters and Setters
-
-    public ArrayList<InGameCard> getDeck0() {
-        return deck0;
-    }
-
-    public void setDeck0(ArrayList<InGameCard> deck0) {
-        this.deck0 = deck0;
-    }
-
-    public ArrayList<InGameCard> getDeck1() {
-        return deck1;
-    }
-
-    public void setDeck1(ArrayList<InGameCard> deck1) {
-        this.deck1 = deck1;
-    }
-
-    public ArrayList<ArrayList<InGameCard>> getBoard() {
-        return board;
-    }
-
-    public void setBoard(ArrayList<ArrayList<InGameCard>> board) {
-        this.board = board;
-    }
-
-    public int getTurn() {
-        return turn;
-    }
-
-    public void setTurn(int turn) {
-        this.turn = turn;
-    }
-
-    public int getRound() {
-        return round;
-    }
-
-    public void setRound(int round) {
-        this.round = round;
-    }
-
-    public int getGameWinner() {
-        return gameWinner;
-    }
-
-    public String getEndGameReason() {
-        return endGameReason;
     }
 
     // Private Methods
@@ -380,33 +332,5 @@ public class Game {
     public void executeSurrender(int user) {
         this.gameWinner = user == 0 ? 1 : 0;
         endGame("Surrender");
-    }
-
-    /**
-     * Returns the JSON representation of the game board.
-     * 
-     * @return The JSON representation of the game board.
-     */
-    public String getBoardJSONString() {
-        String boardString = "[";
-        for (ArrayList<InGameCard> row : this.board) {
-            boardString += "[";
-            for (InGameCard card : row) {
-                if (card != null) {
-                    boardString += card.toJSONString() + ",";
-                } else {
-                    boardString += "null,";
-                }
-            }
-            if (boardString.length() > 1) {
-                boardString = boardString.substring(0, boardString.length() - 1);
-            }
-            boardString += "],";
-        }
-        if (boardString.length() > 1) {
-            boardString = boardString.substring(0, boardString.length() - 1);
-        }
-        boardString += "]";
-        return boardString;
     }
 }

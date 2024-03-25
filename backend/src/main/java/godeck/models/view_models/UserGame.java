@@ -46,49 +46,4 @@ public class UserGame {
         this.board = board;
         this.turn = turn;
     }
-
-    /**
-     * Returns the JSON representation of the user's deck in the game.
-     * 
-     * @return The JSON representation of the user's deck in the game.
-     */
-    public String getDeckJSONString() {
-        String deckString = "[";
-        for (InGameCard card : this.deck) {
-            deckString += card.toJSONString() + ",";
-        }
-        if (deckString.length() > 1) {
-            deckString = deckString.substring(0, deckString.length() - 1);
-        }
-        deckString += "]";
-        return deckString;
-    }
-
-    /**
-     * Returns the JSON representation of the board in the game.
-     * 
-     * @return The JSON representation of the board in the game.
-     */
-    public String getBoardJSONString() {
-        String boardString = "[";
-        for (ArrayList<InGameCard> row : this.board) {
-            boardString += "[";
-            for (InGameCard card : row) {
-                if (card != null) {
-                    boardString += card.toJSONString() + ",";
-                } else {
-                    boardString += "null,";
-                }
-            }
-            if (boardString.length() > 1) {
-                boardString = boardString.substring(0, boardString.length() - 1);
-            }
-            boardString += "],";
-        }
-        if (boardString.length() > 1) {
-            boardString = boardString.substring(0, boardString.length() - 1);
-        }
-        boardString += "]";
-        return boardString;
-    }
 }

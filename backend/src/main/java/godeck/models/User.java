@@ -75,28 +75,6 @@ public class User {
 
     // Methods
 
-    /**
-     * Returns a JSON representation of the user.
-     * 
-     * @return A JSON representation of the user.
-     */
-    public String toJSONString() {
-        String string = "{\"id\" : \"" + id + "\", \"name\" : \"" + name + "\", \"email\" : \"" + email
-                + "\", \"gold\" : " + gold
-                + ", \"crystals\" : " + crystals + ", \"deck\" : ";
-        for (GameCharacter gameCharacter : deck) {
-            string += gameCharacter.toJSONString() + ", ";
-        }
-        string = string.substring(0, string.length() - 2);
-        string += ", \"collection\" : ";
-        for (GameCharacter gameCharacter : collection) {
-            string += gameCharacter.toJSONString() + ", ";
-        }
-        string = string.substring(0, string.length() - 2);
-        string += "}";
-        return string;
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof User) {

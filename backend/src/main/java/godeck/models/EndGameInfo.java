@@ -27,16 +27,4 @@ public class EndGameInfo {
     private String reason;
     private int gold;
     private int ranking;
-
-    // Public Methods
-
-    /**
-     * Returns the JSON representation of the end game info.
-     * 
-     * @return The JSON representation of the end game info.
-     */
-    public String toJSONString() {
-        return "{\"winner\":" + winner + ",\"reason\":\"" + reason + "\",\"gold\":" + gold + ",\"ranking\":" + ranking
-                + "}";
-    }
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import godeck.models.GameMove;
 import godeck.models.GodeckThread;
 import godeck.utils.ErrorHandler;
+import godeck.utils.JSON;
 import godeck.utils.Printer;
 import godeck.utils.ThreadUtils;
 import lombok.NoArgsConstructor;
@@ -119,7 +120,7 @@ public class GameClient extends GodeckThread {
      * @param msg The move string to be sent.
      */
     private void sendMove(String msg) {
-        GameMove move = new GameMove(msg);
+        GameMove move = (GameMove) JSON.construct(msg, GameMove.class);
         gameInstance.tryMove(number, move);
     }
 

@@ -1,6 +1,5 @@
 package godeck.models;
 
-import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
 import lombok.AllArgsConstructor;
@@ -43,32 +42,9 @@ public class InGameCard {
         this.exists = true;
     }
 
-    public InGameCard(String jsonString) {
-        JSONObject card = new JSONObject(jsonString);
-        this.cardOwner = card.getInt("cardOwner");
-        this.currentDominator = card.getInt("currentDominator");
-        this.card = new GameCharacter(card.getJSONObject("card").toString());
-        this.exists = card.getBoolean("exists");
-    }
-
     // Public Methods
 
     public boolean exists() {
         return this.exists;
     }
-
-    /**
-     * Returns the JSON representation of the card in the game.
-     * 
-     * @return The JSON representation of the card in the game.
-     */
-    public String toJSONString() {
-        if (exists) {
-            return "{\"cardOwner\":" + this.cardOwner + ",\"currentDominator\":" + this.currentDominator + ",\"card\":"
-                    + this.card.toJSONString() + ",\"exists\":" + this.exists + "}";
-        }
-        return "{\"cardOwner\":" + null + ",\"currentDominator\":" + null + ",\"card\":"
-                + null + ",\"exists\":" + this.exists + "}";
-    }
-
 }

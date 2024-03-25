@@ -22,6 +22,7 @@ import godeck.models.User;
 import godeck.models.view_models.Opponent;
 import godeck.models.view_models.UserGame;
 import godeck.utils.ErrorHandler;
+import godeck.utils.JSON;
 import lombok.NoArgsConstructor;
 
 /**
@@ -112,15 +113,41 @@ public class GameInstance extends GodeckThread {
     }
 
     /**
+     * Sends a message to both clients.
+     * 
+     * @param message The message to be sent.
+     * @throws IOException If the message could not be sent.
+     */
+    private void sendMessageToClients(String message) throws IOException {
+        out0.flush();
+        out1.flush();
+        out0.writeBytes(message + "\n");
+        out1.writeBytes(message + "\n");
+    }
+
+    /**
+     * Sends two messages to the respective clients.
+     * 
+     * @param message0 Message to be sent to client 0.
+     * @param message1 Message to be sent to client 1.
+     * @throws IOException If the messages could not be sent.
+     */
+    private void sendMessageToClients(String message0, String message1) throws IOException {
+        out0.flush();
+        out1.flush();
+        out0.writeBytes(message0 + "\n");
+        out1.writeBytes(message1 + "\n");
+    }
+
+    /**
      * Sends the client numbers to the respective clients.
      * 
      * @throws IOException If the client numbers could not be sent.
      */
     private void sendClientNumber() throws IOException {
-        out0.flush();
-        out1.flush();
-        out0.writeBytes("UserNumber:0\n");
-        out1.writeBytes("UserNumber:1\n");
+        String m0 = "UserNumber:0";
+        String m1 = "UserNumber:1";
+        sendMessageToClients(m0, m1);
     }
 
     /**
@@ -129,15 +156,14 @@ public class GameInstance extends GodeckThread {
      * @throws IOException If the game turn could not be sent.
      */
     private void sendGameTurn() throws IOException {
-        out0.flush();
-        out1.flush();
+        String m0 = "GameTurn:false";
+        String m1 = "GameTurn:false";
         if (game.getTurn() == 0) {
-            out0.writeBytes("GameTurn:true\n");
-            out1.writeBytes("GameTurn:false\n");
+            m0 = "GameTurn:true";
         } else {
-            out0.writeBytes("GameTurn:false\n");
-            out1.writeBytes("GameTurn:true\n");
+            m1 = "GameTurn:true";
         }
+        sendMessageToClients(m0, m1);
     }
 
     /**
@@ -146,10 +172,9 @@ public class GameInstance extends GodeckThread {
      * @throws IOException If the opponent information could not be sent.
      */
     private void sendOpponentInfo() throws IOException {
-        out0.flush();
-        out1.flush();
-        out0.writeBytes("OpponentInfo:" + user0game.getOpponent().toJSONString() + "\n");
-        out1.writeBytes("OpponentInfo:" + user1game.getOpponent().toJSONString() + "\n");
+        String m0 = "OpponentInfo:" + JSON.stringify(user0game.getOpponent());
+        String m1 = "OpponentInfo:" + JSON.stringify(user1game.getOpponent());
+        sendMessageToClients(m0, m1);
     }
 
     /**
@@ -158,10 +183,9 @@ public class GameInstance extends GodeckThread {
      * @throws IOException If the decks could not be sent.
      */
     private void sendClientDeck() throws IOException {
-        out0.flush();
-        out1.flush();
-        out0.writeBytes("Deck:" + user0game.getDeckJSONString() + "\n");
-        out1.writeBytes("Deck:" + user1game.getDeckJSONString() + "\n");
+        String m0 = "Deck:" + JSON.stringify(user0game.getDeck());
+        String m1 = "Deck:" + JSON.stringify(user1game.getDeck());
+        sendMessageToClients(m0, m1);
     }
 
     /**
@@ -170,10 +194,9 @@ public class GameInstance extends GodeckThread {
      * @throws IOException If the boards could not be sent.
      */
     private void sendClientBoard() throws IOException {
-        out0.flush();
-        out1.flush();
-        out0.writeBytes("Board:" + user0game.getBoardJSONString() + "\n");
-        out1.writeBytes("Board:" + user1game.getBoardJSONString() + "\n");
+        String m0 = "Board:" + JSON.stringify(user0game.getBoard());
+        String m1 = "Board:" + JSON.stringify(user1game.getBoard());
+        sendMessageToClients(m0, m1);
     }
 
     /**
@@ -182,10 +205,7 @@ public class GameInstance extends GodeckThread {
      * @throws IOException If the turn timeout could not be sent.
      */
     private void sendClientTimer() throws IOException {
-        out0.flush();
-        out1.flush();
-        out0.writeBytes("Timer:" + turnTimeout + "\n");
-        out1.writeBytes("Timer:" + turnTimeout + "\n");
+        sendMessageToClients("Timer:" + turnTimeout);
     }
 
     /**
@@ -195,10 +215,7 @@ public class GameInstance extends GodeckThread {
      * @throws IOException If the game confirmation could not be sent.
      */
     private void sendGameConfirmation() throws IOException {
-        out0.flush();
-        out1.flush();
-        out0.writeBytes("GameStart:true\n");
-        out1.writeBytes("GameStart:true\n");
+        sendMessageToClients("GameStart:true");
     }
 
     /**
@@ -208,10 +225,7 @@ public class GameInstance extends GodeckThread {
      * @throws IOException If the update message could not be sent.
      */
     private void sendClientUpdate() throws IOException {
-        out0.flush();
-        out1.flush();
-        out0.writeBytes("Update:\n");
-        out1.writeBytes("Update:\n");
+        sendMessageToClients("Update:");
     }
 
     /**
@@ -318,10 +332,7 @@ public class GameInstance extends GodeckThread {
         int winner = game.getGameWinner();
         String reason = game.getEndGameReason();
         EndGameInfo endGameInfo = new EndGameInfo(winner, reason, 0, 0);
-        out0.flush();
-        out1.flush();
-        out0.writeBytes("GameEnd:" + endGameInfo.toJSONString() + "\n");
-        out1.writeBytes("GameEnd:" + endGameInfo.toJSONString() + "\n");
+        sendMessageToClients("GameEnd:" + JSON.stringify(endGameInfo));
     }
 
     /**

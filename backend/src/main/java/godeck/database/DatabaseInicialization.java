@@ -9,8 +9,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -20,6 +18,7 @@ import godeck.models.User;
 import godeck.repositories.UserRepository;
 import godeck.services.GameCharacterService;
 import godeck.utils.ErrorHandler;
+import godeck.utils.JSON;
 
 /**
  * Static class to initialize all the pre-defined data in the database.
@@ -84,51 +83,11 @@ public class DatabaseInicialization {
      * @throws Exception If the file is not found or if there is an error reading
      *                   the file.
      */
+    @SuppressWarnings("unchecked")
     private static List<GameCharacter> readGameCharactersDataFromFile(String fileName) throws Exception {
         String data = Files.readString(Path.of(fileName));
-        JSONArray jsonArray = new JSONArray(data);
-        List<GameCharacter> gameCharacters = getGameCharactersFromJSON(jsonArray);
+        List<GameCharacter> gameCharacters = (List<GameCharacter>) JSON.construct(data, GameCharacter.class, true);
         return gameCharacters;
-    }
-
-    /**
-     * Converts a JSON array of game characters to a list of game characters.
-     * 
-     * @param jsonArray The JSON array of game characters.
-     * @return A list of game characters.
-     */
-    private static List<GameCharacter> getGameCharactersFromJSON(JSONArray jsonArray) {
-        List<GameCharacter> gameCharacters = new ArrayList<>();
-        for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject gameCharacterJson = jsonArray.getJSONObject(i);
-            GameCharacter gameCharacter = convertJSONToGameCharacter(gameCharacterJson);
-            gameCharacters.add(gameCharacter);
-        }
-        return gameCharacters;
-    }
-
-    /**
-     * Converts a JSON object of a game character to a game character.
-     * 
-     * @param gameCharacterJson The JSON object of a game character.
-     * @return A game character.
-     */
-    private static GameCharacter convertJSONToGameCharacter(JSONObject gameCharacterJson) {
-        return new GameCharacter(
-                UUID.fromString(gameCharacterJson.getString("id")),
-                gameCharacterJson.getInt("number"),
-                gameCharacterJson.getString("name"),
-                gameCharacterJson.getInt("tier"),
-                gameCharacterJson.getInt("mythology"),
-                gameCharacterJson.getString("file_name"),
-                gameCharacterJson.getInt("price"),
-                gameCharacterJson.getInt("stars"),
-                gameCharacterJson.getInt("north"),
-                gameCharacterJson.getInt("north_east"),
-                gameCharacterJson.getInt("south_east"),
-                gameCharacterJson.getInt("south"),
-                gameCharacterJson.getInt("south_west"),
-                gameCharacterJson.getInt("north_west"));
     }
 
     /**
@@ -177,7 +136,6 @@ public class DatabaseInicialization {
 
     /////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // TODO: This is just a test. Remove it later when oAuth is implemented
-    @SuppressWarnings("null")
     public static void test_initializeUser() {
         Random random = new Random();
         Iterable<GameCharacter> chars = gameCharacterService.findAll();

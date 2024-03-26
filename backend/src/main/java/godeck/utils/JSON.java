@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.UUID;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.stereotype.Component;
 
@@ -80,9 +81,9 @@ public class JSON {
     private static List<?> constructList(String jsonString, Class<?> type) {
         try {
             List<Object> list = new ArrayList<>();
-            JSONObject jsonObject = new JSONObject(jsonString);
-            for (Object element : jsonObject.getJSONArray("list").toList()) {
-                list.add(construct(element.toString(), type));
+            JSONArray jsonArray = new JSONArray(jsonString);
+            for (var obj : jsonArray) {
+                list.add(JSON.construct(obj.toString(), type));
             }
             return list;
         } catch (Exception e) {
@@ -167,7 +168,20 @@ public class JSON {
      * @throws Exception
      */
     public static Object construct(String jsonString, Class<?> type) {
-        if (listTypes.contains(type)) {
+        return constructObject(jsonString, type);
+    }
+
+    /**
+     * Constructs an object of the given type from a JSON string. Acts like a JSON
+     * parser.
+     * 
+     * @param jsonString JSON string to be parsed.
+     * @param type       Type of the object to be constructed.
+     * @param isList     If the object is a list or a set.
+     * @return Object constructed from the JSON string.
+     */
+    public static Object construct(String jsonString, Class<?> type, boolean isList) {
+        if (isList) {
             return constructList(jsonString, type);
         } else {
             return constructObject(jsonString, type);

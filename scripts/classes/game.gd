@@ -15,9 +15,7 @@ func set_board(board_string : String):
 		for row in 5:
 			r.append(null)
 		board.append(r)
-	var json = JSON.new()
-	json.parse(board_string)
-	var data =  json.data
+	var data = JSON_Utils.get_object_from_string(board_string)
 	for col in data.size():
 		for row in data[col].size():
 			var item = data[col][row]
@@ -28,14 +26,10 @@ func set_board(board_string : String):
 
 func set_deck(deck_string : String):
 	deck = []
-	var json = JSON.new()
-	json.parse(deck_string)
-	var data =  json.data
+	var data = JSON_Utils.get_object_from_string(deck_string)
 	for card in data:
 		deck.append(InGameCard.new(card))
 
 func set_opponent(opponent_string : String):
-	var json = JSON.new()
-	json.parse(opponent_string)
-	var data =  json.data
+	var data = JSON_Utils.get_object_from_string(opponent_string)
 	opponent.opponent_name = data.name

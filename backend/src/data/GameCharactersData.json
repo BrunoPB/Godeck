@@ -5,15 +5,15 @@
         "name": "Zeus",
         "tier": 1,
         "mythology": 0,
-        "file_name": "zeus.jpg",
+        "fileName": "zeus.jpg",
         "price": 1000,
         "stars": 3,
         "north": 7,
-        "north_east": 6,
-        "south_east": 5,
+        "northEast": 6,
+        "southEast": 5,
         "south": 4,
-        "south_west": 6,
-        "north_west": 5
+        "southWest": 6,
+        "northWest": 5
     },
 
     {
@@ -22,15 +22,15 @@
         "name": "Poseidon",
         "tier": 1,
         "mythology": 0,
-        "file_name": "poseidon.jpg",
+        "fileName": "poseidon.jpg",
         "price": 800,
         "stars": 3,
         "north": 5,
-        "north_east": 5,
-        "south_east": 4,
+        "northEast": 5,
+        "southEast": 4,
         "south": 3,
-        "south_west": 5,
-        "north_west": 1
+        "southWest": 5,
+        "northWest": 1
     },
 
     {
@@ -39,15 +39,15 @@
         "name": "Hades",
         "tier": 1,
         "mythology": 0,
-        "file_name": "hades.jpg",
+        "fileName": "hades.jpg",
         "price": 850,
         "stars": 3,
         "north": 7,
-        "north_east": 5,
-        "south_east": 4,
+        "northEast": 5,
+        "southEast": 4,
         "south": 3,
-        "south_west": 4,
-        "north_west": 1
+        "southWest": 4,
+        "northWest": 1
     },
 
     {
@@ -56,15 +56,15 @@
         "name": "Kronos",
         "tier": 1,
         "mythology": 0,
-        "file_name": "kronos.jpg",
+        "fileName": "kronos.jpg",
         "price": 650,
         "stars": 2,
         "north": 5,
-        "north_east": 5,
-        "south_east": 3,
+        "northEast": 5,
+        "southEast": 3,
         "south": 2,
-        "south_west": 4,
-        "north_west": 2
+        "southWest": 4,
+        "northWest": 2
     },
 
     {
@@ -73,15 +73,15 @@
         "name": "Odin",
         "tier": 1,
         "mythology": 2,
-        "file_name": "odin.jpg",
+        "fileName": "odin.jpg",
         "price": 850,
         "stars": 3,
         "north": 5,
-        "north_east": 5,
-        "south_east": 7,
+        "northEast": 5,
+        "southEast": 7,
         "south": 3,
-        "south_west": 4,
-        "north_west": 2
+        "southWest": 4,
+        "northWest": 2
     },
 
     {
@@ -90,15 +90,15 @@
         "name": "Thor",
         "tier": 1,
         "mythology": 2,
-        "file_name": "thor.jpg",
+        "fileName": "thor.jpg",
         "price": 600,
         "stars": 2,
         "north": 4,
-        "north_east": 4,
-        "south_east": 5,
+        "northEast": 4,
+        "southEast": 5,
         "south": 4,
-        "south_west": 2,
-        "north_west": 1
+        "southWest": 2,
+        "northWest": 1
     },
 
     {
@@ -107,15 +107,15 @@
         "name": "Saci Pererê",
         "tier": 1,
         "mythology": 4,
-        "file_name": "saci.jpg",
+        "fileName": "saci.jpg",
         "price": 1200,
         "stars": 2,
         "north": 10,
-        "north_east": 5,
-        "south_east": 8,
+        "northEast": 5,
+        "southEast": 8,
         "south": 3,
-        "south_west": 5,
-        "north_west": 4
+        "southWest": 5,
+        "northWest": 4
     },
 
     {
@@ -124,15 +124,15 @@
         "name": "Cuca",
         "tier": 1,
         "mythology": 4,
-        "file_name": "cuca.jpg",
+        "fileName": "cuca.jpg",
         "price": 300,
         "stars": 2,
         "north": 3,
-        "north_east": 4,
-        "south_east": 7,
+        "northEast": 4,
+        "southEast": 7,
         "south": 3,
-        "south_west": 5,
-        "north_west": 4
+        "southWest": 5,
+        "northWest": 4
     },
 
     {
@@ -141,15 +141,15 @@
         "name": "Boitatá",
         "tier": 1,
         "mythology": 4,
-        "file_name": "boitata.jpg",
+        "fileName": "boitata.jpg",
         "price": 1500,
         "stars": 3,
         "north": 10,
-        "north_east": 8,
-        "south_east": 8,
+        "northEast": 8,
+        "southEast": 8,
         "south": 7,
-        "south_west": 5,
-        "north_west": 4
+        "southWest": 5,
+        "northWest": 4
     },
 
     {
@@ -158,15 +158,15 @@
         "name": "Pegasus",
         "tier": 1,
         "mythology": 6,
-        "file_name": "pegasus.jpg",
+        "fileName": "pegasus.jpg",
         "price": 100,
         "stars": 1,
         "north": 3,
-        "north_east": 5,
-        "south_east": 4,
+        "northEast": 5,
+        "southEast": 4,
         "south": 3,
-        "south_west": 2,
-        "north_west": 3
+        "southWest": 2,
+        "northWest": 3
     },
 
     {
@@ -175,15 +175,15 @@
         "name": "Centaur",
         "tier": 1,
         "mythology": 6,
-        "file_name": "centaur.jpg",
+        "fileName": "centaur.jpg",
         "price": 100,
         "stars": 1,
         "north": 4,
-        "north_east": 4,
-        "south_east": 4,
+        "northEast": 4,
+        "southEast": 4,
         "south": 1,
-        "south_west": 2,
-        "north_west": 5
+        "southWest": 2,
+        "northWest": 5
     },
 
     {
@@ -192,14 +192,14 @@
         "name": "Valkyrie",
         "tier": 1,
         "mythology": 6,
-        "file_name": "valkyrie.jpg",
+        "fileName": "valkyrie.jpg",
         "price": 100,
         "stars": 1,
         "north": 3,
-        "north_east": 5,
-        "south_east": 3,
+        "northEast": 5,
+        "southEast": 3,
         "south": 2,
-        "south_west": 2,
-        "north_west": 4
+        "southWest": 2,
+        "northWest": 4
     }
 ]

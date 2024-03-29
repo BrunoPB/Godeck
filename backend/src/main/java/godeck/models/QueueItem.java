@@ -4,6 +4,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.springframework.stereotype.Component;
 
+import godeck.models.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 

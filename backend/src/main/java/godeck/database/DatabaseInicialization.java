@@ -13,8 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import godeck.models.GameCharacter;
-import godeck.models.User;
+import godeck.models.entities.GameCharacter;
+import godeck.models.entities.User;
 import godeck.repositories.UserRepository;
 import godeck.services.GameCharacterService;
 import godeck.utils.ErrorHandler;
@@ -161,8 +161,8 @@ public class DatabaseInicialization {
                 collection.add(character);
             }
             deck.addAll(pickRandomGameCharacters(collection, 7));
-            User user = new User(id, email.substring(0, email.indexOf("@")), email, gold, crystals, deck,
-                    collection);
+            User user = new User(id, email.substring(0, email.indexOf("@")), email.substring(0, email.indexOf("@")),
+                    email, gold, crystals, deck, collection, false, new HashSet<>());
             userRepository.save(user);
         }
     }

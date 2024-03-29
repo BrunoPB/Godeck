@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import org.springframework.data.repository.CrudRepository;
 
-import godeck.models.GameCharacter;
+import godeck.models.entities.GameCharacter;
 
 /**
  * Repository for the game character model. It is responsible for managing the

@@ -26,8 +26,9 @@ public class JSON {
     private static List<Object> basicTypes = Arrays.asList(String.class, Integer.class, Double.class, Float.class,
             Boolean.class, int.class, double.class, float.class, boolean.class);
 
-    private static List<Object> listTypes = Arrays.asList(List.class, ArrayList.class, LinkedList.class, Set.class,
-            HashSet.class, TreeSet.class);
+    private static List<Object> listTypes = Arrays.asList(List.class, ArrayList.class, LinkedList.class);
+
+    private static List<Object> setTypes = Arrays.asList(Set.class, HashSet.class, TreeSet.class);
 
     // Private Methods
 
@@ -93,6 +94,27 @@ public class JSON {
     }
 
     /**
+     * Constructs a set of objects of the given type from a JSON string.
+     * 
+     * @param jsonString JSON string to be parsed.
+     * @param type       Type of the objects to be constructed.
+     * @return Set of objects constructed from the JSON string.
+     */
+    private static Set<?> constructSet(String jsonString, Class<?> type) {
+        try {
+            Set<Object> set = new HashSet<>();
+            JSONArray jsonArray = new JSONArray(jsonString);
+            for (var obj : jsonArray) {
+                set.add(JSON.construct(obj.toString(), type));
+            }
+            return set;
+        } catch (Exception e) {
+            ErrorHandler.message(e);
+        }
+        return null;
+    }
+
+    /**
      * Converts an object to a JSON string.
      * 
      * @param object Object to be converted.
@@ -117,6 +139,14 @@ public class JSON {
                     json += "[";
                     List<?> list = (List<?>) field.get(object);
                     for (Object element : list) {
+                        json += stringify(element) + ",";
+                    }
+                    json = json.substring(0, json.length() - 1);
+                    json += "],";
+                } else if (setTypes.contains(fieldType)) {
+                    json += "[";
+                    Set<?> set = (Set<?>) field.get(object);
+                    for (Object element : set) {
                         json += stringify(element) + ",";
                     }
                     json = json.substring(0, json.length() - 1);
@@ -156,6 +186,27 @@ public class JSON {
         return "";
     }
 
+    /**
+     * Converts a set to a JSON string.
+     * 
+     * @param set Set to be converted.
+     * @return JSON string representing the set.
+     */
+    private static String stringifySet(Set<?> set) {
+        try {
+            String json = "[";
+            for (Object object : set) {
+                json += stringify(object) + ",";
+            }
+            json = json.substring(0, json.length() - 1);
+            json += "]";
+            return json;
+        } catch (Exception e) {
+            ErrorHandler.message(e);
+        }
+        return "";
+    }
+
     // Public Methods
 
     /**
@@ -184,7 +235,7 @@ public class JSON {
         if (isList) {
             return constructList(jsonString, type);
         } else {
-            return constructObject(jsonString, type);
+            return constructSet(jsonString, type);
         }
     }
 
@@ -202,6 +253,8 @@ public class JSON {
         }
         if (listTypes.contains(object.getClass())) {
             return stringifyList((List<?>) object);
+        } else if (setTypes.contains(object.getClass())) {
+            return stringifySet((Set<?>) object);
         } else {
             return stringifyObject(object);
         }

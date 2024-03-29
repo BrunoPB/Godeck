@@ -2,16 +2,21 @@ extends Node
 
 var id : String
 var username : String
+var display_name : String
 var email : String
 var gold : int
 var crystals : int
 var deck : Array
 var collection : Array
+var ghost : bool
 
 func start_user(dict : Dictionary):
 	id = dict.id
-	username = dict.name
-	email = dict.email
+	username = dict.username
+	display_name = dict.displayName
+	ghost = dict.ghost
+	if not ghost:
+		email = dict.email
 	gold = dict.gold
 	crystals = dict.crystals
 	for card in dict.collection:

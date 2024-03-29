@@ -2,4 +2,5 @@ extends Node
 
 class_name Address
 
-static var BASE_URL = "http://localhost:8080"
+const BASE_URL : String  = "http://localhost:8080"
+const TOKEN_PATH : String = "user://token"

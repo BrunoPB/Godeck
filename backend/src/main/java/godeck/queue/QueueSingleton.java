@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.stereotype.Component;
 
 import godeck.models.QueueItem;
-import godeck.models.User;
+import godeck.models.entities.User;
 import lombok.NoArgsConstructor;
 
 /**

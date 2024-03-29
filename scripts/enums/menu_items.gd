@@ -2,8 +2,8 @@ extends Node
 
 class_name Menu_Items
 
-static var HOME = 0
-static var DECKBUILDER = 1
-static var SHOP = 2
-static var FRIENDS = 3
-static var EVENTS = 4
+const HOME = 0
+const DECKBUILDER = 1
+const SHOP = 2
+const FRIENDS = 3
+const EVENTS = 4

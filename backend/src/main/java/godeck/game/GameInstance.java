@@ -13,14 +13,14 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import godeck.models.EndGameInfo;
-import godeck.models.Game;
-import godeck.models.GameMove;
 import godeck.models.GodeckThread;
-import godeck.models.InGameCard;
-import godeck.models.User;
-import godeck.models.view_models.Opponent;
-import godeck.models.view_models.UserGame;
+import godeck.models.entities.User;
+import godeck.models.in_game.EndGameInfo;
+import godeck.models.in_game.Game;
+import godeck.models.in_game.GameMove;
+import godeck.models.in_game.InGameCard;
+import godeck.models.in_game.Opponent;
+import godeck.models.in_game.UserGame;
 import godeck.utils.ErrorHandler;
 import godeck.utils.JSON;
 import lombok.NoArgsConstructor;
@@ -362,8 +362,8 @@ public class GameInstance extends GodeckThread {
         ArrayList<InGameCard> deck1 = user1.getDeck().stream().map((card) -> new InGameCard(1, card))
                 .collect(Collectors.toCollection(ArrayList::new));
         game = new Game(deck0, deck1);
-        user0game = new UserGame(game.getBoard(), deck0, 0, true, new Opponent(user1.getName()));
-        user1game = new UserGame(game.getBoard(), deck1, 1, false, new Opponent(user0.getName()));
+        user0game = new UserGame(game.getBoard(), deck0, 0, true, new Opponent(user1.getDisplayName()));
+        user1game = new UserGame(game.getBoard(), deck1, 1, false, new Opponent(user0.getDisplayName()));
     }
 
     /**

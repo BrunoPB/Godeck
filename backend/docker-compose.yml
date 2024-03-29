@@ -7,7 +7,7 @@ services:
         container_name: godeck-mysql
         restart: always
         ports:
-            - "3306:3306"
+            - "3360:3306"
         environment:
             MYSQL_ROOT_PASSWORD: "${DB_PASSWORD}"
             MYSQL_DATABASE: "${SCHEMA_NAME}"

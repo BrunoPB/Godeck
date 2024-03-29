@@ -19,7 +19,6 @@ public class Main {
 
 	private static void startDatabases() {
 		DatabaseInicialization.initializeGameCharacters();
-		DatabaseInicialization.test_initializeUser(); // TODO: remove this line
 	}
 
 	private static void runQueueSystem() {

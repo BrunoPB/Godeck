@@ -2,6 +2,8 @@ extends Node
 
 @onready var in_game_system = get_node("/root/InGameSystem")
 @onready var user = get_node("/root/User")
+@onready var token = get_node("/root/Token").token
+
 var queue_endpoint
 var http = HTTPRequest.new()
 
@@ -15,7 +17,7 @@ func initiate_queue():
 	http.cancel_request()
 	if not http.request_completed.is_connected(emit_game_found):
 		http.request_completed.connect(emit_game_found)
-	http.request(queue_endpoint,PackedStringArray(),HTTPClient.METHOD_POST,user.id)
+	http.request(queue_endpoint,Http_Utils.header(token),HTTPClient.METHOD_POST,user.id)
 
 func emit_game_found(result, response_code, headers, body):
 	if response_code != 200 or result != OK:
@@ -32,5 +34,5 @@ func emit_game_found(result, response_code, headers, body):
 func cancel_queue():
 	http.request_completed.disconnect(emit_game_found)
 	http.cancel_request()
-	http.request(queue_endpoint+"/dequeue",PackedStringArray(),HTTPClient.METHOD_POST,user.id)
+	http.request(queue_endpoint+"/dequeue",Http_Utils.header(token),HTTPClient.METHOD_POST)
 	queue_finished.emit(false)

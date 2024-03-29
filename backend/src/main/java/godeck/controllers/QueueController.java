@@ -3,11 +3,12 @@ package godeck.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import godeck.models.view_models.QueueResponse;
+import godeck.models.entities.User;
+import godeck.models.responses.QueueResponse;
 import godeck.services.QueueService;
 
 /**
@@ -30,13 +31,13 @@ public class QueueController {
 
     @PostMapping(path = "")
     @ResponseBody
-    public QueueResponse queue(@RequestBody String stringUserId) {
-        return queueService.queue(stringUserId);
+    public QueueResponse queue(@RequestAttribute User user) {
+        return queueService.queue(user.getId().toString());
     }
 
     @PostMapping(path = "/dequeue")
     @ResponseBody
-    public QueueResponse dequeue(@RequestBody String stringUserId) {
-        return queueService.dequeue(stringUserId);
+    public QueueResponse dequeue(@RequestAttribute User user) {
+        return queueService.dequeue(user.getId().toString());
     }
 }

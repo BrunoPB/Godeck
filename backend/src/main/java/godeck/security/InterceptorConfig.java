@@ -6,7 +6,7 @@ import org.springframework.lang.NonNull;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import godeck.services.LoginService;
+import godeck.services.TokenService;
 
 /**
  * Configuration class for the interceptors. It is responsible for adding the
@@ -19,7 +19,7 @@ import godeck.services.LoginService;
 public class InterceptorConfig implements WebMvcConfigurer {
 
     @Autowired
-    private LoginService loginService;
+    private TokenService tokenService;
     @NonNull
     private static String[] loginPaths = { "/login", "/login/**" };
     private static String errorPath = "/error";
@@ -34,7 +34,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(@NonNull InterceptorRegistry registry) {
         registry.addInterceptor(new LoginInterceptor()).addPathPatterns(loginPaths);
-        registry.addInterceptor(new AuthInterceptor(loginService)).excludePathPatterns(loginPaths)
+        registry.addInterceptor(new AuthInterceptor(tokenService)).excludePathPatterns(loginPaths)
                 .excludePathPatterns(errorPath);
         registry.addInterceptor(new ErrorInterceptor()).addPathPatterns(errorPath).excludePathPatterns(loginPaths);
     }

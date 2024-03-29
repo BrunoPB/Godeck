@@ -36,7 +36,7 @@ public class LoginController {
 
     @PostMapping(path = "/ghostuser")
     @ResponseBody
-    public LoginResponse createGhostUser() {
-        return loginService.createGhostUser();
+    public LoginResponse loginGhostUser() {
+        return loginService.loginGhostUser();
     }
 }

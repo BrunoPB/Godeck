@@ -148,8 +148,9 @@ public class DatabaseInicialization {
         emails.add("fagner@email.com");
         emails.add("gerson@email.com");
         for (String email : emails) {
-            List<User> users = userRepository.findByEmail(email);
-            if (users.size() > 0) {
+            User user = userRepository.findByEmail(email)
+                    .orElse(null);
+            if (user != null) {
                 continue;
             }
             UUID id = UUID.randomUUID();
@@ -161,7 +162,7 @@ public class DatabaseInicialization {
                 collection.add(character);
             }
             deck.addAll(pickRandomGameCharacters(collection, 7));
-            User user = new User(id, email.substring(0, email.indexOf("@")), email.substring(0, email.indexOf("@")),
+            user = new User(id, email.substring(0, email.indexOf("@")), email.substring(0, email.indexOf("@")),
                     email, gold, crystals, deck, collection, false, new HashSet<>());
             userRepository.save(user);
         }

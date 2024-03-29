@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import godeck.models.entities.User;
-import godeck.services.LoginService;
+import godeck.services.TokenService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -21,15 +21,15 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class AuthInterceptor implements HandlerInterceptor {
 
-    private LoginService loginService;
+    private TokenService tokenService;
 
     /**
      * Constructor for the AuthInterceptor class.
      * 
      * @param loginService The login service to be used by the interceptor.
      */
-    public AuthInterceptor(LoginService loginService) {
-        this.loginService = loginService;
+    public AuthInterceptor(TokenService tokenService) {
+        this.tokenService = tokenService;
     }
 
     /**
@@ -48,15 +48,13 @@ public class AuthInterceptor implements HandlerInterceptor {
     public synchronized boolean preHandle(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response,
             @NonNull Object handler) throws Exception {
         String token = request.getHeader("Authorization");
-
         User tokenUser = new User();
         try {
-            tokenUser = loginService.checkToken(token);
+            tokenUser = tokenService.getByToken(token).getUser();
         } catch (IllegalArgumentException e) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized. " + e.getMessage());
             return false;
         }
-
         request.setAttribute("user", tokenUser);
         return true;
     }

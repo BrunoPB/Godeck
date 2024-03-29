@@ -1,11 +1,15 @@
 package godeck.services;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import godeck.models.entities.GameCharacter;
 import godeck.models.entities.User;
 import godeck.repositories.UserRepository;
 
@@ -21,6 +25,7 @@ public class UserService {
     // Properties
 
     private UserRepository userRepository;
+    private GameCharacterService gameCharacterService;
 
     // Constructors
 
@@ -30,20 +35,12 @@ public class UserService {
      * @param userRepository The repository for the user model.
      */
     @Autowired
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, GameCharacterService gameCharacterService) {
         this.userRepository = userRepository;
+        this.gameCharacterService = gameCharacterService;
     }
 
-    // Methods
-
-    /**
-     * Returns all the users from the database.
-     * 
-     * @return All the users from the database.
-     */
-    public Iterable<User> findAll() {
-        return userRepository.findAll();
-    }
+    // CRUD Methods
 
     /**
      * Returns the user from the database by its id. If the user does not exist, it
@@ -64,25 +61,26 @@ public class UserService {
     }
 
     /**
+     * Returns the user from the database by its email. If the user does not exist,
+     * it returns an empty list.
+     * 
+     * @param email The email of the user.
+     * @return The user from the database.
+     */
+    public User getByEmail(String email) {
+        if (email == null) {
+            throw new IllegalArgumentException("Email cannot be null");
+        }
+        return userRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("User not found!"));
+    }
+
+    /**
      * Saves the user in the database.
      * 
      * @param user The user to be saved.
      * @return The user saved in the database.
      */
     public User save(User user) {
-        if (user == null) {
-            throw new IllegalArgumentException("User cannot be null");
-        }
-        return userRepository.save(user);
-    }
-
-    /**
-     * Updates the user in the database.
-     * 
-     * @param user The user to be updated.
-     * @return The user updated in the database.
-     */
-    public User update(User user) {
         if (user == null) {
             throw new IllegalArgumentException("User cannot be null");
         }
@@ -105,24 +103,35 @@ public class UserService {
         userRepository.deleteById(uuid);
     }
 
-    /**
-     * Deletes all the users from the database. It is used for testing purposes.
-     */
-    public void deleteAll() {
-        userRepository.deleteAll();
-    }
+    // Private Methods
 
     /**
-     * Returns the user from the database by its email. If the user does not exist,
-     * it returns an empty list.
+     * Generates a list of cards for ghost users.
      * 
-     * @param email The email of the user.
-     * @return The user from the database.
+     * @return The list of cards for ghost users.
      */
-    public List<User> getByEmail(String email) {
-        if (email == null) {
-            throw new IllegalArgumentException("Email cannot be null");
+    private List<GameCharacter> generateGhostUserCards() { // TODO: Establish the initial cards for ghost users
+        List<GameCharacter> fullChars = (List<GameCharacter>) gameCharacterService.findAll();
+        List<GameCharacter> randomList = new ArrayList<GameCharacter>();
+        List<GameCharacter> characters = new ArrayList<GameCharacter>(fullChars);
+        Random r = new Random();
+        for (int i = 0; i < 7; i++) {
+            GameCharacter randomElement = characters.get(r.nextInt(characters.size()));
+            randomList.add(randomElement);
+            characters.remove(randomElement);
         }
-        return userRepository.findByEmail(email);
+        return randomList;
+    }
+
+    // Public Methods
+
+    public synchronized User generateGhostUser() {
+        int numberOfUsers = ((List<User>) userRepository.findAll()).size();
+        User user = new User();
+        user.makeGhostUser("user0" + numberOfUsers);
+        List<GameCharacter> cards = generateGhostUserCards();
+        user.setCollection(new HashSet<GameCharacter>(cards));
+        user.setDeck(cards);
+        return user;
     }
 }

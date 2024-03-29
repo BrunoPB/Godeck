@@ -1,6 +1,6 @@
 package godeck.repositories;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.repository.CrudRepository;
@@ -18,5 +18,5 @@ import godeck.models.entities.User;
  */
 @Repository
 public interface UserRepository extends CrudRepository<User, UUID> {
-    List<User> findByEmail(String email);
+    Optional<User> findByEmail(String email);
 }

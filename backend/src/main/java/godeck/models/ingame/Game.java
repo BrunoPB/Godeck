@@ -1,4 +1,4 @@
-package godeck.models.in_game;
+package godeck.models.ingame;
 
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;

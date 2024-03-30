@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import godeck.models.in_game.InGameCard;
+import godeck.models.ingame.InGameCard;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,7 +16,7 @@ import lombok.Setter;
  * Class that represents the information a player can receive about it's own
  * game.
  * 
- * @see godeck.models.in_game.Game
+ * @see godeck.models.ingame.Game
  * @author Bruno Pena Baeta
  */
 @Component

@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
 
 import godeck.models.GodeckThread;
-import godeck.models.in_game.GameMove;
+import godeck.models.ingame.GameMove;
 import godeck.utils.ErrorHandler;
 import godeck.utils.JSON;
 import godeck.utils.Printer;

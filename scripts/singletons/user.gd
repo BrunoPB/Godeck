@@ -25,4 +25,4 @@ func start_user(dict : Dictionary):
 	for card in dict.deck:
 		deck.append(Card_Utils.convert_dictionary_to_card(card))
 	for friend in dict.friends:
-		friends.append(Friend.new(friend.id, friend.username, friend.display_name, friend.deck, friend.collection))
+		friends.append(Friend.new(friend.id, friend.username, friend.displayName, friend.deck, friend.collection))

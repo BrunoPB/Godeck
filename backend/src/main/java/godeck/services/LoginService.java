@@ -3,7 +3,7 @@ package godeck.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import godeck.models.client.UserClient;
+import godeck.models.client.ClientUser;
 import godeck.models.entities.Token;
 import godeck.models.entities.User;
 import godeck.models.responses.LoginResponse;
@@ -45,10 +45,10 @@ public class LoginService {
             String token = tokenService.generateToken();
             Token tokenObject = new Token(token, user);
             tokenService.save(tokenObject);
-            UserClient userClient = new UserClient(user);
+            ClientUser userClient = new ClientUser(user);
             return new LoginResponse(true, token, userClient, "Ghost User logged in successfully.");
         } catch (Exception e) {
-            return new LoginResponse(false, null, new UserClient(), e.getMessage());
+            return new LoginResponse(false, null, new ClientUser(), e.getMessage());
         }
     }
 
@@ -62,10 +62,10 @@ public class LoginService {
         Token tokenObject = tokenService.getByToken(token);
 
         if (!tokenObject.isActive()) {
-            return new LoginResponse(false, null, new UserClient(), "Token expired.");
+            return new LoginResponse(false, null, new ClientUser(), "Token expired.");
         }
 
-        UserClient userClient = new UserClient(tokenObject.getUser(),
+        ClientUser userClient = new ClientUser(tokenObject.getUser(),
                 friendshipService.getUserFriendList(tokenObject.getUser().getId()));
 
         LoginResponse response = new LoginResponse(true, token, userClient, "User logged in successfully.");

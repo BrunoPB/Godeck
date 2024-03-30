@@ -13,7 +13,7 @@ static func convert_dictionary_to_card(dictionary : Dictionary) -> Card:
 	var card : Card = Card.new()
 	card.id = dictionary.id
 	card.number = dictionary.number
-	card.character_name = dictionary.name
+	card.card_name = dictionary.cardName
 	card.tier = dictionary.tier
 	card.mythology = dictionary.mythology
 	card.file_name = dictionary.fileName

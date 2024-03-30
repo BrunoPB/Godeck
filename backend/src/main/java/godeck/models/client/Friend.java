@@ -5,10 +5,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
-import godeck.models.entities.Card;
 import godeck.models.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,8 +34,8 @@ public class Friend {
     private UUID id;
     private String username;
     private String displayName;
-    private List<Card> deck = new ArrayList<Card>();
-    private Set<Card> collection = new HashSet<Card>();
+    private List<ClientCard> deck = new ArrayList<ClientCard>();
+    private Set<ClientCard> collection = new HashSet<ClientCard>();
 
     // Constructors
 
@@ -48,7 +48,7 @@ public class Friend {
         this.id = user.getId();
         this.username = user.getUsername();
         this.displayName = user.getDisplayName();
-        this.deck = user.getDeck();
-        this.collection = user.getCollection();
+        this.deck = user.getDeck().stream().map(card -> new ClientCard(card)).toList();
+        this.collection = user.getCollection().stream().map(card -> new ClientCard(card)).collect(Collectors.toSet());
     }
 }

@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 import godeck.models.GodeckThread;
 import godeck.models.client.EndGameInfo;
 import godeck.models.client.Opponent;
-import godeck.models.client.UserGame;
+import godeck.models.client.ClientGame;
 import godeck.models.entities.User;
 import godeck.models.in_game.Game;
 import godeck.models.in_game.GameMove;
@@ -39,8 +39,8 @@ public class GameInstance extends GodeckThread {
 
     private int port;
     private Game game;
-    private UserGame user0game;
-    private UserGame user1game;
+    private ClientGame user0game;
+    private ClientGame user1game;
     private GameClient user0Client;
     private GameClient user1Client;
     private ServerSocket server;
@@ -281,8 +281,8 @@ public class GameInstance extends GodeckThread {
      * Updates the game state of both users.
      */
     private void updateUsersGameState() {
-        user0game.updateGameState(game.getDeck0(), game.getBoard(), game.getTurn() == 0);
-        user1game.updateGameState(game.getDeck1(), game.getBoard(), game.getTurn() == 1);
+        user0game.updateGameState(game.getBoard(), game.getDeck0(), game.getTurn() == 0);
+        user1game.updateGameState(game.getBoard(), game.getDeck1(), game.getTurn() == 1);
     }
 
     /**
@@ -360,8 +360,8 @@ public class GameInstance extends GodeckThread {
         ArrayList<InGameCard> deck1 = user1.getDeck().stream().map((card) -> new InGameCard(1, card))
                 .collect(Collectors.toCollection(ArrayList::new));
         game = new Game(deck0, deck1, turnTimeout);
-        user0game = new UserGame(game.getBoard(), deck0, true, 0, new Opponent(user1.getDisplayName()), turnTimeout);
-        user1game = new UserGame(game.getBoard(), deck1, false, 1, new Opponent(user0.getDisplayName()), turnTimeout);
+        user0game = new ClientGame(game.getBoard(), deck0, true, 0, new Opponent(user1.getDisplayName()), turnTimeout);
+        user1game = new ClientGame(game.getBoard(), deck1, false, 1, new Opponent(user0.getDisplayName()), turnTimeout);
     }
 
     /**

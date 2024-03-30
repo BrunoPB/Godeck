@@ -2,7 +2,7 @@ package godeck.models.responses;
 
 import org.springframework.stereotype.Component;
 
-import godeck.models.client.UserClient;
+import godeck.models.client.ClientUser;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +26,6 @@ public class LoginResponse {
 
     private boolean status;
     private String token;
-    private UserClient user;
+    private ClientUser user;
     private String message;
 }

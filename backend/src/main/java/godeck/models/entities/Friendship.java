@@ -61,6 +61,12 @@ public class Friendship {
 
     // Private methods
 
+    /**
+     * Verify if the users are different.
+     * 
+     * @param user0 First user.
+     * @param user1 Second user.
+     */
     private void verifyUsers(User user0, User user1) {
         if (user0.equals(user1)) {
             throw new IllegalArgumentException("Can't start a friendship with 2 equal users.");

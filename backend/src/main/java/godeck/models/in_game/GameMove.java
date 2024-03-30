@@ -2,6 +2,7 @@ package godeck.models.in_game;
 
 import org.springframework.stereotype.Component;
 
+import godeck.models.Coordinates;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

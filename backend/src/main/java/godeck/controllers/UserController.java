@@ -2,9 +2,15 @@ package godeck.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import godeck.repositories.UserRepository;
+import godeck.models.client.Friend;
+import godeck.models.entities.User;
+import godeck.services.UserService;
 
 /**
  * Controller that handles user manipulation. It is responsible for manipulating
@@ -15,12 +21,18 @@ import godeck.repositories.UserRepository;
  * @author Bruno Pena Baeta
  */
 @Controller
-@RequestMapping("/test")
+@RequestMapping("/")
 public class UserController {
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
-    public UserController(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @PostMapping(path = "friend")
+    @ResponseBody
+    public Friend addFriend(@RequestAttribute User user, @RequestBody String friendUsername) {
+        return userService.addFriend(user, friendUsername);
     }
 }

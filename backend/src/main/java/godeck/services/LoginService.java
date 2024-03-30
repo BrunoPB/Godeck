@@ -3,6 +3,7 @@ package godeck.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import godeck.models.client.UserClient;
 import godeck.models.entities.Token;
 import godeck.models.entities.User;
 import godeck.models.responses.LoginResponse;
@@ -18,13 +19,15 @@ public class LoginService {
 
     private UserService userService;
     private TokenService tokenService;
+    private FriendshipService friendshipService;
 
     // Constructors
 
     @Autowired
-    public LoginService(UserService userService, TokenService tokenService) {
+    public LoginService(UserService userService, TokenService tokenService, FriendshipService friendshipService) {
         this.userService = userService;
         this.tokenService = tokenService;
+        this.friendshipService = friendshipService;
     }
 
     // Public Methods
@@ -42,9 +45,10 @@ public class LoginService {
             String token = tokenService.generateToken();
             Token tokenObject = new Token(token, user);
             tokenService.save(tokenObject);
-            return new LoginResponse(true, token, user, "Ghost User logged in successfully.");
+            UserClient userClient = new UserClient(user);
+            return new LoginResponse(true, token, userClient, "Ghost User logged in successfully.");
         } catch (Exception e) {
-            return new LoginResponse(false, null, new User(), e.getMessage());
+            return new LoginResponse(false, null, new UserClient(), e.getMessage());
         }
     }
 
@@ -58,10 +62,13 @@ public class LoginService {
         Token tokenObject = tokenService.getByToken(token);
 
         if (!tokenObject.isActive()) {
-            return new LoginResponse(false, null, new User(), "Token expired.");
+            return new LoginResponse(false, null, new UserClient(), "Token expired.");
         }
 
-        LoginResponse response = new LoginResponse(true, token, tokenObject.getUser(), "User logged in successfully.");
+        UserClient userClient = new UserClient(tokenObject.getUser(),
+                friendshipService.getUserFriendList(tokenObject.getUser().getId()));
+
+        LoginResponse response = new LoginResponse(true, token, userClient, "User logged in successfully.");
 
         return response;
     }

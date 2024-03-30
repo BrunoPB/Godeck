@@ -1,3 +1,3 @@
 extends Node
 
-var token = null
+static var TOKEN

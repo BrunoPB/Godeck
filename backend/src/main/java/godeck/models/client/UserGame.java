@@ -28,9 +28,10 @@ public class UserGame {
 
     private ArrayList<ArrayList<InGameCard>> board;
     private ArrayList<InGameCard> deck;
-    private int number;
     private boolean turn;
+    private int number;
     private Opponent opponent;
+    private int timeLimit;
 
     // Public Methods
 

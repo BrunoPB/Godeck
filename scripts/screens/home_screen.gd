@@ -10,6 +10,14 @@ extends PanelContainer
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	start_user_data()
+	test()
+
+func test():
+	var http = HTTPRequest.new()
+	add_child(http)
+	var token = get_node("/root/Token").TOKEN
+	var header = Http_Utils.header(token)
+	http.request("http://localhost:8080/friend", header, HTTPClient.METHOD_POST, "user00")
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta):

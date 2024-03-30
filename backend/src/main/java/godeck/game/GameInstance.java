@@ -37,7 +37,6 @@ import lombok.NoArgsConstructor;
 public class GameInstance extends GodeckThread {
     // Properties
 
-    private int turnTimeout;
     private int port;
     private Game game;
     private UserGame user0game;
@@ -205,7 +204,7 @@ public class GameInstance extends GodeckThread {
      * @throws IOException If the turn timeout could not be sent.
      */
     private void sendClientTimer() throws IOException {
-        sendMessageToClients("Timer:" + turnTimeout);
+        sendMessageToClients("Timer:" + game.getTimeLimit());
     }
 
     /**
@@ -293,7 +292,7 @@ public class GameInstance extends GodeckThread {
      * @throws Exception If some error occurs during the game loop.
      */
     private void gameLoop() throws Exception {
-        GameTimer timer = game.startTimer(turnTimeout + 2);
+        GameTimer timer = game.startTimer(game.getTimeLimit() + 2);
         CompletableFuture.anyOf(timer.timeOver, game.over).thenAccept((result) -> {
             if (result.equals("Timeout")) {
                 game.notifyTimeout();
@@ -356,14 +355,13 @@ public class GameInstance extends GodeckThread {
      */
     public void setupGame(User user0, User user1, int port, int turnTimeout) {
         this.port = port;
-        this.turnTimeout = turnTimeout;
         ArrayList<InGameCard> deck0 = user0.getDeck().stream().map((card) -> new InGameCard(0, card))
                 .collect(Collectors.toCollection(ArrayList::new));
         ArrayList<InGameCard> deck1 = user1.getDeck().stream().map((card) -> new InGameCard(1, card))
                 .collect(Collectors.toCollection(ArrayList::new));
-        game = new Game(deck0, deck1);
-        user0game = new UserGame(game.getBoard(), deck0, 0, true, new Opponent(user1.getDisplayName()));
-        user1game = new UserGame(game.getBoard(), deck1, 1, false, new Opponent(user0.getDisplayName()));
+        game = new Game(deck0, deck1, turnTimeout);
+        user0game = new UserGame(game.getBoard(), deck0, true, 0, new Opponent(user1.getDisplayName()), turnTimeout);
+        user1game = new UserGame(game.getBoard(), deck1, false, 1, new Opponent(user0.getDisplayName()), turnTimeout);
     }
 
     /**

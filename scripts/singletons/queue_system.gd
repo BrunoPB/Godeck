@@ -2,7 +2,7 @@ extends Node
 
 @onready var in_game_system = get_node("/root/InGameSystem")
 @onready var user = get_node("/root/User")
-@onready var token = get_node("/root/Token").token
+@onready var token = get_node("/root/Token").TOKEN
 
 var queue_endpoint
 var http = HTTPRequest.new()

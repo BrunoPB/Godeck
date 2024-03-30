@@ -32,4 +32,4 @@ func set_deck(deck_string : String):
 
 func set_opponent(opponent_string : String):
 	var data = JSON_Utils.get_object_from_string(opponent_string)
-	opponent.opponent_name = data.name
+	opponent.display_name = data.displayName

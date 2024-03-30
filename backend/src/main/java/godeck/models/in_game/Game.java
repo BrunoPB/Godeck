@@ -6,6 +6,7 @@ import java.util.concurrent.CompletableFuture;
 import org.springframework.stereotype.Component;
 
 import godeck.game.GameTimer;
+import godeck.models.Coordinates;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +32,7 @@ public class Game {
     private int turn;
     private int round;
     private int gameWinner;
+    private int timeLimit;
     private String endGameReason;
     private GameTimer timer;
     public CompletableFuture<String> over;
@@ -43,9 +45,10 @@ public class Game {
      * @param deck0 The deck of player 0.
      * @param deck1 The deck of player 1.
      */
-    public Game(ArrayList<InGameCard> deck0, ArrayList<InGameCard> deck1) {
+    public Game(ArrayList<InGameCard> deck0, ArrayList<InGameCard> deck1, int timeLimit) {
         this.deck0 = deck0;
         this.deck1 = deck1;
+        this.timeLimit = timeLimit;
         buildInitialBoard();
         this.turn = 0;
         this.round = 0;

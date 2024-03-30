@@ -9,6 +9,8 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import godeck.models.client.Friend;
+import godeck.models.entities.Friendship;
 import godeck.models.entities.GameCharacter;
 import godeck.models.entities.User;
 import godeck.repositories.UserRepository;
@@ -25,6 +27,7 @@ public class UserService {
     // Properties
 
     private UserRepository userRepository;
+    private FriendshipService friendshipService;
     private GameCharacterService gameCharacterService;
 
     // Constructors
@@ -35,8 +38,10 @@ public class UserService {
      * @param userRepository The repository for the user model.
      */
     @Autowired
-    public UserService(UserRepository userRepository, GameCharacterService gameCharacterService) {
+    public UserService(UserRepository userRepository, FriendshipService friendshipService,
+            GameCharacterService gameCharacterService) {
         this.userRepository = userRepository;
+        this.friendshipService = friendshipService;
         this.gameCharacterService = gameCharacterService;
     }
 
@@ -103,6 +108,18 @@ public class UserService {
         userRepository.deleteById(uuid);
     }
 
+    /**
+     * Deletes the user from the database.
+     * 
+     * @param user The user to be deleted.
+     */
+    public void delete(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
+        userRepository.delete(user);
+    }
+
     // Private Methods
 
     /**
@@ -125,6 +142,12 @@ public class UserService {
 
     // Public Methods
 
+    /**
+     * Generates a brand new ghost user. A Ghost User starts with a basic set of
+     * cards and a random display name.
+     * 
+     * @return The ghost user.
+     */
     public synchronized User generateGhostUser() {
         int numberOfUsers = ((List<User>) userRepository.findAll()).size();
         User user = new User();
@@ -133,5 +156,24 @@ public class UserService {
         user.setCollection(new HashSet<GameCharacter>(cards));
         user.setDeck(cards);
         return user;
+    }
+
+    /**
+     * Adds a friend to the user. It creates a friendship between the user and the
+     * friend.
+     * 
+     * @param user           The user to add the friend.
+     * @param friendUsername The username of the friend to be added.
+     * @return The friend added.
+     */
+    public Friend addFriend(User user, String friendUsername) {
+        if (user.getUsername().equals(friendUsername)) {
+            throw new IllegalArgumentException("Cannot add yourself as a friend");
+        }
+        User friend = userRepository.findByUsername(friendUsername)
+                .orElseThrow(() -> new IllegalArgumentException("Friend not found!"));
+        Friendship friendship = new Friendship(user, friend);
+        friendshipService.save(friendship);
+        return new Friend(friend);
     }
 }

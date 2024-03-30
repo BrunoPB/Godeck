@@ -2,7 +2,6 @@ package godeck.models.entities;
 
 import java.util.UUID;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -11,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +23,7 @@ import lombok.Setter;
  * @author Bruno Pena Baeta
  */
 @Entity(name = "token")
+@Table(name = "token")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -37,7 +38,7 @@ public class Token {
     private String token;
     @Column(name = "active", nullable = false)
     private boolean active;
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -53,5 +54,21 @@ public class Token {
         this.token = token;
         this.user = user;
         this.active = true;
+    }
+
+    // Public Methods
+
+    /**
+     * Reactivates the token.
+     */
+    public void reactivate() {
+        this.active = true;
+    }
+
+    /**
+     * Deactivates the token.
+     */
+    public void deactivate() {
+        this.active = false;
     }
 }

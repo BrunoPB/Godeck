@@ -6,10 +6,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import godeck.utils.Randomizer;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +27,7 @@ import lombok.Setter;
  * @author Bruno Pena Baeta
  */
 @Entity(name = "user")
+@Table(name = "user")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -49,19 +48,19 @@ public class User {
     private Integer gold;
     @Column(name = "crystals", nullable = false)
     private Integer crystals;
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(name = "user_deck", joinColumns = @JoinColumn(name = "game_character_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<GameCharacter> deck = new ArrayList<GameCharacter>();
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany
     @JoinTable(name = "user_collection", joinColumns = @JoinColumn(name = "game_character_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<GameCharacter> collection = new HashSet<>();
+    private Set<GameCharacter> collection = new HashSet<GameCharacter>();
     @Column(name = "ghost", nullable = false)
     private boolean ghost;
 
     // Constructors
 
     /**
-     * Constructor without id.
+     * Main constructor.
      * 
      * @param username    User's username
      * @param displayName User's display name

@@ -6,6 +6,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import godeck.models.entities.User;
 import godeck.services.TokenService;
+import godeck.utils.Printer;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -52,7 +53,12 @@ public class AuthInterceptor implements HandlerInterceptor {
         try {
             tokenUser = tokenService.getByToken(token).getUser();
         } catch (IllegalArgumentException e) {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized. " + e.getMessage());
+            String message = "Unauthorized. " + e.getMessage();
+            if (token != null && !token.isBlank()) {
+                message += " Tried with Token: " + token;
+            }
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, message);
+            Printer.printWarn(message);
             return false;
         }
         request.setAttribute("user", tokenUser);

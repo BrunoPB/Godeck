@@ -2,6 +2,7 @@ package godeck.models.client;
 
 import org.springframework.stereotype.Component;
 
+import godeck.models.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,5 +24,16 @@ import lombok.Setter;
 public class Opponent {
     // Properties
 
-    private String name;
+    private String displayName;
+
+    // Constructors
+
+    /**
+     * Creates a new opponent from a user.
+     * 
+     * @param user The user to copy the information from.
+     */
+    public Opponent(User user) {
+        this.displayName = user.getDisplayName();
+    }
 }

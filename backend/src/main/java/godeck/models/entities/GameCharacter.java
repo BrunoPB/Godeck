@@ -5,6 +5,7 @@ import java.util.UUID;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,6 +18,7 @@ import lombok.Setter;
  * @author Bruno Pena Baeta
  */
 @Entity(name = "game_character")
+@Table(name = "game_character")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

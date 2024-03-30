@@ -1,4 +1,4 @@
-package godeck.models.in_game;
+package godeck.models.client;
 
 public class UserGameMove {
 

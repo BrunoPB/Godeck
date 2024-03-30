@@ -14,13 +14,13 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 
 import godeck.models.GodeckThread;
+import godeck.models.client.EndGameInfo;
+import godeck.models.client.Opponent;
+import godeck.models.client.UserGame;
 import godeck.models.entities.User;
-import godeck.models.in_game.EndGameInfo;
 import godeck.models.in_game.Game;
 import godeck.models.in_game.GameMove;
 import godeck.models.in_game.InGameCard;
-import godeck.models.in_game.Opponent;
-import godeck.models.in_game.UserGame;
 import godeck.utils.ErrorHandler;
 import godeck.utils.JSON;
 import lombok.NoArgsConstructor;

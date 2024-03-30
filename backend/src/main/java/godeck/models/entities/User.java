@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import godeck.utils.Randomizer;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -55,9 +57,6 @@ public class User {
     private Set<GameCharacter> collection = new HashSet<>();
     @Column(name = "ghost", nullable = false)
     private boolean ghost;
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "user_friendship", joinColumns = @JoinColumn(name = "user0_id"), inverseJoinColumns = @JoinColumn(name = "user1_id"))
-    private Set<User> friends = new HashSet<>();
 
     // Constructors
 
@@ -72,10 +71,9 @@ public class User {
      * @param deck        User's deck
      * @param collection  User's collection
      * @param ghost       User's ghost status
-     * @param friends     User's friends
      */
     public User(String username, String displayName, String email, Integer gold, Integer crystals,
-            List<GameCharacter> deck, Set<GameCharacter> collection, boolean ghost, Set<User> friends) {
+            List<GameCharacter> deck, Set<GameCharacter> collection, boolean ghost) {
         this.username = username;
         this.displayName = displayName;
         this.email = email;
@@ -84,7 +82,6 @@ public class User {
         this.deck = deck;
         this.collection = collection;
         this.ghost = ghost;
-        this.friends = friends;
     }
 
     // Public Methods
@@ -101,7 +98,6 @@ public class User {
         this.email = null;
         this.gold = 0;
         this.crystals = 0;
-        this.friends = new HashSet<>();
         this.ghost = true;
     }
 

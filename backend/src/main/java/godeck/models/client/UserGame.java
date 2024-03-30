@@ -1,9 +1,10 @@
-package godeck.models.in_game;
+package godeck.models.client;
 
 import java.util.ArrayList;
 
 import org.springframework.stereotype.Component;
 
+import godeck.models.in_game.InGameCard;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

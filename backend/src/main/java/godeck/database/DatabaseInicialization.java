@@ -163,7 +163,7 @@ public class DatabaseInicialization {
             }
             deck.addAll(pickRandomGameCharacters(collection, 7));
             user = new User(id, email.substring(0, email.indexOf("@")), email.substring(0, email.indexOf("@")),
-                    email, gold, crystals, deck, collection, false, new HashSet<>());
+                    email, gold, crystals, deck, collection, false);
             userRepository.save(user);
         }
     }

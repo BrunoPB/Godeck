@@ -1,4 +1,4 @@
-package godeck.models.in_game;
+package godeck.models.client;
 
 import org.springframework.stereotype.Component;
 
@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Class that represents the information a player should receive about the end
- * of a game.
+ * Class that represents the information a player can receive about it's
+ * opponent during a game.
  * 
  * Is a component. Can be accessed from anywhere in the application.
  * 
@@ -20,11 +20,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class EndGameInfo {
+public class Opponent {
     // Properties
 
-    private int winner;
-    private String reason;
-    private int gold;
-    private int ranking;
+    private String name;
 }

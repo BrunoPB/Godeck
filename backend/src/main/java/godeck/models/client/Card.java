@@ -10,12 +10,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Class that represents a GameCharacter card. This is how the client will see
+ * Class that represents a Card card. This is how the client will see
  * the cards.
  * 
  * Is a component. Can be accessed from anywhere in the application.
  * 
- * @see godeck.models.entities.GameCharacter
+ * @see godeck.models.entities.Card
  * @author Bruno Pena Baeta
  */
 @Component

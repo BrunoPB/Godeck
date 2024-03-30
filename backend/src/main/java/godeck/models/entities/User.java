@@ -50,10 +50,10 @@ public class User {
     private Integer crystals;
     @ManyToMany
     @JoinTable(name = "user_deck", joinColumns = @JoinColumn(name = "game_character_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private List<GameCharacter> deck = new ArrayList<GameCharacter>();
+    private List<Card> deck = new ArrayList<Card>();
     @ManyToMany
     @JoinTable(name = "user_collection", joinColumns = @JoinColumn(name = "game_character_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private Set<GameCharacter> collection = new HashSet<GameCharacter>();
+    private Set<Card> collection = new HashSet<Card>();
     @Column(name = "ghost", nullable = false)
     private boolean ghost;
 
@@ -72,7 +72,7 @@ public class User {
      * @param ghost       User's ghost status
      */
     public User(String username, String displayName, String email, Integer gold, Integer crystals,
-            List<GameCharacter> deck, Set<GameCharacter> collection, boolean ghost) {
+            List<Card> deck, Set<Card> collection, boolean ghost) {
         this.username = username;
         this.displayName = displayName;
         this.email = email;

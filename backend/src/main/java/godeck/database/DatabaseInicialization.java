@@ -13,10 +13,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import godeck.models.entities.GameCharacter;
+import godeck.models.entities.Card;
 import godeck.models.entities.User;
 import godeck.repositories.UserRepository;
-import godeck.services.GameCharacterService;
+import godeck.services.CardService;
 import godeck.utils.ErrorHandler;
 import godeck.utils.JSON;
 
@@ -30,23 +30,23 @@ public class DatabaseInicialization {
     // Properties
 
     private static String environment;
-    private static GameCharacterService gameCharacterService;
+    private static CardService cardService;
     private static UserRepository userRepository;
 
     // Constructors
 
     /**
      * Main constructor. Should never be called, this is a static class. Uses
-     * Autowire to inject the game character service and the user repository.
+     * Autowire to inject the card service and the user repository.
      * 
-     * @param gameCharacterService The game character service.
-     * @param userRepository       The user repository.
-     * @param environment          The current environment.
+     * @param cardService    The card service.
+     * @param userRepository The user repository.
+     * @param environment    The current environment.
      */
     @Autowired
-    public DatabaseInicialization(GameCharacterService gameCharacterService, UserRepository userRepository,
+    public DatabaseInicialization(CardService cardService, UserRepository userRepository,
             @Value("${environment}") String environment) {
-        DatabaseInicialization.gameCharacterService = gameCharacterService;
+        DatabaseInicialization.cardService = cardService;
         DatabaseInicialization.userRepository = userRepository;
         DatabaseInicialization.environment = environment;
     }
@@ -54,19 +54,19 @@ public class DatabaseInicialization {
     // Private Methods
 
     /**
-     * Gets the file path of the game characters data file according to the
+     * Gets the file path of the cards data file according to the
      * current environment.
      * 
-     * @return The file path of the game characters data file.
+     * @return The file path of the cards data file.
      * @throws RuntimeException
      */
-    private static String getGameCharactersDataFilePath() throws RuntimeException {
+    private static String getCardsDataFilePath() throws RuntimeException {
         if (environment.equals("production")) {
             return "";
         } else if (environment.equals("docker")) {
-            return "../data/GameCharactersData.json";
+            return "../data/CardsData.json";
         } else if (environment.equals("dev")) {
-            return "src/data/GameCharactersData.json";
+            return "src/data/CardsData.json";
         } else {
             throw new RuntimeException(
                     "\u001B[31mERROR!\u001B[0m Environment not recognized. Please check the environment variable. Environment: "
@@ -75,43 +75,43 @@ public class DatabaseInicialization {
     }
 
     /**
-     * Reads the game characters data from a JSON file and returns a list of game
+     * Reads the cards data from a JSON file and returns a list of game
      * characters.
      * 
      * @param fileName The file name.
-     * @return A list of game characters.
+     * @return A list of cards.
      * @throws Exception If the file is not found or if there is an error reading
      *                   the file.
      */
     @SuppressWarnings("unchecked")
-    private static List<GameCharacter> readGameCharactersDataFromFile(String fileName) throws Exception {
+    private static List<Card> readCardsDataFromFile(String fileName) throws Exception {
         String data = Files.readString(Path.of(fileName));
-        List<GameCharacter> gameCharacters = (List<GameCharacter>) JSON.construct(data, GameCharacter.class, true);
-        return gameCharacters;
+        List<Card> cards = (List<Card>) JSON.construct(data, Card.class, true);
+        return cards;
     }
 
     /**
-     * Saves a list of game characters to the database. Also updates the game
+     * Saves a list of cards to the database. Also updates the game
      * characters that already exist in the database.
      * 
-     * @param gameCharacters The list of game characters.
+     * @param cards The list of cards.
      */
-    private static void saveGameCharactersToDatabase(List<GameCharacter> gameCharacters) {
-        for (GameCharacter gameCharacter : gameCharacters) {
-            gameCharacterService.save(gameCharacter);
+    private static void saveCardsToDatabase(List<Card> cards) {
+        for (Card card : cards) {
+            cardService.save(card);
         }
     }
 
     /**
-     * Removes any unknown game characters from the database.
+     * Removes any unknown cards from the database.
      * 
-     * @param gameCharacters The list of game characters.
+     * @param cards The list of cards.
      */
-    private static void removeUnknownGameCharacters(List<GameCharacter> gameCharacters) {
-        Iterable<GameCharacter> databaseGameCharacters = gameCharacterService.findAll();
-        for (GameCharacter databaseGameCharacter : databaseGameCharacters) {
-            if (!gameCharacters.contains(databaseGameCharacter)) {
-                gameCharacterService.delete(databaseGameCharacter.getId());
+    private static void removeUnknownCards(List<Card> cards) {
+        Iterable<Card> databaseCards = cardService.findAll();
+        for (Card databaseCard : databaseCards) {
+            if (!cards.contains(databaseCard)) {
+                cardService.delete(databaseCard.getId());
             }
         }
     }
@@ -119,16 +119,16 @@ public class DatabaseInicialization {
     // Public Methods
 
     /**
-     * Populates the database with the game characters. Reads the data from a JSON
-     * file and saves it to the database. Also removes any unknown game characters
+     * Populates the database with the cards. Reads the data from a JSON
+     * file and saves it to the database. Also removes any unknown cards
      * from the database.
      */
-    public static void initializeGameCharacters() {
+    public static void initializeCards() {
         try {
-            String gameCharactersDataFilePath = getGameCharactersDataFilePath();
-            List<GameCharacter> gameCharacters = readGameCharactersDataFromFile(gameCharactersDataFilePath);
-            saveGameCharactersToDatabase(gameCharacters);
-            removeUnknownGameCharacters(gameCharacters);
+            String cardsDataFilePath = getCardsDataFilePath();
+            List<Card> cards = readCardsDataFromFile(cardsDataFilePath);
+            saveCardsToDatabase(cards);
+            removeUnknownCards(cards);
         } catch (Exception e) {
             ErrorHandler.message(e);
         }
@@ -138,7 +138,7 @@ public class DatabaseInicialization {
     // TODO: This is just a test. Remove it later when oAuth is implemented
     public static void test_initializeUser() {
         Random random = new Random();
-        Iterable<GameCharacter> chars = gameCharacterService.findAll();
+        Iterable<Card> chars = cardService.findAll();
         List<String> emails = new ArrayList<String>();
         emails.add("arnaldo@email.com");
         emails.add("berenice@email.com");
@@ -156,24 +156,24 @@ public class DatabaseInicialization {
             UUID id = UUID.randomUUID();
             Integer gold = random.nextInt(10000);
             Integer crystals = random.nextInt(100);
-            Set<GameCharacter> collection = new HashSet<GameCharacter>();
-            ArrayList<GameCharacter> deck = new ArrayList<GameCharacter>(7);
-            for (GameCharacter character : chars) {
+            Set<Card> collection = new HashSet<Card>();
+            ArrayList<Card> deck = new ArrayList<Card>(7);
+            for (Card character : chars) {
                 collection.add(character);
             }
-            deck.addAll(pickRandomGameCharacters(collection, 7));
+            deck.addAll(pickRandomCards(collection, 7));
             user = new User(id, email.substring(0, email.indexOf("@")), email.substring(0, email.indexOf("@")),
                     email, gold, crystals, deck, collection, false);
             userRepository.save(user);
         }
     }
 
-    private static List<GameCharacter> pickRandomGameCharacters(Set<GameCharacter> list, int n) {
-        List<GameCharacter> randomList = new ArrayList<GameCharacter>();
-        List<GameCharacter> characters = new ArrayList<GameCharacter>(list);
+    private static List<Card> pickRandomCards(Set<Card> list, int n) {
+        List<Card> randomList = new ArrayList<Card>();
+        List<Card> characters = new ArrayList<Card>(list);
         Random r = new Random();
         for (int i = 0; i < n; i++) {
-            GameCharacter randomElement = characters.get(r.nextInt(characters.size()));
+            Card randomElement = characters.get(r.nextInt(characters.size()));
             randomList.add(randomElement);
             characters.remove(randomElement);
         }

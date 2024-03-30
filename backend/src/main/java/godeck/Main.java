@@ -18,7 +18,7 @@ public class Main {
 	}
 
 	private static void startDatabases() {
-		DatabaseInicialization.initializeGameCharacters();
+		DatabaseInicialization.initializeCards();
 	}
 
 	private static void runQueueSystem() {

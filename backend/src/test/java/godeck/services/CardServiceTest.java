@@ -2,7 +2,7 @@ package godeck.services;
 
 import org.junit.jupiter.api.Test;
 
-public class GameCharacterServiceTest {
+public class CardServiceTest {
     @Test
     void testDelete() {
 

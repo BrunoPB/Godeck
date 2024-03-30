@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import org.springframework.stereotype.Component;
 
-import godeck.models.entities.GameCharacter;
+import godeck.models.entities.Card;
 import godeck.models.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -34,8 +34,8 @@ public class Friend {
     private UUID id;
     private String username;
     private String displayName;
-    private List<GameCharacter> deck = new ArrayList<GameCharacter>();
-    private Set<GameCharacter> collection = new HashSet<GameCharacter>();
+    private List<Card> deck = new ArrayList<Card>();
+    private Set<Card> collection = new HashSet<Card>();
 
     // Constructors
 

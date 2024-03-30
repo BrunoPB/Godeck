@@ -12,18 +12,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * Represents a game character. A game character is a card that can be used in a
- * game.
+ * Represents a game card.
  * 
  * @author Bruno Pena Baeta
  */
-@Entity(name = "game_character")
-@Table(name = "game_character")
+@Entity(name = "card")
+@Table(name = "card")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class GameCharacter {
+public class Card {
     // Properties
 
     @Id
@@ -59,9 +58,9 @@ public class GameCharacter {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof GameCharacter) {
-            GameCharacter gameCharacter = (GameCharacter) obj;
-            return gameCharacter.getId().equals(this.id);
+        if (obj instanceof Card) {
+            Card card = (Card) obj;
+            return card.getId().equals(this.id);
         }
         return false;
     }

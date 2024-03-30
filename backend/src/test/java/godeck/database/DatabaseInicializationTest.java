@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 public class DatabaseInicializationTest {
     @Test
-    void testInitializeGameCharacters() {
+    void testInitializeCards() {
 
     }
 

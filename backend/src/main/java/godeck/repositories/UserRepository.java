@@ -10,8 +10,7 @@ import godeck.models.entities.User;
 
 /**
  * Repository for the user model. It is responsible for managing the user data
- * in
- * the database. It uses the Spring Data JPA to provide the basic CRUD
+ * in the database. It uses the Spring Data JPA to provide the basic CRUD
  * operations.
  * 
  * @author Bruno Pena Baeta

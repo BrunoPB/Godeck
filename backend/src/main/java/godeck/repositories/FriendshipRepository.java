@@ -11,6 +11,13 @@ import org.springframework.stereotype.Repository;
 import godeck.models.entities.Friendship;
 import godeck.models.entities.User;
 
+/**
+ * Repository for the friendship model. It is responsible for managing the
+ * friendship data in the database. It uses the Spring Data JPA to provide
+ * the basic CRUD operations.
+ * 
+ * @author Bruno Pena Baeta
+ */
 @Repository
 public interface FriendshipRepository extends CrudRepository<Friendship, UUID> {
 

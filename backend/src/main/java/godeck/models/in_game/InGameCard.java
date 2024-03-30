@@ -2,7 +2,7 @@ package godeck.models.in_game;
 
 import org.springframework.stereotype.Component;
 
-import godeck.models.entities.GameCharacter;
+import godeck.models.entities.Card;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +25,7 @@ public class InGameCard {
 
     private int cardOwner;
     private int currentDominator;
-    private GameCharacter card;
+    private Card card;
     private boolean exists = false;
 
     // Constructors
@@ -36,7 +36,7 @@ public class InGameCard {
      * @param cardOwner The owner of the card.
      * @param card      The card.
      */
-    public InGameCard(int cardOwner, GameCharacter card) {
+    public InGameCard(int cardOwner, Card card) {
         this.cardOwner = cardOwner;
         this.currentDominator = cardOwner;
         this.card = card;

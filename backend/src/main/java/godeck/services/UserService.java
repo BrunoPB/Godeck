@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import godeck.models.client.Friend;
 import godeck.models.entities.Friendship;
-import godeck.models.entities.GameCharacter;
+import godeck.models.entities.Card;
 import godeck.models.entities.User;
 import godeck.repositories.UserRepository;
 
@@ -28,7 +28,7 @@ public class UserService {
 
     private UserRepository userRepository;
     private FriendshipService friendshipService;
-    private GameCharacterService gameCharacterService;
+    private CardService cardService;
 
     // Constructors
 
@@ -39,10 +39,10 @@ public class UserService {
      */
     @Autowired
     public UserService(UserRepository userRepository, FriendshipService friendshipService,
-            GameCharacterService gameCharacterService) {
+            CardService cardService) {
         this.userRepository = userRepository;
         this.friendshipService = friendshipService;
-        this.gameCharacterService = gameCharacterService;
+        this.cardService = cardService;
     }
 
     // CRUD Methods
@@ -127,13 +127,13 @@ public class UserService {
      * 
      * @return The list of cards for ghost users.
      */
-    private List<GameCharacter> generateGhostUserCards() { // TODO: Establish the initial cards for ghost users
-        List<GameCharacter> fullChars = (List<GameCharacter>) gameCharacterService.findAll();
-        List<GameCharacter> randomList = new ArrayList<GameCharacter>();
-        List<GameCharacter> characters = new ArrayList<GameCharacter>(fullChars);
+    private List<Card> generateGhostUserCards() { // TODO: Establish the initial cards for ghost users
+        List<Card> fullChars = (List<Card>) cardService.findAll();
+        List<Card> randomList = new ArrayList<Card>();
+        List<Card> characters = new ArrayList<Card>(fullChars);
         Random r = new Random();
         for (int i = 0; i < 7; i++) {
-            GameCharacter randomElement = characters.get(r.nextInt(characters.size()));
+            Card randomElement = characters.get(r.nextInt(characters.size()));
             randomList.add(randomElement);
             characters.remove(randomElement);
         }
@@ -152,8 +152,8 @@ public class UserService {
         int numberOfUsers = ((List<User>) userRepository.findAll()).size();
         User user = new User();
         user.makeGhostUser("user0" + numberOfUsers);
-        List<GameCharacter> cards = generateGhostUserCards();
-        user.setCollection(new HashSet<GameCharacter>(cards));
+        List<Card> cards = generateGhostUserCards();
+        user.setCollection(new HashSet<Card>(cards));
         user.setDeck(cards);
         return user;
     }

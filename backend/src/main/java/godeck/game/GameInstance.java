@@ -23,7 +23,6 @@ import godeck.models.ingame.GameMove;
 import godeck.models.ingame.InGameCard;
 import godeck.utils.ErrorHandler;
 import godeck.utils.JSON;
-import godeck.utils.Printer;
 import lombok.NoArgsConstructor;
 
 /**

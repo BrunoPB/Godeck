@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import org.springframework.stereotype.Component;
 
 import godeck.models.GodeckThread;
-import godeck.models.ingame.GameMove;
+import godeck.models.client.ClientGameMove;
 import godeck.utils.ErrorHandler;
 import godeck.utils.JSON;
 import godeck.utils.Printer;
@@ -120,7 +120,7 @@ public class GameClient extends GodeckThread {
      * @param msg The move string to be sent.
      */
     private void sendMove(String msg) {
-        GameMove move = (GameMove) JSON.construct(msg, GameMove.class);
+        ClientGameMove move = (ClientGameMove) JSON.construct(msg, ClientGameMove.class);
         gameInstance.tryMove(number, move);
     }
 

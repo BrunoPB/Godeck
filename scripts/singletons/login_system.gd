@@ -4,20 +4,35 @@ extends Node
 @onready var token = get_node("/root/Token")
 @onready var http = HTTPRequest.new()
 
+var test : int = 0
+var debugtest = TCPServer.new()
+
 signal login_status(bool)
 
+func _ready():
+	###############################################################
+	# TODO: DEBUG
+	if debugtest.listen(5005) == OK:
+		test = 1
+	else:
+		test = 2
+	###############################################################
+
 func get_token():
-	var file = FileAccess.open(Address.TOKEN_PATH, FileAccess.READ)
+	var path = Address.TOKEN_PATH if test == 1 else (Address.TOKEN_PATH+"1") # TODO: DEBUG
+	var file = FileAccess.open(path, FileAccess.READ)
 	if file != null:
 		token.TOKEN = file.get_as_text()
 	else:
 		token.TOKEN = null
 
 func delete_token():
-	DirAccess.remove_absolute(Address.TOKEN_PATH)
+	var path = Address.TOKEN_PATH if test == 1 else (Address.TOKEN_PATH+"1") # TODO: DEBUG
+	DirAccess.remove_absolute(path)
 
 func store_new_token(new_token : String):
-	var file = FileAccess.open(Address.TOKEN_PATH, FileAccess.WRITE)
+	var path = Address.TOKEN_PATH if test == 1 else (Address.TOKEN_PATH+"1") # TODO: DEBUG
+	var file = FileAccess.open(path, FileAccess.WRITE)
 	if file != null:
 		token.TOKEN = new_token
 		file.store_string(token.TOKEN)
@@ -59,14 +74,3 @@ func start_user(result, response_code, headers, body):
 		push_error(login_response.message)
 		print(login_response.message)
 	login_status.emit(login_response.status)
-
-###############################################################
-# TODO: DEBUG
-#var debugtest = TCPServer.new()
-#if debugtest.listen(5000):
-#	http.request(Address.BASE_URL+"/test",PackedStringArray(),HTTPClient.METHOD_GET,"berenice@email.com")
-#elif debugtest.listen(5001):
-#	http.request(Address.BASE_URL+"/test",PackedStringArray(),HTTPClient.METHOD_GET,"catarina@email.com")
-#else:
-#	http.request(Address.BASE_URL+"/test",PackedStringArray(),HTTPClient.METHOD_GET,"dorival@email.com")
-###############################################################

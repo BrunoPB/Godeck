@@ -2,7 +2,6 @@ package godeck.models.client;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
@@ -48,10 +47,24 @@ public class ClientGame {
      */
     public ClientGame(ArrayList<ArrayList<InGameCard>> board, ArrayList<InGameCard> deck, boolean turn, int number,
             Opponent opponent, int turnTimeout) {
-        this.board = board.stream().map(row -> row.stream()
-                .map(card -> new ClientInGameCard(card)).toList())
-                .collect(Collectors.toCollection(ArrayList::new));
-        this.deck = deck.stream().map(card -> new ClientInGameCard(card)).toList();
+        this.board = new ArrayList<List<ClientInGameCard>>();
+        for (ArrayList<InGameCard> column : board) {
+            ArrayList<ClientInGameCard> newColumn = new ArrayList<ClientInGameCard>();
+            for (InGameCard card : column) {
+                if (card == null) {
+                    newColumn.add(null);
+                } else {
+                    newColumn.add(new ClientInGameCard(card));
+                }
+            }
+            this.board.add(newColumn);
+        }
+
+        this.deck = new ArrayList<ClientInGameCard>();
+        for (InGameCard card : deck) {
+            this.deck.add(new ClientInGameCard(card));
+        }
+
         this.turn = turn;
         this.number = number;
         this.opponent = opponent;
@@ -68,10 +81,24 @@ public class ClientGame {
      * @param turn  If it is the player's turn.
      */
     public void updateGameState(ArrayList<ArrayList<InGameCard>> board, ArrayList<InGameCard> deck, boolean turn) {
-        this.deck = deck.stream().map(card -> new ClientInGameCard(card)).toList();
-        this.board = board.stream().map(row -> row.stream()
-                .map(card -> new ClientInGameCard(card)).toList())
-                .collect(Collectors.toCollection(ArrayList::new));
+        this.board = new ArrayList<List<ClientInGameCard>>();
+        for (ArrayList<InGameCard> column : board) {
+            ArrayList<ClientInGameCard> newColumn = new ArrayList<ClientInGameCard>();
+            for (InGameCard card : column) {
+                if (card == null) {
+                    newColumn.add(null);
+                } else {
+                    newColumn.add(new ClientInGameCard(card));
+                }
+            }
+            this.board.add(newColumn);
+        }
+
+        this.deck = new ArrayList<ClientInGameCard>();
+        for (InGameCard card : deck) {
+            this.deck.add(new ClientInGameCard(card));
+        }
+
         this.turn = turn;
     }
 }

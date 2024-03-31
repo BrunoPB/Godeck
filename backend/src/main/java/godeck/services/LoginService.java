@@ -38,7 +38,7 @@ public class LoginService {
      * 
      * @return The response with the user and it's token.
      */
-    public LoginResponse loginGhostUser() {
+    public synchronized LoginResponse loginGhostUser() {
         try {
             User user = userService.generateGhostUser();
             userService.save(user);

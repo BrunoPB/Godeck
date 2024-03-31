@@ -37,10 +37,12 @@ public class ClientInGameCard {
      * @param inGameCard The InGameCard object.
      */
     public ClientInGameCard(InGameCard inGameCard) {
-        this.cardOwner = inGameCard.getCardOwner();
-        this.currentDominator = inGameCard.getCurrentDominator();
-        this.card = new ClientCard(inGameCard.getCard());
         this.exists = inGameCard.exists();
+        if (exists) {
+            this.cardOwner = inGameCard.getCardOwner();
+            this.currentDominator = inGameCard.getCurrentDominator();
+            this.card = new ClientCard(inGameCard.getCard());
+        }
     }
 
     // Public Methods

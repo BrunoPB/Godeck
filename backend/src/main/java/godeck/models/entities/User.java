@@ -7,8 +7,10 @@ import java.util.Set;
 import java.util.UUID;
 
 import godeck.utils.Randomizer;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -48,10 +50,10 @@ public class User {
     private Integer gold;
     @Column(name = "crystals", nullable = false)
     private Integer crystals;
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "user_deck", joinColumns = @JoinColumn(name = "game_character_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<Card> deck = new ArrayList<Card>();
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "user_collection", joinColumns = @JoinColumn(name = "game_character_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<Card> collection = new HashSet<Card>();
     @Column(name = "ghost", nullable = false)

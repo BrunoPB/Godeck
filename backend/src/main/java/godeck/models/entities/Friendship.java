@@ -3,6 +3,7 @@ package godeck.models.entities;
 import java.util.UUID;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -24,10 +25,10 @@ public class Friendship {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user0_id")
     private User user0;
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user1_id")
     private User user1;
 

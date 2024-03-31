@@ -18,7 +18,7 @@ public class ErrorHandler {
      * @param e The exception.
      */
     public static void message(Exception e) {
-        Printer.printError(e.getMessage());
+        Printer.printError(e.getClass().toString() + " > " + e.getMessage());
     }
 
     /**

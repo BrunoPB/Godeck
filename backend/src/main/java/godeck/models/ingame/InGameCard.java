@@ -2,6 +2,7 @@ package godeck.models.ingame;
 
 import org.springframework.stereotype.Component;
 
+import godeck.models.client.ClientInGameCard;
 import godeck.models.entities.Card;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -41,6 +42,19 @@ public class InGameCard {
         this.currentDominator = cardOwner;
         this.card = card;
         this.exists = true;
+    }
+
+    /**
+     * Constructor that receives a ClientInGameCard object and creates an InGameCard
+     * object.
+     * 
+     * @param cInGameCard The ClientInGameCard object.
+     */
+    public InGameCard(ClientInGameCard cInGameCard) {
+        this.cardOwner = cInGameCard.getCardOwner();
+        this.currentDominator = cInGameCard.getCurrentDominator();
+        this.card = new Card(cInGameCard.getCard());
+        this.exists = cInGameCard.exists();
     }
 
     // Public Methods

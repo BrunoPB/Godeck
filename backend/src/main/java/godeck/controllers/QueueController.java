@@ -32,12 +32,12 @@ public class QueueController {
     @PostMapping(path = "")
     @ResponseBody
     public QueueResponse queue(@RequestAttribute User user) {
-        return queueService.queue(user.getId().toString());
+        return queueService.queue(user);
     }
 
     @PostMapping(path = "/dequeue")
     @ResponseBody
     public QueueResponse dequeue(@RequestAttribute User user) {
-        return queueService.dequeue(user.getId().toString());
+        return queueService.dequeue(user);
     }
 }

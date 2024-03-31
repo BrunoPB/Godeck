@@ -1,6 +1,5 @@
 package godeck.services;
 
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -40,23 +39,6 @@ public class QueueService {
         this.userRepository = userRepository;
     }
 
-    // Private Methods
-
-    /**
-     * Returns the user from the database by its id. If the user does not exist, it
-     * throws an exception.
-     * 
-     * @param stringUserId The id of the user.
-     * @return The user from the database.
-     */
-    private User getUserById(String stringUserId) {
-        UUID userId = UUID.fromString(stringUserId);
-        if (userId == null) {
-            throw new IllegalArgumentException("User id cannot be null.");
-        }
-        return userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("User not found!"));
-    }
-
     // Public Methods
 
     /**
@@ -64,12 +46,10 @@ public class QueueService {
      * user is dequeued or the game is found. It returns the queue response for the
      * user. It is used by the controller to handle the queue http request.
      * 
-     * @param stringUserId The id of the user.
+     * @param user The user to be queued.
      * @return The queue response for the user.
      */
-    public QueueResponse queue(String stringUserId) {
-        User user = getUserById(stringUserId);
-
+    public QueueResponse queue(User user) {
         CompletableFuture<Integer> futurePort = new CompletableFuture<Integer>();
 
         QueueSingleton.getInstance().queue(new QueueItem(user, futurePort));
@@ -91,11 +71,10 @@ public class QueueService {
      * dequeue http request. It returns the queue response for the user. The queue
      * response status will always be false.
      * 
-     * @param stringUserId The id of the user.
+     * @param user The user to be dequeued.
      * @return The queue response for the user.
      */
-    public QueueResponse dequeue(String stringUserId) {
-        User user = getUserById(stringUserId);
+    public QueueResponse dequeue(User user) {
         QueueSingleton.getInstance().dequeue(user);
         return new QueueResponse(false, 0, "User removed from queue!");
     }

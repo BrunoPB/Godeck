@@ -9,20 +9,21 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
 import godeck.models.GodeckThread;
+import godeck.models.client.ClientGame;
+import godeck.models.client.ClientGameMove;
 import godeck.models.client.EndGameInfo;
 import godeck.models.client.Opponent;
-import godeck.models.client.ClientGame;
 import godeck.models.entities.User;
 import godeck.models.ingame.Game;
 import godeck.models.ingame.GameMove;
 import godeck.models.ingame.InGameCard;
 import godeck.utils.ErrorHandler;
 import godeck.utils.JSON;
+import godeck.utils.Printer;
 import lombok.NoArgsConstructor;
 
 /**
@@ -355,10 +356,12 @@ public class GameInstance extends GodeckThread {
      */
     public void setupGame(User user0, User user1, int port, int turnTimeout) {
         this.port = port;
-        ArrayList<InGameCard> deck0 = user0.getDeck().stream().map((card) -> new InGameCard(0, card))
-                .collect(Collectors.toCollection(ArrayList::new));
-        ArrayList<InGameCard> deck1 = user1.getDeck().stream().map((card) -> new InGameCard(1, card))
-                .collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<InGameCard> deck0 = new ArrayList<InGameCard>();
+        ArrayList<InGameCard> deck1 = new ArrayList<InGameCard>();
+        for (int i = 0; i < user0.getDeck().size(); i++) {
+            deck0.add(new InGameCard(0, user0.getDeck().get(i)));
+            deck1.add(new InGameCard(1, user1.getDeck().get(i)));
+        }
         game = new Game(deck0, deck1, turnTimeout);
         user0game = new ClientGame(game.getBoard(), deck0, true, 0, new Opponent(user1.getDisplayName()), turnTimeout);
         user1game = new ClientGame(game.getBoard(), deck1, false, 1, new Opponent(user0.getDisplayName()), turnTimeout);
@@ -371,13 +374,14 @@ public class GameInstance extends GodeckThread {
      * @param player The number of the player executing the move.
      * @param move   The move to be executed.
      */
-    public void tryMove(int player, GameMove move) {
+    public void tryMove(int player, ClientGameMove move) {
         try {
-            if (game.verifyMove(player, move)) {
-                game.executeMove(move);
+            GameMove gMove = new GameMove(player, move);
+            if (game.verifyMove(player, gMove)) {
+                game.executeMove(gMove);
                 game.resetTimer();
                 updateUsersGameState();
-                synchronizeClients(move);
+                synchronizeClients(gMove);
                 game.checkEndGame();
             }
         } catch (Exception e) {

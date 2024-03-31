@@ -2,6 +2,7 @@ package godeck.models.entities;
 
 import java.util.UUID;
 
+import godeck.models.client.ClientCard;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -53,6 +54,30 @@ public class Card {
     private int southWest;
     @Column(name = "northWest", nullable = false)
     private int northWest;
+
+    // Constructors
+
+    /**
+     * Constructor that receives a ClientCard object and creates a Card object.
+     * 
+     * @param cCard The ClientCard object.
+     */
+    public Card(ClientCard cCard) {
+        this.id = cCard.getId();
+        this.number = cCard.getNumber();
+        this.name = cCard.getCardName();
+        this.tier = cCard.getTier();
+        this.mythology = cCard.getMythology();
+        this.fileName = cCard.getFileName();
+        this.price = cCard.getPrice();
+        this.stars = cCard.getStars();
+        this.north = cCard.getNorth();
+        this.northEast = cCard.getNorthEast();
+        this.southEast = cCard.getSouthEast();
+        this.south = cCard.getSouth();
+        this.southWest = cCard.getSouthWest();
+        this.northWest = cCard.getNorthWest();
+    }
 
     // Methods
 

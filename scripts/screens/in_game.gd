@@ -60,7 +60,7 @@ func build_ui():
 	var seconds = game.time_limit%60
 	var time_string : String = "%02d" % seconds
 	s_timer.text = time_string
-	s_opponent_name.text = game.opponent.opponent_name
+	s_opponent_name.text = game.opponent.display_name
 	if current_turn:
 		s_turn_label.text = "YOUR TURN"
 	else:

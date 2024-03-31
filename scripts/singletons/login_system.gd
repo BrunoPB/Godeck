@@ -1,7 +1,7 @@
 extends Node
 
 @onready var user = get_node("/root/User")
-@onready var token_f = get_node("/root/Token")
+@onready var token = get_node("/root/Token")
 @onready var http = HTTPRequest.new()
 
 signal login_status(bool)
@@ -9,9 +9,9 @@ signal login_status(bool)
 func get_token():
 	var file = FileAccess.open(Address.TOKEN_PATH, FileAccess.READ)
 	if file != null:
-		token_f.TOKEN = file.get_as_text()
+		token.TOKEN = file.get_as_text()
 	else:
-		token_f.TOKEN = null
+		token.TOKEN = null
 
 func delete_token():
 	DirAccess.remove_absolute(Address.TOKEN_PATH)
@@ -19,26 +19,26 @@ func delete_token():
 func store_new_token(new_token : String):
 	var file = FileAccess.open(Address.TOKEN_PATH, FileAccess.WRITE)
 	if file != null:
-		token_f.TOKEN = new_token
-		file.store_string(token_f.TOKEN)
+		token.TOKEN = new_token
+		file.store_string(token.TOKEN)
 
 # TODO: Implement completed function
 func login():
 	add_child(http)
 	if check_token():
 		await get_user_data()
-	elif token_f.TOKEN != null:
-		pass # TODO: Expired token_f.TOKEN, show login screen
+	elif token.TOKEN != null:
+		pass # TODO: Expired token, show login screen
 	else:
 		await start_ghost_user()
 	http.queue_free()
 
 func check_token() -> bool:
-	return token_f.TOKEN != null
+	return token.TOKEN != null
 
 func get_user_data():
 	http.request_completed.connect(start_user)
-	http.request(Address.BASE_URL+"/login",PackedStringArray(),HTTPClient.METHOD_POST,token_f.TOKEN)
+	http.request(Address.BASE_URL+"/login",PackedStringArray(),HTTPClient.METHOD_POST,token.TOKEN)
 	await http.request_completed
 
 func start_ghost_user():

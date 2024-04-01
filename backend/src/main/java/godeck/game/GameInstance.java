@@ -9,6 +9,9 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.springframework.stereotype.Component;
 
@@ -37,6 +40,8 @@ import lombok.NoArgsConstructor;
 public class GameInstance extends GodeckThread {
     // Properties
 
+    private final int SOCKET_MAX_TRIES = 3;
+
     private int port;
     private Game game;
     private ClientGame user0game;
@@ -44,14 +49,100 @@ public class GameInstance extends GodeckThread {
     private GameClient user0Client;
     private GameClient user1Client;
     private ServerSocket server;
-    private DataOutputStream out0;
-    private DataOutputStream out1;
     private Socket socket0;
     private Socket socket1;
+    private DataOutputStream out0;
+    private DataOutputStream out1;
     private DataInputStream in0;
     private DataInputStream in1;
 
     // Private Methods
+
+    private void setupGameServerAndClients() throws Exception {
+        server = new ServerSocket(port);
+        server.setSoTimeout(5000); // 5 seconds timeout
+        try {
+            initiateClientSockets();
+        } catch (SocketTimeoutException | TimeoutException e) {
+            if (socket0 != null && socket0.isBound()) {
+                initiateSocket0DataStreams();
+                out0.writeBytes("Error:Opponent could not connect.\n");
+            }
+            closeServer();
+            throw new SocketTimeoutException("Player could not connect.");
+        }
+        sendInitialInfoToClients();
+    }
+
+    private void initiateClientSockets()
+            throws SocketTimeoutException, TimeoutException, IOException {
+        for (int i = 0; i < SOCKET_MAX_TRIES; i++) {
+            socket0 = server.accept();
+            initiateSocket0DataStreams();
+            try {
+                setupGameClient0();
+                i = SOCKET_MAX_TRIES;
+            } catch (ExecutionException | InterruptedException e) {
+                user0Client.kill();
+                user0Client.killed.join();
+            }
+        }
+        for (int i = 0; i < SOCKET_MAX_TRIES; i++) {
+            socket1 = server.accept();
+            initiateSocket1DataStreams();
+            try {
+                setupGameClient1();
+                i = SOCKET_MAX_TRIES;
+            } catch (ExecutionException | InterruptedException e) {
+                user1Client.kill();
+                user1Client.killed.join();
+            }
+        }
+    }
+
+    private void initiateSocket0DataStreams() throws IOException {
+        in0 = new DataInputStream(new BufferedInputStream(socket0.getInputStream()));
+        in0.readByte();
+        out0 = new DataOutputStream(socket0.getOutputStream());
+    }
+
+    private void setupGameClient0() throws TimeoutException, ExecutionException, InterruptedException {
+        user0Client = new GameClient();
+        user0Client.setupGameClient(0, this, in0);
+        user0Client.start();
+        user0Client.ready.get(3, TimeUnit.SECONDS);
+    }
+
+    private void initiateSocket1DataStreams() throws IOException {
+        in1 = new DataInputStream(new BufferedInputStream(socket1.getInputStream()));
+        in1.readByte();
+        out1 = new DataOutputStream(socket1.getOutputStream());
+    }
+
+    private void setupGameClient1() throws TimeoutException, ExecutionException, InterruptedException {
+        user1Client = new GameClient();
+        user1Client.setupGameClient(1, this, in1);
+        user1Client.start();
+        user1Client.ready.get(3, TimeUnit.SECONDS);
+    }
+
+    private void checkClient0Ready(String msg) {
+        // TODO: Decrypt msg
+        if (msg.equals("Ready:")) {
+            user0Client.ready.complete(null);
+        } else {
+            user0Client.ready.completeExceptionally(new Exception());
+        }
+    }
+
+    private void checkClient1Ready(String msg) {
+        // TODO: Decrypt msg
+        if (msg.equals("Ready:")) {
+            user1Client.ready.complete(null);
+        } else {
+            user1Client.ready.completeExceptionally(new Exception());
+        }
+    }
 
     /**
      * Allocates a port for the game server, connects the clients and initiates data
@@ -64,10 +155,9 @@ public class GameInstance extends GodeckThread {
         server = new ServerSocket(port);
         server.setSoTimeout(5000); // 5 seconds timeout
         try {
-            socket0 = server.accept();
-            socket1 = server.accept();
+            initiateClientSockets();
         } catch (SocketTimeoutException e) {
-            if (socket0.isBound()) {
+            if (socket0 != null && socket0.isBound()) {
                 in0 = new DataInputStream(new BufferedInputStream(socket0.getInputStream()));
                 in0.readByte();
                 out0 = new DataOutputStream(socket0.getOutputStream());
@@ -366,6 +456,19 @@ public class GameInstance extends GodeckThread {
         user1game = new ClientGame(game.getBoard(), deck1, false, 1, new Opponent(user0.getDisplayName()), turnTimeout);
     }
 
+    public void checkClientReady(int number, String msg) {
+        switch (number) {
+            case 0:
+                checkClient0Ready(msg);
+                break;
+            case 1:
+                checkClient1Ready(msg);
+                break;
+            default:
+                throw new IllegalArgumentException("There is no client number " + number + " in the game.");
+        }
+    }
+
     /**
      * Tries to execute a move in the game. If the move is valid, synchronizes the
      * clients with the new game state.
@@ -403,8 +506,9 @@ public class GameInstance extends GodeckThread {
     @Override
     public void run() {
         try {
-            setupGameServer();
-            setupGameClients();
+            // setupGameServer();
+            // setupGameClients();
+            setupGameServerAndClients();
             gameLoop();
             stopClients();
             endGame();

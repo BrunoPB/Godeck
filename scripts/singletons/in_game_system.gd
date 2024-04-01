@@ -31,7 +31,7 @@ func establish_connection():
 			push_error("An error has occurred while establishing connection to the server. Error: " + str(e))
 			return false
 		check_connection_status()
-		send_tcp("Ready:true")
+		send_tcp("Ready:")
 		return true
 	else:
 		push_error("Set socket port first.")

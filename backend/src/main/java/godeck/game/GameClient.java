@@ -29,7 +29,8 @@ public class GameClient extends GodeckThread {
     private int number;
     private DataInputStream in;
     private GameInstance gameInstance;
-    public CompletableFuture<Boolean> ready = new CompletableFuture<Boolean>();
+    private boolean setted;
+    public CompletableFuture<Void> ready;
 
     // Constructors
 
@@ -51,7 +52,12 @@ public class GameClient extends GodeckThread {
                 }
                 msg += charChar;
             }
-            decodeMessage(preProcessMessage(msg));
+            if (setted) {
+                decodeMessage(preProcessMessage(msg));
+            } else {
+                gameInstance.checkClientReady(number, preProcessMessage(msg));
+                ready.join();
+            }
         }
         ThreadUtils.sleep(10);
     }
@@ -101,9 +107,7 @@ public class GameClient extends GodeckThread {
         int index = msg.indexOf(":");
         String command = msg.substring(0, index);
         String parameter = msg.substring(index + 1);
-        if (command.equals("Ready")) {
-            ready.complete(Boolean.parseBoolean(parameter));
-        } else if (command.equals("GameMove")) {
+        if (command.equals("GameMove")) {
             sendMove(parameter);
         } else if (command.equals("Lose")) {
             gameInstance.declareSurrender(number);
@@ -137,6 +141,15 @@ public class GameClient extends GodeckThread {
         this.number = number;
         this.gameInstance = gameInstance;
         this.in = in;
+        this.setted = false;
+        ready = new CompletableFuture<>();
+        ready.thenAccept((p) -> {
+            set();
+        });
+    }
+
+    public void set() {
+        setted = true;
     }
 
     /**

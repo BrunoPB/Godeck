@@ -49,7 +49,7 @@ tcp_stream.put_string("Ready:true".uri_encode() + "\n")
 
 ### Client commands
 
--   `Ready` Notify the Server that the Client is ready to receive messages. Should get "true" or "false" as parameter
+-   `Ready` Notify the Server that the Client is ready to receive messages. Does not receive parameters
 -   `GameMove` Tries to make a move in the game, the game move might not be made, it is up to the server to decide. Should get a `GameMove` json string as parameter
 -   `Lose` Notify the Server that this Client has lost the game. Should get the reason ("Surrender", "Connection") as parameter
 

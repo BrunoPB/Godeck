@@ -34,7 +34,7 @@ func update_time(delta):
 		s_time_label.text = time_string
 
 func check_queue(game_found):
-	if(game_found):
+	if game_found:
 		prepare_game()
 	else:
 		get_tree().change_scene_to_file("res://scenes/main_menu/main_menu.tscn")

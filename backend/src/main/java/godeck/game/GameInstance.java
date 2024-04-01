@@ -44,12 +44,12 @@ public class GameInstance extends GodeckThread {
 
     private int port;
     private Game game;
-    private ArrayList<ClientGame> clientGame = new ArrayList<ClientGame>();
-    private ArrayList<GameClient> gameClient = new ArrayList<GameClient>();
     private ServerSocket server;
-    private ArrayList<Socket> socket = new ArrayList<Socket>();
-    private ArrayList<DataOutputStream> out = new ArrayList<DataOutputStream>();
-    private ArrayList<DataInputStream> in = new ArrayList<DataInputStream>();
+    private ClientGame[] clientGame = { null, null };
+    private GameClient[] gameClient = { null, null };
+    private Socket[] socket = { null, null };
+    private DataOutputStream[] out = { null, null };
+    private DataInputStream[] in = { null, null };
 
     // Private Methods
 
@@ -65,9 +65,9 @@ public class GameInstance extends GodeckThread {
         try {
             initiateClientSockets();
         } catch (SocketTimeoutException | TimeoutException e) {
-            if (socket.get(0) != null && socket.get(0).isBound()) {
+            if (socket[0] != null && socket[0].isBound()) {
                 initiateSocketDataStreams(0);
-                out.get(0).writeBytes("Error:Opponent could not connect.\n");
+                out[0].writeBytes("Error:Opponent could not connect.\n");
             }
             closeServer();
             throw new SocketTimeoutException("Player could not connect.");
@@ -88,25 +88,25 @@ public class GameInstance extends GodeckThread {
     private void initiateClientSockets()
             throws SocketTimeoutException, TimeoutException, IOException {
         for (int i = 0; i < SOCKET_MAX_TRIES; i++) {
-            socket.set(0, server.accept());
+            socket[0] = server.accept();
             initiateSocketDataStreams(0);
             try {
                 setupGameClient(0);
                 i = SOCKET_MAX_TRIES;
             } catch (ExecutionException | InterruptedException e) {
-                gameClient.get(0).kill();
-                gameClient.get(0).killed.join();
+                gameClient[0].kill();
+                gameClient[0].killed.join();
             }
         }
         for (int i = 0; i < SOCKET_MAX_TRIES; i++) {
-            socket.set(1, server.accept());
+            socket[1] = server.accept();
             initiateSocketDataStreams(1);
             try {
                 setupGameClient(1);
                 i = SOCKET_MAX_TRIES;
             } catch (ExecutionException | InterruptedException e) {
-                gameClient.get(1).kill();
-                gameClient.get(1).killed.join();
+                gameClient[1].kill();
+                gameClient[1].killed.join();
             }
         }
     }
@@ -118,9 +118,9 @@ public class GameInstance extends GodeckThread {
      * @throws IOException If a message could not be received
      */
     private void initiateSocketDataStreams(int n) throws IOException {
-        in.set(n, new DataInputStream(new BufferedInputStream(socket.get(n).getInputStream())));
-        in.get(n).readByte();
-        out.set(n, new DataOutputStream(socket.get(n).getOutputStream()));
+        in[n] = new DataInputStream(new BufferedInputStream(socket[n].getInputStream()));
+        in[n].readByte();
+        out[n] = new DataOutputStream(socket[n].getOutputStream());
     }
 
     /**
@@ -133,9 +133,9 @@ public class GameInstance extends GodeckThread {
      *                              waiting for the answer
      */
     private void setupGameClient(int n) throws TimeoutException, ExecutionException, InterruptedException {
-        gameClient.get(n).setupGameClient(n, this, in.get(n));
-        gameClient.get(n).start();
-        gameClient.get(n).ready.get(3, TimeUnit.SECONDS);
+        gameClient[n].setupGameClient(n, this, in[n]);
+        gameClient[n].start();
+        gameClient[n].ready.get(3, TimeUnit.SECONDS);
     }
 
     /**
@@ -145,10 +145,10 @@ public class GameInstance extends GodeckThread {
      * @throws IOException If the message could not be sent.
      */
     private void sendMessageToClients(String message) throws IOException {
-        out.get(0).flush();
-        out.get(1).flush();
-        out.get(0).writeBytes(message + "\n");
-        out.get(1).writeBytes(message + "\n");
+        out[0].flush();
+        out[1].flush();
+        out[0].writeBytes(message + "\n");
+        out[1].writeBytes(message + "\n");
     }
 
     /**
@@ -159,10 +159,10 @@ public class GameInstance extends GodeckThread {
      * @throws IOException If the messages could not be sent.
      */
     private void sendMessageToClients(String message0, String message1) throws IOException {
-        out.get(0).flush();
-        out.get(1).flush();
-        out.get(0).writeBytes(message0 + "\n");
-        out.get(1).writeBytes(message1 + "\n");
+        out[0].flush();
+        out[1].flush();
+        out[0].writeBytes(message0 + "\n");
+        out[1].writeBytes(message1 + "\n");
     }
 
     /**
@@ -198,8 +198,8 @@ public class GameInstance extends GodeckThread {
      * @throws IOException If the opponent information could not be sent.
      */
     private void sendOpponentInfo() throws IOException {
-        String m0 = "OpponentInfo:" + JSON.stringify(clientGame.get(0).getOpponent());
-        String m1 = "OpponentInfo:" + JSON.stringify(clientGame.get(1).getOpponent());
+        String m0 = "OpponentInfo:" + JSON.stringify(clientGame[0].getOpponent());
+        String m1 = "OpponentInfo:" + JSON.stringify(clientGame[1].getOpponent());
         sendMessageToClients(m0, m1);
     }
 
@@ -209,8 +209,8 @@ public class GameInstance extends GodeckThread {
      * @throws IOException If the decks could not be sent.
      */
     private void sendClientDeck() throws IOException {
-        String m0 = "Deck:" + JSON.stringify(clientGame.get(0).getDeck());
-        String m1 = "Deck:" + JSON.stringify(clientGame.get(1).getDeck());
+        String m0 = "Deck:" + JSON.stringify(clientGame[0].getDeck());
+        String m1 = "Deck:" + JSON.stringify(clientGame[1].getDeck());
         sendMessageToClients(m0, m1);
     }
 
@@ -220,8 +220,8 @@ public class GameInstance extends GodeckThread {
      * @throws IOException If the boards could not be sent.
      */
     private void sendClientBoard() throws IOException {
-        String m0 = "Board:" + JSON.stringify(clientGame.get(0).getBoard());
-        String m1 = "Board:" + JSON.stringify(clientGame.get(1).getBoard());
+        String m0 = "Board:" + JSON.stringify(clientGame[0].getBoard());
+        String m1 = "Board:" + JSON.stringify(clientGame[1].getBoard());
         sendMessageToClients(m0, m1);
     }
 
@@ -308,8 +308,8 @@ public class GameInstance extends GodeckThread {
      * Updates the game state of both users.
      */
     private void updateUsersGameState() {
-        clientGame.get(0).updateGameState(game.getBoard(), game.getDeck0(), game.getTurn() == 0);
-        clientGame.get(1).updateGameState(game.getBoard(), game.getDeck1(), game.getTurn() == 1);
+        clientGame[0].updateGameState(game.getBoard(), game.getDeck0(), game.getTurn() == 0);
+        clientGame[1].updateGameState(game.getBoard(), game.getDeck1(), game.getTurn() == 1);
     }
 
     /**
@@ -333,18 +333,18 @@ public class GameInstance extends GodeckThread {
      * @throws IOException If the server could not be closed.
      */
     private void closeServer() throws IOException {
-        if (in.get(0) != null)
-            in.get(0).close();
-        if (in.get(1) != null)
-            in.get(1).close();
-        if (out.get(0) != null)
-            out.get(0).close();
-        if (out.get(1) != null)
-            out.get(1).close();
-        if (socket.get(0) != null)
-            socket.get(0).close();
-        if (socket.get(1) != null)
-            socket.get(1).close();
+        if (in[0] != null)
+            in[0].close();
+        if (in[1] != null)
+            in[1].close();
+        if (out[0] != null)
+            out[0].close();
+        if (out[1] != null)
+            out[1].close();
+        if (socket[0] != null)
+            socket[0].close();
+        if (socket[1] != null)
+            socket[1].close();
         if (server != null)
             server.close();
     }
@@ -365,9 +365,9 @@ public class GameInstance extends GodeckThread {
      * Stops both game clients, killing their threads. Waits for them to be dead.
      */
     private void stopClients() {
-        gameClient.get(0).kill();
-        gameClient.get(1).kill();
-        CompletableFuture.allOf(gameClient.get(0).killed, gameClient.get(1).killed).join();
+        gameClient[0].kill();
+        gameClient[1].kill();
+        CompletableFuture.allOf(gameClient[0].killed, gameClient[1].killed).join();
     }
 
     // Public Methods
@@ -392,30 +392,21 @@ public class GameInstance extends GodeckThread {
 
         game = new Game(deck0, deck1, turnTimeout);
 
-        clientGame.add(
-                new ClientGame(game.getBoard(), deck0, true, 0, new Opponent(user1.getDisplayName()), turnTimeout));
-        clientGame.add(
-                new ClientGame(game.getBoard(), deck1, false, 1, new Opponent(user0.getDisplayName()), turnTimeout));
+        clientGame[0] = new ClientGame(game.getBoard(), deck0, true, 0, new Opponent(user1.getDisplayName()),
+                turnTimeout);
+        clientGame[1] = new ClientGame(game.getBoard(), deck1, false, 1, new Opponent(user0.getDisplayName()),
+                turnTimeout);
 
-        gameClient.add(new GameClient());
-        gameClient.add(new GameClient());
-
-        socket.add(null);
-        socket.add(null);
-
-        in.add(null);
-        in.add(null);
-
-        out.add(null);
-        out.add(null);
+        gameClient[0] = new GameClient();
+        gameClient[1] = new GameClient();
     }
 
     public void checkClientReady(int n, String msg) {
         // TODO: Decrypt msg
         if (msg.equals("Ready:")) {
-            gameClient.get(n).ready.complete(null);
+            gameClient[n].ready.complete(null);
         } else {
-            gameClient.get(n).ready.completeExceptionally(new Exception());
+            gameClient[n].ready.completeExceptionally(new Exception());
         }
     }
 

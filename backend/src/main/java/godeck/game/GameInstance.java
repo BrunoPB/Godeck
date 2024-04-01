@@ -44,29 +44,30 @@ public class GameInstance extends GodeckThread {
 
     private int port;
     private Game game;
-    private ClientGame user0game;
-    private ClientGame user1game;
-    private GameClient user0Client;
-    private GameClient user1Client;
+    private ArrayList<ClientGame> clientGame = new ArrayList<ClientGame>();
+    private ArrayList<GameClient> gameClient = new ArrayList<GameClient>();
     private ServerSocket server;
-    private Socket socket0;
-    private Socket socket1;
-    private DataOutputStream out0;
-    private DataOutputStream out1;
-    private DataInputStream in0;
-    private DataInputStream in1;
+    private ArrayList<Socket> socket = new ArrayList<Socket>();
+    private ArrayList<DataOutputStream> out = new ArrayList<DataOutputStream>();
+    private ArrayList<DataInputStream> in = new ArrayList<DataInputStream>();
 
     // Private Methods
 
+    /**
+     * Starts the server and both game clients so the game can start.
+     * 
+     * @throws Exception If the server could not be created or the
+     *                   clients could not connect.
+     */
     private void setupGameServerAndClients() throws Exception {
         server = new ServerSocket(port);
         server.setSoTimeout(5000); // 5 seconds timeout
         try {
             initiateClientSockets();
         } catch (SocketTimeoutException | TimeoutException e) {
-            if (socket0 != null && socket0.isBound()) {
-                initiateSocket0DataStreams();
-                out0.writeBytes("Error:Opponent could not connect.\n");
+            if (socket.get(0) != null && socket.get(0).isBound()) {
+                initiateSocketDataStreams(0);
+                out.get(0).writeBytes("Error:Opponent could not connect.\n");
             }
             closeServer();
             throw new SocketTimeoutException("Player could not connect.");
@@ -74,131 +75,67 @@ public class GameInstance extends GodeckThread {
         sendInitialInfoToClients();
     }
 
+    /**
+     * Initiate both client sockets based on the server. Tries at a maximum of
+     * SOCKET_MAX_TRIES times. If the client connects and send the wrong message,
+     * tries again.
+     * 
+     * @throws SocketTimeoutException If no client connects in time
+     * @throws TimeoutException       If the client that connect does not answer in
+     *                                time
+     * @throws IOException            If the message could not be received
+     */
     private void initiateClientSockets()
             throws SocketTimeoutException, TimeoutException, IOException {
         for (int i = 0; i < SOCKET_MAX_TRIES; i++) {
-            socket0 = server.accept();
-            initiateSocket0DataStreams();
+            socket.set(0, server.accept());
+            initiateSocketDataStreams(0);
             try {
-                setupGameClient0();
+                setupGameClient(0);
                 i = SOCKET_MAX_TRIES;
             } catch (ExecutionException | InterruptedException e) {
-                user0Client.kill();
-                user0Client.killed.join();
+                gameClient.get(0).kill();
+                gameClient.get(0).killed.join();
             }
         }
         for (int i = 0; i < SOCKET_MAX_TRIES; i++) {
-            socket1 = server.accept();
-            initiateSocket1DataStreams();
+            socket.set(1, server.accept());
+            initiateSocketDataStreams(1);
             try {
-                setupGameClient1();
+                setupGameClient(1);
                 i = SOCKET_MAX_TRIES;
             } catch (ExecutionException | InterruptedException e) {
-                user1Client.kill();
-                user1Client.killed.join();
+                gameClient.get(1).kill();
+                gameClient.get(1).killed.join();
             }
         }
     }
 
-    private void initiateSocket0DataStreams() throws IOException {
-        in0 = new DataInputStream(new BufferedInputStream(socket0.getInputStream()));
-        in0.readByte();
-        out0 = new DataOutputStream(socket0.getOutputStream());
-    }
-
-    private void setupGameClient0() throws TimeoutException, ExecutionException, InterruptedException {
-        user0Client = new GameClient();
-        user0Client.setupGameClient(0, this, in0);
-        user0Client.start();
-        user0Client.ready.get(3, TimeUnit.SECONDS);
-    }
-
-    private void initiateSocket1DataStreams() throws IOException {
-        in1 = new DataInputStream(new BufferedInputStream(socket1.getInputStream()));
-        in1.readByte();
-        out1 = new DataOutputStream(socket1.getOutputStream());
-    }
-
-    private void setupGameClient1() throws TimeoutException, ExecutionException, InterruptedException {
-        user1Client = new GameClient();
-        user1Client.setupGameClient(1, this, in1);
-        user1Client.start();
-        user1Client.ready.get(3, TimeUnit.SECONDS);
-    }
-
-    private void checkClient0Ready(String msg) {
-        // TODO: Decrypt msg
-        if (msg.equals("Ready:")) {
-            user0Client.ready.complete(null);
-        } else {
-            user0Client.ready.completeExceptionally(new Exception());
-        }
-    }
-
-    private void checkClient1Ready(String msg) {
-        // TODO: Decrypt msg
-        if (msg.equals("Ready:")) {
-            user1Client.ready.complete(null);
-        } else {
-            user1Client.ready.completeExceptionally(new Exception());
-        }
+    /**
+     * Initiate both input and out data streams of a single client
+     * 
+     * @param n The client number
+     * @throws IOException If a message could not be received
+     */
+    private void initiateSocketDataStreams(int n) throws IOException {
+        in.set(n, new DataInputStream(new BufferedInputStream(socket.get(n).getInputStream())));
+        in.get(n).readByte();
+        out.set(n, new DataOutputStream(socket.get(n).getOutputStream()));
     }
 
     /**
-     * Allocates a port for the game server, connects the clients and initiates data
-     * streams.
+     * Setup and starts a game client. Waits for it to send the ready message
      * 
-     * @throws Exception If the server could not be created or the
-     *                   clients could not connect.
+     * @param n the client number
+     * @throws TimeoutException     If the client does not answer in time
+     * @throws ExecutionException   If the client is not ready when it should be
+     * @throws InterruptedException If the game client thread is interrupted while
+     *                              waiting for the answer
      */
-    private void setupGameServer() throws Exception {
-        server = new ServerSocket(port);
-        server.setSoTimeout(5000); // 5 seconds timeout
-        try {
-            initiateClientSockets();
-        } catch (SocketTimeoutException e) {
-            if (socket0 != null && socket0.isBound()) {
-                in0 = new DataInputStream(new BufferedInputStream(socket0.getInputStream()));
-                in0.readByte();
-                out0 = new DataOutputStream(socket0.getOutputStream());
-                out0.writeBytes("Error:Opponent could not connect.\n");
-            }
-            closeServer();
-            throw new SocketTimeoutException("Opponent could not connect.");
-        }
-        initiateDataStreams();
-    }
-
-    /**
-     * Initiates the server data input and output streams.
-     * 
-     * @throws IOException If the data input stream could not read the first byte.
-     */
-    private void initiateDataStreams() throws IOException {
-        in0 = new DataInputStream(new BufferedInputStream(socket0.getInputStream()));
-        in1 = new DataInputStream(new BufferedInputStream(socket1.getInputStream()));
-        in0.readByte();
-        in1.readByte();
-        out0 = new DataOutputStream(socket0.getOutputStream());
-        out1 = new DataOutputStream(socket1.getOutputStream());
-    }
-
-    /**
-     * Starts both game clients, waits for them to be ready and sends their
-     * respective numbers.
-     * 
-     * @throws IOException If the clients could not be started or if they could not
-     *                     be synchronized.
-     */
-    private void setupGameClients() throws IOException {
-        user0Client = new GameClient();
-        user0Client.setupGameClient(0, this, in0);
-        user1Client = new GameClient();
-        user1Client.setupGameClient(1, this, in1);
-        user0Client.start();
-        user1Client.start();
-        CompletableFuture.allOf(user0Client.ready, user1Client.ready).join();
-        sendInitialInfoToClients();
+    private void setupGameClient(int n) throws TimeoutException, ExecutionException, InterruptedException {
+        gameClient.get(n).setupGameClient(n, this, in.get(n));
+        gameClient.get(n).start();
+        gameClient.get(n).ready.get(3, TimeUnit.SECONDS);
     }
 
     /**
@@ -208,10 +145,10 @@ public class GameInstance extends GodeckThread {
      * @throws IOException If the message could not be sent.
      */
     private void sendMessageToClients(String message) throws IOException {
-        out0.flush();
-        out1.flush();
-        out0.writeBytes(message + "\n");
-        out1.writeBytes(message + "\n");
+        out.get(0).flush();
+        out.get(1).flush();
+        out.get(0).writeBytes(message + "\n");
+        out.get(1).writeBytes(message + "\n");
     }
 
     /**
@@ -222,10 +159,10 @@ public class GameInstance extends GodeckThread {
      * @throws IOException If the messages could not be sent.
      */
     private void sendMessageToClients(String message0, String message1) throws IOException {
-        out0.flush();
-        out1.flush();
-        out0.writeBytes(message0 + "\n");
-        out1.writeBytes(message1 + "\n");
+        out.get(0).flush();
+        out.get(1).flush();
+        out.get(0).writeBytes(message0 + "\n");
+        out.get(1).writeBytes(message1 + "\n");
     }
 
     /**
@@ -261,8 +198,8 @@ public class GameInstance extends GodeckThread {
      * @throws IOException If the opponent information could not be sent.
      */
     private void sendOpponentInfo() throws IOException {
-        String m0 = "OpponentInfo:" + JSON.stringify(user0game.getOpponent());
-        String m1 = "OpponentInfo:" + JSON.stringify(user1game.getOpponent());
+        String m0 = "OpponentInfo:" + JSON.stringify(clientGame.get(0).getOpponent());
+        String m1 = "OpponentInfo:" + JSON.stringify(clientGame.get(1).getOpponent());
         sendMessageToClients(m0, m1);
     }
 
@@ -272,8 +209,8 @@ public class GameInstance extends GodeckThread {
      * @throws IOException If the decks could not be sent.
      */
     private void sendClientDeck() throws IOException {
-        String m0 = "Deck:" + JSON.stringify(user0game.getDeck());
-        String m1 = "Deck:" + JSON.stringify(user1game.getDeck());
+        String m0 = "Deck:" + JSON.stringify(clientGame.get(0).getDeck());
+        String m1 = "Deck:" + JSON.stringify(clientGame.get(1).getDeck());
         sendMessageToClients(m0, m1);
     }
 
@@ -283,8 +220,8 @@ public class GameInstance extends GodeckThread {
      * @throws IOException If the boards could not be sent.
      */
     private void sendClientBoard() throws IOException {
-        String m0 = "Board:" + JSON.stringify(user0game.getBoard());
-        String m1 = "Board:" + JSON.stringify(user1game.getBoard());
+        String m0 = "Board:" + JSON.stringify(clientGame.get(0).getBoard());
+        String m1 = "Board:" + JSON.stringify(clientGame.get(1).getBoard());
         sendMessageToClients(m0, m1);
     }
 
@@ -371,8 +308,8 @@ public class GameInstance extends GodeckThread {
      * Updates the game state of both users.
      */
     private void updateUsersGameState() {
-        user0game.updateGameState(game.getBoard(), game.getDeck0(), game.getTurn() == 0);
-        user1game.updateGameState(game.getBoard(), game.getDeck1(), game.getTurn() == 1);
+        clientGame.get(0).updateGameState(game.getBoard(), game.getDeck0(), game.getTurn() == 0);
+        clientGame.get(1).updateGameState(game.getBoard(), game.getDeck1(), game.getTurn() == 1);
     }
 
     /**
@@ -396,18 +333,18 @@ public class GameInstance extends GodeckThread {
      * @throws IOException If the server could not be closed.
      */
     private void closeServer() throws IOException {
-        if (in0 != null)
-            in0.close();
-        if (in1 != null)
-            in1.close();
-        if (out0 != null)
-            out0.close();
-        if (out1 != null)
-            out1.close();
-        if (socket0 != null)
-            socket0.close();
-        if (socket1 != null)
-            socket1.close();
+        if (in.get(0) != null)
+            in.get(0).close();
+        if (in.get(1) != null)
+            in.get(1).close();
+        if (out.get(0) != null)
+            out.get(0).close();
+        if (out.get(1) != null)
+            out.get(1).close();
+        if (socket.get(0) != null)
+            socket.get(0).close();
+        if (socket.get(1) != null)
+            socket.get(1).close();
         if (server != null)
             server.close();
     }
@@ -428,9 +365,9 @@ public class GameInstance extends GodeckThread {
      * Stops both game clients, killing their threads. Waits for them to be dead.
      */
     private void stopClients() {
-        user0Client.kill();
-        user1Client.kill();
-        CompletableFuture.allOf(user0Client.killed, user1Client.killed).join();
+        gameClient.get(0).kill();
+        gameClient.get(1).kill();
+        CompletableFuture.allOf(gameClient.get(0).killed, gameClient.get(1).killed).join();
     }
 
     // Public Methods
@@ -445,27 +382,40 @@ public class GameInstance extends GodeckThread {
      */
     public void setupGame(User user0, User user1, int port, int turnTimeout) {
         this.port = port;
+
         ArrayList<InGameCard> deck0 = new ArrayList<InGameCard>();
         ArrayList<InGameCard> deck1 = new ArrayList<InGameCard>();
         for (int i = 0; i < user0.getDeck().size(); i++) {
             deck0.add(new InGameCard(0, user0.getDeck().get(i)));
             deck1.add(new InGameCard(1, user1.getDeck().get(i)));
         }
+
         game = new Game(deck0, deck1, turnTimeout);
-        user0game = new ClientGame(game.getBoard(), deck0, true, 0, new Opponent(user1.getDisplayName()), turnTimeout);
-        user1game = new ClientGame(game.getBoard(), deck1, false, 1, new Opponent(user0.getDisplayName()), turnTimeout);
+
+        clientGame.add(
+                new ClientGame(game.getBoard(), deck0, true, 0, new Opponent(user1.getDisplayName()), turnTimeout));
+        clientGame.add(
+                new ClientGame(game.getBoard(), deck1, false, 1, new Opponent(user0.getDisplayName()), turnTimeout));
+
+        gameClient.add(new GameClient());
+        gameClient.add(new GameClient());
+
+        socket.add(null);
+        socket.add(null);
+
+        in.add(null);
+        in.add(null);
+
+        out.add(null);
+        out.add(null);
     }
 
-    public void checkClientReady(int number, String msg) {
-        switch (number) {
-            case 0:
-                checkClient0Ready(msg);
-                break;
-            case 1:
-                checkClient1Ready(msg);
-                break;
-            default:
-                throw new IllegalArgumentException("There is no client number " + number + " in the game.");
+    public void checkClientReady(int n, String msg) {
+        // TODO: Decrypt msg
+        if (msg.equals("Ready:")) {
+            gameClient.get(n).ready.complete(null);
+        } else {
+            gameClient.get(n).ready.completeExceptionally(new Exception());
         }
     }
 
@@ -506,8 +456,6 @@ public class GameInstance extends GodeckThread {
     @Override
     public void run() {
         try {
-            // setupGameServer();
-            // setupGameClients();
             setupGameServerAndClients();
             gameLoop();
             stopClients();

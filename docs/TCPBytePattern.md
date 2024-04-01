@@ -41,10 +41,10 @@ The Client should always use the `StreamPeerTCP.put_string(string)` method to se
 
 -   **IMPORTANT**: Due to a bug in Godot Engine, special characters can not be sent through TCP/IP connection. To deal with this, all messages from Client to Server should be encoded using the URI pattern. Use the `String.uri_encode()` method. The Server will be decoding these messages.
 
--   Example: Sending a message to the Server to notify the Client is ready
+-   Example: Sending a message to the Server to notify the Client is surrendering
 
 ```cpp
-tcp_stream.put_string("Ready:true".uri_encode() + "\n")
+tcp_stream.put_string("Lose:Surrender".uri_encode() + "\n")
 ```
 
 ### Client commands

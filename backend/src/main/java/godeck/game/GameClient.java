@@ -142,7 +142,7 @@ public class GameClient extends GodeckThread {
         this.gameInstance = gameInstance;
         this.in = in;
         this.setted = false;
-        ready = new CompletableFuture<>();
+        ready = new CompletableFuture<Void>();
         ready.thenAccept((p) -> {
             set();
         });

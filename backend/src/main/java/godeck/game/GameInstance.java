@@ -61,10 +61,10 @@ public class GameInstance extends GodeckThread {
      */
     private void setupGameServerAndClients() throws Exception {
         server = new ServerSocket(port);
-        server.setSoTimeout(5000); // 5 seconds timeout
+        server.setSoTimeout(3000); // 3 seconds timeout
         try {
             initiateClientSockets();
-        } catch (SocketTimeoutException | TimeoutException e) {
+        } catch (SocketTimeoutException e) {
             if (socket[0] != null && socket[0].isBound()) {
                 initiateSocketDataStreams(0);
                 out[0].writeBytes("Error:Opponent could not connect.\n");
@@ -81,19 +81,17 @@ public class GameInstance extends GodeckThread {
      * tries again.
      * 
      * @throws SocketTimeoutException If no client connects in time
-     * @throws TimeoutException       If the client that connect does not answer in
-     *                                time
      * @throws IOException            If the message could not be received
      */
     private void initiateClientSockets()
-            throws SocketTimeoutException, TimeoutException, IOException {
+            throws SocketTimeoutException, IOException {
         for (int i = 0; i < SOCKET_MAX_TRIES; i++) {
             socket[0] = server.accept();
             initiateSocketDataStreams(0);
             try {
                 setupGameClient(0);
                 i = SOCKET_MAX_TRIES;
-            } catch (ExecutionException | InterruptedException e) {
+            } catch (ExecutionException | TimeoutException | InterruptedException e) {
                 gameClient[0].kill();
                 gameClient[0].killed.join();
             }
@@ -104,7 +102,7 @@ public class GameInstance extends GodeckThread {
             try {
                 setupGameClient(1);
                 i = SOCKET_MAX_TRIES;
-            } catch (ExecutionException | InterruptedException e) {
+            } catch (ExecutionException | TimeoutException | InterruptedException e) {
                 gameClient[1].kill();
                 gameClient[1].killed.join();
             }
@@ -124,7 +122,7 @@ public class GameInstance extends GodeckThread {
     }
 
     /**
-     * Setup and starts a game client. Waits for it to send the ready message
+     * Setup and starts a game client. Waits for it to send the ready message.
      * 
      * @param n the client number
      * @throws TimeoutException     If the client does not answer in time
@@ -133,9 +131,10 @@ public class GameInstance extends GodeckThread {
      *                              waiting for the answer
      */
     private void setupGameClient(int n) throws TimeoutException, ExecutionException, InterruptedException {
+        gameClient[n] = new GameClient();
         gameClient[n].setupGameClient(n, this, in[n]);
         gameClient[n].start();
-        gameClient[n].ready.get(3, TimeUnit.SECONDS);
+        gameClient[n].ready.get(2, TimeUnit.SECONDS);
     }
 
     /**
@@ -396,9 +395,6 @@ public class GameInstance extends GodeckThread {
                 turnTimeout);
         clientGame[1] = new ClientGame(game.getBoard(), deck1, false, 1, new Opponent(user0.getDisplayName()),
                 turnTimeout);
-
-        gameClient[0] = new GameClient();
-        gameClient[1] = new GameClient();
     }
 
     public void checkClientReady(int n, String msg) {

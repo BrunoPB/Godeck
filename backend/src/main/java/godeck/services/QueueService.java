@@ -2,8 +2,8 @@ package godeck.services;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -11,8 +11,8 @@ import godeck.models.QueueItem;
 import godeck.models.entities.User;
 import godeck.models.responses.QueueResponse;
 import godeck.queue.QueueSingleton;
-import godeck.repositories.UserRepository;
 import godeck.utils.ErrorHandler;
+import lombok.NoArgsConstructor;
 
 /**
  * Service for handling queue manipulations from the controller http requests.
@@ -20,24 +20,12 @@ import godeck.utils.ErrorHandler;
  * @author Bruno Pena Baeta
  */
 @Service
+@NoArgsConstructor
 public class QueueService {
     // Properties
 
     @Value("${queue_timeout_s}")
     private int QUEUE_TIMEOUT_S;
-    private UserRepository userRepository;
-
-    // Constructors
-
-    /**
-     * Main constructor. Uses Autowire to inject the UserRepository.
-     * 
-     * @param userRepository
-     */
-    @Autowired
-    public QueueService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     // Public Methods
 
@@ -50,20 +38,22 @@ public class QueueService {
      * @return The queue response for the user.
      */
     public QueueResponse queue(User user) {
-        CompletableFuture<Integer> futurePort = new CompletableFuture<Integer>();
+        CompletableFuture<Void> finished = new CompletableFuture<Void>();
+        QueueItem queueItem = new QueueItem(user, finished, 0, null, null);
 
-        QueueSingleton.getInstance().queue(new QueueItem(user, futurePort));
-
-        int port = 0;
+        QueueSingleton.getInstance().queue(queueItem);
 
         try {
-            port = futurePort.get(QUEUE_TIMEOUT_S, TimeUnit.SECONDS);
-        } catch (Exception e) {
+            queueItem.finished.get(QUEUE_TIMEOUT_S, TimeUnit.SECONDS);
+        } catch (TimeoutException e) {
             ErrorHandler.message(new Exception("Queue timeout!"));
-            return new QueueResponse(false, 0, "Queue timeout!");
+            return new QueueResponse(false, 0, null, null, "Queue timeout!");
+        } catch (Exception e) {
+            ErrorHandler.message(e);
+            return new QueueResponse(false, 0, null, null, "Error while waiting for game!");
         }
 
-        return new QueueResponse(true, port, "Game found!");
+        return new QueueResponse(true, queueItem.port, queueItem.key, queueItem.iv, "Game found!");
     }
 
     /**
@@ -76,6 +66,6 @@ public class QueueService {
      */
     public QueueResponse dequeue(User user) {
         QueueSingleton.getInstance().dequeue(user);
-        return new QueueResponse(false, 0, "User removed from queue!");
+        return new QueueResponse(false, 0, null, null, "User removed from queue!");
     }
 }

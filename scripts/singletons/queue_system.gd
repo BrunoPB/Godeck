@@ -29,6 +29,8 @@ func emit_game_found(result, response_code, headers, body):
 		cancel_queue()
 		return
 	in_game_system.socket_port = int(response.port)
+	in_game_system.key = Marshalls.base64_to_raw(response.key)
+	in_game_system.iv = Marshalls.base64_to_raw(response.iv)
 	queue_finished.emit(true)
 
 func cancel_queue():

@@ -2,15 +2,17 @@ package godeck.game;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.ArrayList;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import godeck.models.QueueItem;
+import godeck.security.AESCryptography;
 
 /**
  * Singleton class that manages the game server. It is responsible for creating
@@ -133,15 +135,37 @@ public class GameServerSingleton {
      * 
      * @param item0 User number 0.
      * @param item0 User number 1.
-     * @throws IllegalStateException If there is no available port.
+     * @throws IllegalStateException    If there is no available port.
+     * @throws NoSuchAlgorithmException If the AES criptography fails. This should
+     *                                  never happen.
      */
-    public synchronized void startNewGame(QueueItem item0, QueueItem item1) throws IllegalStateException {
+    public synchronized void startNewGame(QueueItem item0, QueueItem item1)
+            throws IllegalStateException, NoSuchAlgorithmException {
+        AESCryptography crypt0 = new AESCryptography(16);
+        AESCryptography crypt1 = new AESCryptography(16);
+        String key0 = crypt0.getKeyString();
+        String iv0 = crypt0.getIVString();
+        String key1 = crypt1.getKeyString();
+        String iv1 = crypt1.getIVString();
+
+        System.out.println("BASE64: " + key0);
+        byte[] key0Bytes = crypt0.getKey().getEncoded();
+        System.out.print("[");
+        for (byte b : key0Bytes) {
+            System.out.print((int) b + ", ");
+        }
+        System.out.println("]");
+
         int port = findAvailablePort();
+
         GameInstance gameInstance = new GameInstance();
         threads.add(gameInstance);
-        gameInstance.setupGame(item0.user, item1.user, port, turnTimeout);
+        gameInstance.setupGame(item0.user, item1.user, port, crypt0, crypt1, turnTimeout);
         gameInstance.start();
-        item0.futurePort.complete(port);
-        item1.futurePort.complete(port);
+
+        item0.setQueueItem(port, key0, iv0);
+        item1.setQueueItem(port, key1, iv1);
+        item0.finished.complete(null);
+        item1.finished.complete(null);
     }
 }

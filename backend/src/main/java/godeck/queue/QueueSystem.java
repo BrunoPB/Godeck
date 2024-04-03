@@ -1,5 +1,6 @@
 package godeck.queue;
 
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
@@ -49,10 +50,10 @@ public class QueueSystem extends GodeckThread {
         List<QueueItem> items = QueueSingleton.getInstance().getNFirstItems(2);
         try {
             GameServerSingleton.getInstance().startNewGame(items.get(0), items.get(1));
-        } catch (IllegalStateException e) {
+        } catch (IllegalStateException | NoSuchAlgorithmException e) {
             ErrorHandler.message(e);
-            items.get(0).futurePort.completeExceptionally(e);
-            items.get(1).futurePort.completeExceptionally(e);
+            items.get(0).finished.completeExceptionally(e);
+            items.get(1).finished.completeExceptionally(e);
         }
         QueueSingleton.getInstance().dequeue(items.get(1).user);
         QueueSingleton.getInstance().dequeue(items.get(0).user);

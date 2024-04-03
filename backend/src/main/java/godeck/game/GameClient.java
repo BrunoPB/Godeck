@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 
 import godeck.models.GodeckThread;
 import godeck.models.client.ClientGameMove;
+import godeck.security.AESCryptography;
 import godeck.utils.ErrorHandler;
 import godeck.utils.JSON;
 import godeck.utils.Printer;
@@ -29,6 +30,7 @@ public class GameClient extends GodeckThread {
     private int number;
     private DataInputStream in;
     private GameInstance gameInstance;
+    private AESCryptography crypt;
     private boolean setted;
     public CompletableFuture<Void> ready;
 
@@ -52,6 +54,7 @@ public class GameClient extends GodeckThread {
                 }
                 msg += charChar;
             }
+            Printer.printDebug("Client Message: \"" + msg + "\"");
             if (setted) {
                 decodeMessage(preProcessMessage(msg));
             } else {
@@ -70,12 +73,13 @@ public class GameClient extends GodeckThread {
      * 
      * @param msg The message from the client.
      * @return The message after pre-processing.
-     * @throws IllegalArgumentException If the message is unknown.
+     * @throws Exception If the message is unknown.
      */
-    private String preProcessMessage(String msg) throws IllegalArgumentException {
-        String fixedMessage = fixSpecialCharactersBugFromGodot(msg);
+    private String preProcessMessage(String msg) throws Exception {
+        // String fixedMessage = fixSpecialCharactersBugFromGodot(msg);
+        String decryptedMessage = crypt.decrypt(msg);
         Pattern regex = Pattern.compile("[a-zA-Z0-9]+[:].*$");
-        Matcher matcher = regex.matcher(fixedMessage);
+        Matcher matcher = regex.matcher(decryptedMessage);
         if (matcher.find()) {
             String result = matcher.group();
             return result;
@@ -92,9 +96,11 @@ public class GameClient extends GodeckThread {
      * @param m The message to be fixed.
      * @return The fixed message.
      */
-    private String fixSpecialCharactersBugFromGodot(String m) {
-        return java.net.URLDecoder.decode(m, java.nio.charset.StandardCharsets.UTF_8);
-    }
+    // TODO: Remove this when encryption is implemented
+    // private String fixSpecialCharactersBugFromGodot(String m) {
+    // return java.net.URLDecoder.decode(m,
+    // java.nio.charset.StandardCharsets.UTF_8);
+    // }
 
     /**
      * Decodes the message from the client and executes the corresponding command
@@ -136,11 +142,13 @@ public class GameClient extends GodeckThread {
      * @param number       The player number.
      * @param gameInstance The game instance.
      * @param in           The data input stream from the game instance.
+     * @param crypt        The cryptography object.
      */
-    public void setupGameClient(int number, GameInstance gameInstance, DataInputStream in) {
+    public void setupGameClient(int number, GameInstance gameInstance, DataInputStream in, AESCryptography crypt) {
         this.number = number;
         this.gameInstance = gameInstance;
         this.in = in;
+        this.crypt = crypt;
         this.setted = false;
         ready = new CompletableFuture<Void>();
         ready.thenAccept((p) -> {

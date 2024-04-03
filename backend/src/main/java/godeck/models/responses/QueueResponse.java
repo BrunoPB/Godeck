@@ -23,5 +23,7 @@ public class QueueResponse extends Object {
 
     private boolean status;
     private int port;
+    private String key;
+    private String iv;
     private String message;
 }

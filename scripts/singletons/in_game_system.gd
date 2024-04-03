@@ -5,24 +5,54 @@ var status : int = 0
 var msg : String = ""
 var tcp_stream : StreamPeerTCP = StreamPeerTCP.new()
 var game : Game = Game.new()
+var aes : AESContext = AESContext.new()
+var key : PackedByteArray
+var iv : PackedByteArray
 
 signal game_end(info : EndGameInfo)
 signal game_confirmation
 signal should_update_gui
 signal restart_timer
 
-func _ready():
-	pass
+## This method is used to deal with a Godot bug where special characters
+## in strings are not sent by StreamPeerTCP.
+## "Unicode parsing error: Invalid unicode codepoint (ea), cannot represent as ASCII/Latin-1"
+## Issue #61756
+#func fix_special_characters_bug_from_godot(s : String):
+	#return s.uri_encode()
 
-func _process(delta):
-	pass
+func add_needed_bytes(m : String) -> String:
+	var needed_bytes = 16 - (m.to_utf8_buffer().size() % 16)
+	var addition : String = ""
+	for i in range(0, needed_bytes):
+		addition += "_"
+	return addition + m
 
-func preprocess_message():
-	var regex : RegEx = RegEx.new()
-	var commandRegex = "[a-zA-Z0-9]+" 
-	var parameterRegex = ".*$"
-	regex.compile(commandRegex + "[:]" + parameterRegex)
-	msg = regex.search(msg).get_string()
+func encrypt(m : String) -> PackedByteArray:
+	aes.start(AESContext.MODE_CBC_ENCRYPT, key, iv)
+	return aes.update(m.to_utf8_buffer())
+
+func decrypt(m : String) -> String:
+	aes.start(AESContext.MODE_CBC_DECRYPT, key, iv)
+	return aes.update(m.to_utf8_buffer()).get_string_from_utf8()
+
+func send_tcp(m : String):
+	var cripted_msg : PackedByteArray = encrypt(m)
+	var encoded_msg : String = Marshalls.raw_to_base64(cripted_msg)
+	print("SENDING: " + encoded_msg)
+	tcp_stream.put_string(encoded_msg + "\n")
+
+func send_move(move:GameMove):
+	tcp_stream.poll()
+	send_tcp("GameMove:" + move.toJSONString())
+
+func send_debug(s:String):
+	tcp_stream.poll()
+	send_tcp("DebugTest:" + s)
+
+func declare_surrender():
+	tcp_stream.poll()
+	send_tcp("Lose:Surrender")
 
 func establish_connection():
 	if socket_port != 0:
@@ -36,32 +66,6 @@ func establish_connection():
 	else:
 		push_error("Set socket port first.")
 		return false
-
-func send_tcp(m : String):
-	var encoded_msg = fix_special_characters_bug_from_godot(m)
-	tcp_stream.put_string(encoded_msg + "\n")
-
-## This method is used to deal with a Godot bug where special characters
-## in strings are not sent by StreamPeerTCP.
-## "Unicode parsing error: Invalid unicode codepoint (ea), cannot represent as ASCII/Latin-1"
-## Issue #61756
-func fix_special_characters_bug_from_godot(s : String):
-	return s.uri_encode()
-
-func disconnect_from_server():
-	tcp_stream.disconnect_from_host()
-
-func send_move(move:GameMove):
-	tcp_stream.poll()
-	send_tcp("GameMove:" + move.toJSONString())
-
-func send_debug(s:String):
-	tcp_stream.poll()
-	send_tcp("DebugTest:" + s)
-
-func declare_surrender():
-	tcp_stream.poll()
-	send_tcp("Lose:Surrender")
 
 func check_connection_status():
 	tcp_stream.poll()
@@ -78,6 +82,9 @@ func check_connection_status():
 			tcp_stream.STATUS_ERROR:
 				print("Error with socket stream.")
 
+func disconnect_from_server():
+	tcp_stream.disconnect_from_host()
+
 func listen_to_host():
 	if (status == tcp_stream.STATUS_CONNECTED):
 		var available_bytes: int = tcp_stream.get_available_bytes()
@@ -88,6 +95,13 @@ func listen_to_host():
 			else:
 				decode_host_message(data[1])
 			tcp_stream.poll()
+
+func preprocess_message():
+	var regex : RegEx = RegEx.new()
+	var commandRegex = "[a-zA-Z0-9]+" 
+	var parameterRegex = ".*$"
+	regex.compile(commandRegex + "[:]" + parameterRegex)
+	msg = regex.search(msg).get_string()
 
 func decode_host_message(from_host : Array):
 	var end : bool = false

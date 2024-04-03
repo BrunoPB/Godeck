@@ -22,5 +22,23 @@ public class QueueItem {
     // Properties
 
     public User user;
-    public CompletableFuture<Integer> futurePort;
+    public CompletableFuture<Void> finished;
+    public int port;
+    public String key;
+    public String iv;
+
+    // Public Methods
+
+    /**
+     * Sets port, key and iv for the queue item.
+     * 
+     * @param port The port number.
+     * @param key  The key.
+     * @param iv   The iv.
+     */
+    public void setQueueItem(int port, String key, String iv) {
+        this.port = port;
+        this.key = key;
+        this.iv = iv;
+    }
 }

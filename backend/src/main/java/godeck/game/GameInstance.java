@@ -24,6 +24,7 @@ import godeck.models.entities.User;
 import godeck.models.ingame.Game;
 import godeck.models.ingame.GameMove;
 import godeck.models.ingame.InGameCard;
+import godeck.security.AESCryptography;
 import godeck.utils.ErrorHandler;
 import godeck.utils.JSON;
 import lombok.NoArgsConstructor;
@@ -43,6 +44,7 @@ public class GameInstance extends GodeckThread {
     private final int SOCKET_MAX_TRIES = 3;
 
     private int port;
+    private AESCryptography[] crypt = { null, null };
     private Game game;
     private ServerSocket server;
     private ClientGame[] clientGame = { null, null };
@@ -63,7 +65,8 @@ public class GameInstance extends GodeckThread {
         server = new ServerSocket(port);
         server.setSoTimeout(3000); // 3 seconds timeout
         try {
-            initiateClientSockets();
+            initiateClientSocket(0);
+            initiateClientSocket(1);
         } catch (SocketTimeoutException e) {
             if (socket[0] != null && socket[0].isBound()) {
                 initiateSocketDataStreams(0);
@@ -76,35 +79,25 @@ public class GameInstance extends GodeckThread {
     }
 
     /**
-     * Initiate both client sockets based on the server. Tries at a maximum of
+     * Initiate a single client socket based on the server. Tries at a maximum of
      * SOCKET_MAX_TRIES times. If the client connects and send the wrong message,
      * tries again.
      * 
-     * @throws SocketTimeoutException If no client connects in time
+     * @param n The client number
+     * @throws SocketTimeoutException If the clien does not connect in time
      * @throws IOException            If the message could not be received
      */
-    private void initiateClientSockets()
+    private void initiateClientSocket(int n)
             throws SocketTimeoutException, IOException {
         for (int i = 0; i < SOCKET_MAX_TRIES; i++) {
-            socket[0] = server.accept();
-            initiateSocketDataStreams(0);
+            socket[n] = server.accept();
+            initiateSocketDataStreams(n);
             try {
-                setupGameClient(0);
+                setupGameClient(n);
                 i = SOCKET_MAX_TRIES;
             } catch (ExecutionException | TimeoutException | InterruptedException e) {
-                gameClient[0].kill();
-                gameClient[0].killed.join();
-            }
-        }
-        for (int i = 0; i < SOCKET_MAX_TRIES; i++) {
-            socket[1] = server.accept();
-            initiateSocketDataStreams(1);
-            try {
-                setupGameClient(1);
-                i = SOCKET_MAX_TRIES;
-            } catch (ExecutionException | TimeoutException | InterruptedException e) {
-                gameClient[1].kill();
-                gameClient[1].killed.join();
+                gameClient[n].kill();
+                gameClient[n].killed.join();
             }
         }
     }
@@ -132,7 +125,7 @@ public class GameInstance extends GodeckThread {
      */
     private void setupGameClient(int n) throws TimeoutException, ExecutionException, InterruptedException {
         gameClient[n] = new GameClient();
-        gameClient[n].setupGameClient(n, this, in[n]);
+        gameClient[n].setupGameClient(n, this, in[n], crypt[n]);
         gameClient[n].start();
         gameClient[n].ready.get(2, TimeUnit.SECONDS);
     }
@@ -379,8 +372,11 @@ public class GameInstance extends GodeckThread {
      * @param port        The port to be used.
      * @param turnTimeout The turn timeout.
      */
-    public void setupGame(User user0, User user1, int port, int turnTimeout) {
+    public void setupGame(User user0, User user1, int port, AESCryptography crypt0, AESCryptography crypt1,
+            int turnTimeout) {
         this.port = port;
+        this.crypt[0] = crypt0;
+        this.crypt[1] = crypt1;
 
         ArrayList<InGameCard> deck0 = new ArrayList<InGameCard>();
         ArrayList<InGameCard> deck1 = new ArrayList<InGameCard>();
@@ -397,8 +393,13 @@ public class GameInstance extends GodeckThread {
                 turnTimeout);
     }
 
+    /**
+     * Checks if a client is ready to start the game.
+     * 
+     * @param n   The number of the client.
+     * @param msg The message from the client.
+     */
     public void checkClientReady(int n, String msg) {
-        // TODO: Decrypt msg
         if (msg.equals("Ready:")) {
             gameClient[n].ready.complete(null);
         } else {

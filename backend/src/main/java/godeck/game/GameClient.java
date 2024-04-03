@@ -54,10 +54,10 @@ public class GameClient extends GodeckThread {
                 }
                 msg += charChar;
             }
-            Printer.printDebug("Client Message: \"" + msg + "\"");
             if (setted) {
                 decodeMessage(preProcessMessage(msg));
             } else {
+                Printer.printDebug("Client Message: \"" + msg + "\"");
                 gameInstance.checkClientReady(number, preProcessMessage(msg));
                 ready.join();
             }
@@ -78,6 +78,7 @@ public class GameClient extends GodeckThread {
     private String preProcessMessage(String msg) throws Exception {
         // String fixedMessage = fixSpecialCharactersBugFromGodot(msg);
         String decryptedMessage = crypt.decrypt(msg);
+        Printer.printDebug("DECRYPTED MESSAGE: " + decryptedMessage);
         Pattern regex = Pattern.compile("[a-zA-Z0-9]+[:].*$");
         Matcher matcher = regex.matcher(decryptedMessage);
         if (matcher.find()) {

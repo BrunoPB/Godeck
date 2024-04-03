@@ -17,6 +17,7 @@ import javax.crypto.spec.IvParameterSpec;
 import org.springframework.stereotype.Component;
 
 import godeck.utils.ErrorHandler;
+import godeck.utils.Printer;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -149,11 +150,14 @@ public class AESCryptography {
      * @throws IllegalBlockSizeException          If the cipherText block size is
      *                                            illegal.
      */
-    public String decrypt(String cipherText) throws NoSuchPaddingException, NoSuchAlgorithmException,
+    public String decrypt(String base64Text) throws NoSuchPaddingException, NoSuchAlgorithmException,
             InvalidAlgorithmParameterException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         cipher.init(Cipher.DECRYPT_MODE, this.key, this.iv);
-        byte[] plainText = cipher.doFinal(Base64.getDecoder().decode(cipherText));
+        Printer.printDebug(base64Text);
+        byte[] cipherText = Base64.getDecoder().decode(base64Text);
+        Printer.printDebug("DECODED: " + new String(cipherText));
+        byte[] plainText = cipher.doFinal(cipherText);
         return new String(plainText);
     }
 

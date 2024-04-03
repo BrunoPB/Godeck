@@ -28,19 +28,20 @@ func add_needed_bytes(m : String) -> String:
 		addition += "_"
 	return addition + m
 
-func encrypt(m : String) -> PackedByteArray:
+func encrypt(m : String) -> String:
+	var new_m = add_needed_bytes(m)
 	aes.start(AESContext.MODE_CBC_ENCRYPT, key, iv)
-	return aes.update(m.to_utf8_buffer())
+	var encrypted = aes.update(new_m.to_utf8_buffer())
+	return Marshalls.raw_to_base64(encrypted)
 
 func decrypt(m : String) -> String:
+	var raw = Marshalls.base64_to_raw(m)
 	aes.start(AESContext.MODE_CBC_DECRYPT, key, iv)
-	return aes.update(m.to_utf8_buffer()).get_string_from_utf8()
+	return aes.update(raw).get_string_from_utf8()
 
 func send_tcp(m : String):
-	var cripted_msg : PackedByteArray = encrypt(m)
-	var encoded_msg : String = Marshalls.raw_to_base64(cripted_msg)
-	print("SENDING: " + encoded_msg)
-	tcp_stream.put_string(encoded_msg + "\n")
+	var crypted_msg : String = encrypt(m)
+	tcp_stream.put_string(crypted_msg + "\n")
 
 func send_move(move:GameMove):
 	tcp_stream.poll()
@@ -112,6 +113,7 @@ func decode_host_message(from_host : Array):
 			break
 		msg += char_s
 	if end:
+		msg = decrypt(msg)
 		preprocess_message()
 		var index = msg.find(":")
 		var command = msg.substr(0,index)

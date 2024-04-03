@@ -130,6 +130,15 @@ public class Printer {
     }
 
     /**
+     * Prints a message to the console.
+     * 
+     * @param obj The object to be printed.
+     */
+    public static void print(Object obj) {
+        System.out.println(obj);
+    }
+
+    /**
      * Prints a message to the console. The message is formatted as an information
      * message.
      * 
@@ -313,5 +322,18 @@ public class Printer {
         String time = formatTimeMessage();
         String fileTrace = formatStackTrace();
         print(type + " at " + time + " from " + fileTrace + "\t\t: " + bool);
+    }
+
+    /**
+     * Prints a message to the console. The message is formatted as a debug message.
+     * 
+     * @param obj The object to be printed.
+     */
+    public static void printDebug(Object obj) {
+        String type = formatTypeMessage("debug", TextFormatting.COLOR_GREEN);
+        String time = formatTimeMessage();
+        String fileTrace = formatStackTrace();
+        print(type + " at " + time + " from " + fileTrace + "\t\t: ");
+        print(obj);
     }
 }

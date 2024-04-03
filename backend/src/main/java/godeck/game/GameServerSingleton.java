@@ -148,14 +148,6 @@ public class GameServerSingleton {
         String key1 = crypt1.getKeyString();
         String iv1 = crypt1.getIVString();
 
-        System.out.println("BASE64: " + key0);
-        byte[] key0Bytes = crypt0.getKey().getEncoded();
-        System.out.print("[");
-        for (byte b : key0Bytes) {
-            System.out.print((int) b + ", ");
-        }
-        System.out.println("]");
-
         int port = findAvailablePort();
 
         GameInstance gameInstance = new GameInstance();

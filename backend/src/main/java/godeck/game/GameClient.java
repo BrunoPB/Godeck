@@ -1,6 +1,7 @@
 package godeck.game;
 
 import java.io.DataInputStream;
+import java.util.Base64;
 import java.util.concurrent.CompletableFuture;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,10 +32,12 @@ public class GameClient extends GodeckThread {
     private DataInputStream in;
     private GameInstance gameInstance;
     private AESCryptography crypt;
-    private boolean setted;
+    private boolean readyFlag;
     public CompletableFuture<Void> ready;
+    private boolean receivedNumberFlag;
+    public CompletableFuture<Integer> receivedNumber;
 
-    // Constructors
+    // Private Methods
 
     /**
      * Waits for messages from the client and decodes them.
@@ -54,54 +57,79 @@ public class GameClient extends GodeckThread {
                 }
                 msg += charChar;
             }
-            if (setted) {
-                decodeMessage(preProcessMessage(msg));
-            } else {
-                Printer.printDebug("Client Message: \"" + msg + "\"");
-                gameInstance.checkClientReady(number, preProcessMessage(msg));
-                ready.join();
-            }
+            dealWithMessage(msg);
         }
         ThreadUtils.sleep(10);
     }
 
-    // Private Methods
+    /**
+     * Deals with the message from the client. If it is the initial number message,
+     * sets the number. If it is the ready message, sets the ready flag. If it is a
+     * move message, sends the move to the game instance.
+     * 
+     * @param msg The message from the client.
+     * @throws Exception If the message could not be processed.
+     */
+    private void dealWithMessage(String msg) throws Exception {
+        if (!receivedNumberFlag) {
+            try {
+                msg = processBase64(msg);
+                receivedNumber.complete(Integer.parseInt(msg));
+                receivedNumberFlag = true;
+            } catch (Exception e) {
+                receivedNumber.completeExceptionally(e);
+            }
+        } else if (!readyFlag) {
+            try {
+                msg = crypt.decrypt(msg);
+                if (msg.equals("TheClientIsReady")) {
+                    ready.complete(null);
+                    readyFlag = true;
+                } else {
+                    ready.completeExceptionally(null);
+                }
+            } catch (Exception e) {
+                ready.completeExceptionally(e);
+            }
+        } else {
+            decodeMessage(preProcessMessage(msg));
+        }
+    }
 
     /**
-     * Pre-processes the message from the client. Uses a regex to extract the
-     * command and parameter from the message.
+     * Processes the Base64 string from the client. Decodes the Base64 string and
+     * returns the decoded string.
+     * 
+     * @param base64String The Base64 string to be processed.
+     * @return The decoded string.
+     * @throws IllegalArgumentException If the Base64 string is unknown.
+     */
+    private String processBase64(String base64String) throws IllegalArgumentException {
+        Pattern regex = Pattern.compile("[A-Za-z0-9/+=]+");
+        Matcher matcher = regex.matcher(base64String);
+        if (!matcher.find()) {
+            throw new IllegalArgumentException("Unknown Base64 from Client. Message: " + base64String);
+        }
+        return new String(Base64.getDecoder().decode(matcher.group()));
+    }
+
+    /**
+     * Pre-processes the message from the client. Decodes the message from Base64
+     * and extracts the command and parameter.
      * 
      * @param msg The message from the client.
      * @return The message after pre-processing.
      * @throws Exception If the message is unknown.
      */
     private String preProcessMessage(String msg) throws Exception {
-        // String fixedMessage = fixSpecialCharactersBugFromGodot(msg);
-        String decryptedMessage = crypt.decrypt(msg);
-        Printer.printDebug("DECRYPTED MESSAGE: " + decryptedMessage);
+        String decodedMsg = processBase64(msg);
         Pattern regex = Pattern.compile("[a-zA-Z0-9]+[:].*$");
-        Matcher matcher = regex.matcher(decryptedMessage);
-        if (matcher.find()) {
-            String result = matcher.group();
-            return result;
+        Matcher matcher = regex.matcher(decodedMsg);
+        if (!matcher.find()) {
+            throw new IllegalArgumentException("Unknown message from Client. Message: " + decodedMsg);
         }
-        throw new IllegalArgumentException("Unknown message from Client. Message: " + msg);
+        return matcher.group();
     }
-
-    /**
-     * This method is used to decode a message from Godot that has a bug with
-     * special characters. This method can also be found in Godot client. Once
-     * Godot fixes this bug, this method can be removed.
-     * Issue #61756
-     * 
-     * @param m The message to be fixed.
-     * @return The fixed message.
-     */
-    // TODO: Remove this when encryption is implemented
-    // private String fixSpecialCharactersBugFromGodot(String m) {
-    // return java.net.URLDecoder.decode(m,
-    // java.nio.charset.StandardCharsets.UTF_8);
-    // }
 
     /**
      * Decodes the message from the client and executes the corresponding command
@@ -150,15 +178,16 @@ public class GameClient extends GodeckThread {
         this.gameInstance = gameInstance;
         this.in = in;
         this.crypt = crypt;
-        this.setted = false;
+        this.readyFlag = false;
+        this.receivedNumberFlag = false;
         ready = new CompletableFuture<Void>();
         ready.thenAccept((p) -> {
-            set();
+            readyFlag = true;
         });
-    }
-
-    public void set() {
-        setted = true;
+        receivedNumber = new CompletableFuture<Integer>();
+        receivedNumber.thenAccept((p) -> {
+            receivedNumberFlag = true;
+        });
     }
 
     /**

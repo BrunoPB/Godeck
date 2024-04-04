@@ -39,7 +39,7 @@ public class QueueService {
      */
     public QueueResponse queue(User user) {
         CompletableFuture<Void> finished = new CompletableFuture<Void>();
-        QueueItem queueItem = new QueueItem(user, finished, 0, null, null);
+        QueueItem queueItem = new QueueItem(user, finished, 0, 0, null, null);
 
         QueueSingleton.getInstance().queue(queueItem);
 
@@ -47,13 +47,13 @@ public class QueueService {
             queueItem.finished.get(QUEUE_TIMEOUT_S, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
             ErrorHandler.message(new Exception("Queue timeout!"));
-            return new QueueResponse(false, 0, null, null, "Queue timeout!");
+            return new QueueResponse(false, 0, 0, null, null, "Queue timeout!");
         } catch (Exception e) {
             ErrorHandler.message(e);
-            return new QueueResponse(false, 0, null, null, "Error while waiting for game!");
+            return new QueueResponse(false, 0, 0, null, null, "Error while waiting for game!");
         }
 
-        return new QueueResponse(true, queueItem.port, queueItem.key, queueItem.iv, "Game found!");
+        return new QueueResponse(true, queueItem.port, queueItem.number, queueItem.key, queueItem.iv, "Game found!");
     }
 
     /**
@@ -66,6 +66,6 @@ public class QueueService {
      */
     public QueueResponse dequeue(User user) {
         QueueSingleton.getInstance().dequeue(user);
-        return new QueueResponse(false, 0, null, null, "User removed from queue!");
+        return new QueueResponse(false, 0, 0, null, null, "User removed from queue!");
     }
 }

@@ -134,7 +134,7 @@ public class GameServerSingleton {
      * also adds the game instance to the list of threads.
      * 
      * @param item0 User number 0.
-     * @param item0 User number 1.
+     * @param item1 User number 1.
      * @throws IllegalStateException    If there is no available port.
      * @throws NoSuchAlgorithmException If the AES criptography fails. This should
      *                                  never happen.
@@ -155,8 +155,8 @@ public class GameServerSingleton {
         gameInstance.setupGame(item0.user, item1.user, port, crypt0, crypt1, turnTimeout);
         gameInstance.start();
 
-        item0.setQueueItem(port, key0, iv0);
-        item1.setQueueItem(port, key1, iv1);
+        item0.setQueueItem(port, 0, key0, iv0);
+        item1.setQueueItem(port, 1, key1, iv1);
         item0.finished.complete(null);
         item1.finished.complete(null);
     }

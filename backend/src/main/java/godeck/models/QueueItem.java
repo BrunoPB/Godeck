@@ -24,6 +24,7 @@ public class QueueItem {
     public User user;
     public CompletableFuture<Void> finished;
     public int port;
+    public int number;
     public String key;
     public String iv;
 
@@ -36,8 +37,9 @@ public class QueueItem {
      * @param key  The key.
      * @param iv   The iv.
      */
-    public void setQueueItem(int port, String key, String iv) {
+    public void setQueueItem(int port, int number, String key, String iv) {
         this.port = port;
+        this.number = number;
         this.key = key;
         this.iv = iv;
     }

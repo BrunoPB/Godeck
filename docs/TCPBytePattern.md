@@ -2,7 +2,7 @@
 
 This document explains the pattern that should be used in Godeck TCP Connections.
 
-For every single TCP message sent, it should ALWAYS end with `'\n'`.
+For every single TCP message sent, it should ALWAYS be encoded in Base64 and end with `'\n'`.
 
 There are 2 types of pattern for TCP Connections in Godeck: Server to Client and Client to Server.
 
@@ -14,10 +14,10 @@ For this to be possible, the Server will send a TCP message starting with the co
 
 The Server should use the `DataOutputStream.writeBytes(string)` method to send messages to the Client.
 
--   Example: Sending a message to update the Client user's number to 1
+-   Example: Sending a message to update the current turn
 
 ```cpp
-out0.writeBytes("UserNumber:1\n");
+out[0].writeBytes(Base64.getEncoder().encodeToString("GameTurn:false".getBytes()) + "\n");
 ```
 
 ### Server commands
@@ -39,18 +39,23 @@ The pattern used by the Client is the same as the Server, but with other command
 
 The Client should always use the `StreamPeerTCP.put_string(string)` method to send messages to the Server.
 
--   **IMPORTANT**: Due to a bug in Godot Engine, special characters can not be sent through TCP/IP connection. To deal with this, all messages from Client to Server should be encoded using the URI pattern. Use the `String.uri_encode()` method. The Server will be decoding these messages.
-
 -   Example: Sending a message to the Server to notify the Client is surrendering
 
 ```cpp
-tcp_stream.put_string("Lose:Surrender".uri_encode() + "\n")
+tcp_stream.put_string(Marshalls.raw_to_base64("Lose:Surrender".get_utf8_buffer()) + "\n")
 ```
 
 ### Client commands
 
--   `Ready` Notify the Server that the Client is ready to receive messages. Does not receive parameters
 -   `GameMove` Tries to make a move in the game, the game move might not be made, it is up to the server to decide. Should get a `GameMove` json string as parameter
 -   `Lose` Notify the Server that this Client has lost the game. Should get the reason ("Surrender", "Connection") as parameter
 
-###
+## Starting the TCP communication
+
+To initialize a communication, the Client must have first received it's Symmetric Key, IV (initialization vector) and a Key Number.
+
+Then the Client should verify it's Key Number by sending, in order, a message with the Key Number it got and then a message with the string "**TheClientIsReady**" (exactly 16 bytes) encrypted by the Symmetric Key and the IV. The cryptography should be AES/CBC/NoPadding.
+
+The Server will check the Key Number to identify the Symmetric Key it sent to that number and use that Symmetric Key to decrypt the "**TheClientIsReady**" message. If the Server could not decrypt it, it will cancel the connection.
+
+The Server first message will be the the `UserNumber` message, this means the connection was established successfully.

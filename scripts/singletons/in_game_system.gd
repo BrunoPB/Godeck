@@ -1,47 +1,28 @@
 extends Node
 
 var socket_port : int = 0
+var key_number : int = 0
 var status : int = 0
 var msg : String = ""
 var tcp_stream : StreamPeerTCP = StreamPeerTCP.new()
 var game : Game = Game.new()
-var aes : AESContext = AESContext.new()
-var key : PackedByteArray
-var iv : PackedByteArray
+var crypt : AES_Cryptography
 
 signal game_end(info : EndGameInfo)
 signal game_confirmation
 signal should_update_gui
 signal restart_timer
 
-## This method is used to deal with a Godot bug where special characters
-## in strings are not sent by StreamPeerTCP.
-## "Unicode parsing error: Invalid unicode codepoint (ea), cannot represent as ASCII/Latin-1"
-## Issue #61756
-#func fix_special_characters_bug_from_godot(s : String):
-	#return s.uri_encode()
+func set_crypt(key : PackedByteArray, iv : PackedByteArray):
+	crypt = AES_Cryptography.new(key, iv)
 
-func add_needed_bytes(m : String) -> String:
-	var needed_bytes = 16 - (m.to_utf8_buffer().size() % 16)
-	var addition : String = ""
-	for i in range(0, needed_bytes):
-		addition += "_"
-	return addition + m
-
-func encrypt(m : String) -> String:
-	var new_m = add_needed_bytes(m)
-	aes.start(AESContext.MODE_CBC_ENCRYPT, key, iv)
-	var encrypted = aes.update(new_m.to_utf8_buffer())
-	return Marshalls.raw_to_base64(encrypted)
-
-func decrypt(m : String) -> String:
-	var raw = Marshalls.base64_to_raw(m)
-	aes.start(AESContext.MODE_CBC_DECRYPT, key, iv)
-	return aes.update(raw).get_string_from_utf8()
+func send_encrypted(m : String):
+	var encrypted : String = crypt.encrypt(m)
+	tcp_stream.put_string(encrypted + "\n")
 
 func send_tcp(m : String):
-	var crypted_msg : String = encrypt(m)
-	tcp_stream.put_string(crypted_msg + "\n")
+	var base64 : String = Marshalls.raw_to_base64(m.to_utf8_buffer())
+	tcp_stream.put_string(base64 + "\n")
 
 func send_move(move:GameMove):
 	tcp_stream.poll()
@@ -57,12 +38,14 @@ func declare_surrender():
 
 func establish_connection():
 	if socket_port != 0:
-		var e : Error = tcp_stream.connect_to_host("localhost", socket_port)
+		var e : Error = tcp_stream.connect_to_host(Address.TCP, socket_port)
 		if e != OK:
 			push_error("An error has occurred while establishing connection to the server. Error: " + str(e))
 			return false
 		check_connection_status()
-		send_tcp("Ready:")
+		send_tcp(str(game.number))
+		tcp_stream.poll()
+		send_encrypted("TheClientIsReady")
 		return true
 	else:
 		push_error("Set socket port first.")
@@ -73,15 +56,15 @@ func check_connection_status():
 	var new_status: int = tcp_stream.get_status()
 	if new_status != status:
 		status = new_status
-		match status:
-			tcp_stream.STATUS_NONE:
-				print("Disconnected from host.")
-			tcp_stream.STATUS_CONNECTING:
-				print("Connecting to host.")
-			tcp_stream.STATUS_CONNECTED:
-				print("Connected to host.")
-			tcp_stream.STATUS_ERROR:
-				print("Error with socket stream.")
+		#match status: // TODO: use this?
+		#	tcp_stream.STATUS_NONE:
+		#		print("Disconnected from host.")
+		#	tcp_stream.STATUS_CONNECTING:
+		#		print("Connecting to host.")
+		#	tcp_stream.STATUS_CONNECTED:
+		#		print("Connected to host.")
+		#	tcp_stream.STATUS_ERROR:
+		#		print("Error with socket stream.")
 
 func disconnect_from_server():
 	tcp_stream.disconnect_from_host()
@@ -99,6 +82,10 @@ func listen_to_host():
 
 func preprocess_message():
 	var regex : RegEx = RegEx.new()
+	regex.compile("[A-Za-z0-9/+=]+")
+	msg = regex.search(msg).get_string()
+	msg = Marshalls.base64_to_raw(msg).get_string_from_utf8()
+	regex = RegEx.new()
 	var commandRegex = "[a-zA-Z0-9]+" 
 	var parameterRegex = ".*$"
 	regex.compile(commandRegex + "[:]" + parameterRegex)
@@ -113,7 +100,6 @@ func decode_host_message(from_host : Array):
 			break
 		msg += char_s
 	if end:
-		msg = decrypt(msg)
 		preprocess_message()
 		var index = msg.find(":")
 		var command = msg.substr(0,index)

@@ -36,6 +36,7 @@ public class GameClient extends GodeckThread {
     public CompletableFuture<Void> ready;
     private boolean receivedNumberFlag;
     public CompletableFuture<Integer> receivedNumber;
+    public CompletableFuture<Void> numberProcessed;
 
     // Private Methods
 
@@ -76,8 +77,8 @@ public class GameClient extends GodeckThread {
                 msg = processBase64(msg);
                 receivedNumber.complete(Integer.parseInt(msg));
                 receivedNumberFlag = true;
+                numberProcessed.join();
             } catch (Exception e) {
-                Printer.printDebug("ERROR WITH CLIENT MESSAGE: " + e.getMessage());
                 receivedNumber.completeExceptionally(e);
             }
         } else if (!readyFlag) {
@@ -87,11 +88,9 @@ public class GameClient extends GodeckThread {
                     ready.complete(null);
                     readyFlag = true;
                 } else {
-                    Printer.printDebug("READY MESSAGE IS NOT VALID: " + msg);
                     ready.completeExceptionally(null);
                 }
             } catch (Exception e) {
-                Printer.printDebug("READY MESSAGE COULD NOT BE DECRYPTED: " + e.getMessage());
                 ready.completeExceptionally(e);
             }
         } else {
@@ -174,23 +173,25 @@ public class GameClient extends GodeckThread {
      * @param number       The player number.
      * @param gameInstance The game instance.
      * @param in           The data input stream from the game instance.
-     * @param crypt        The cryptography object.
      */
-    public void setupGameClient(int number, GameInstance gameInstance, DataInputStream in, AESCryptography crypt) {
+    public void setupGameClient(int number, GameInstance gameInstance, DataInputStream in) {
         this.number = number;
         this.gameInstance = gameInstance;
         this.in = in;
-        this.crypt = crypt;
         this.readyFlag = false;
         this.receivedNumberFlag = false;
         ready = new CompletableFuture<Void>();
-        ready.thenAccept((p) -> {
-            readyFlag = true;
-        });
         receivedNumber = new CompletableFuture<Integer>();
-        receivedNumber.thenAccept((p) -> {
-            receivedNumberFlag = true;
-        });
+        numberProcessed = new CompletableFuture<Void>();
+    }
+
+    /**
+     * Sets the cryptography object for the game client.
+     * 
+     * @param crypt The cryptography object.
+     */
+    public void setCryptography(AESCryptography crypt) {
+        this.crypt = crypt;
     }
 
     /**

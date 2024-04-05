@@ -43,7 +43,7 @@ func establish_connection():
 			push_error("An error has occurred while establishing connection to the server. Error: " + str(e))
 			return false
 		check_connection_status()
-		send_tcp(str(game.number))
+		send_tcp(str(key_number))
 		tcp_stream.poll()
 		send_encrypted("TheClientIsReady")
 		return true

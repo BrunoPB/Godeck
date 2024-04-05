@@ -15,6 +15,7 @@ import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
 
 import org.springframework.stereotype.Component;
 
@@ -22,6 +23,7 @@ import godeck.utils.ErrorHandler;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 /**
  * Class that manages the AES cryptography. It is responsible for generating
@@ -35,6 +37,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
+@Setter
 public class AESCryptography {
     // Properties
 
@@ -197,5 +200,19 @@ public class AESCryptography {
      */
     public String getIVString() {
         return Base64.getEncoder().encodeToString(this.iv.getIV());
+    }
+
+    /**
+     * Clones the AESCryptography object.
+     * 
+     * @return The cloned object.
+     */
+    public AESCryptography clone() {
+        AESCryptography clone = new AESCryptography();
+        SecretKey keyClone = new SecretKeySpec(this.key.getEncoded(), this.key.getAlgorithm());
+        clone.setKey(keyClone);
+        IvParameterSpec ivClone = new IvParameterSpec(this.iv.getIV());
+        clone.setIv(ivClone);
+        return new AESCryptography(this.key, this.iv);
     }
 }

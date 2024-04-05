@@ -25,7 +25,6 @@ func treat_bad_chars_in_base64(msg : String) -> String:
 
 func encrypt(input : String) -> String:
 	var msg = add_needed_bytes(input)
-	print(msg)
 	ctx.finish()
 	ctx.start(AESContext.MODE_CBC_ENCRYPT, key, iv)
 	var encrypted = ctx.update(msg.to_utf8_buffer())

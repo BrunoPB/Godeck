@@ -54,7 +54,7 @@ tcp_stream.put_string(Marshalls.raw_to_base64("Lose:Surrender".get_utf8_buffer()
 
 To initialize a communication, the Client must have first received it's Symmetric Key, IV (initialization vector) and a Key Number.
 
-Then the Client should verify it's Key Number by sending, in order, a message with the Key Number it got and then a message with the string "**TheClientIsReady**" (exactly 16 bytes) encrypted by the Symmetric Key and the IV. The cryptography should be AES/CBC/NoPadding.
+Then the Client should authenticate itself by sending, in order, a message with the Key Number and then a message with the string "**TheClientIsReady**" (exactly 16 bytes) encrypted by the Symmetric Key and the IV. The cryptography should be AES/CBC/NoPadding.
 
 The Server will check the Key Number to identify the Symmetric Key it sent to that number and use that Symmetric Key to decrypt the "**TheClientIsReady**" message. If the Server could not decrypt it, it will cancel the connection.
 

@@ -28,7 +28,6 @@ import godeck.models.ingame.InGameCard;
 import godeck.security.AESCryptography;
 import godeck.utils.ErrorHandler;
 import godeck.utils.JSON;
-import godeck.utils.Printer;
 import lombok.NoArgsConstructor;
 
 /**
@@ -93,7 +92,6 @@ public class GameInstance extends GodeckThread {
     private void initiateClientSocket(int n, boolean isFirst)
             throws SocketTimeoutException, IOException {
         for (int i = 0; i < SOCKET_MAX_TRIES; i++) {
-            Printer.printDebug("Waiting for client " + n + " to connect. Try number: " + i);
             server.setSoTimeout(3000); // 3 seconds timeout
             socket[n] = server.accept();
             initiateSocketDataStreams(n);
@@ -133,18 +131,17 @@ public class GameInstance extends GodeckThread {
     private void setupGameClient(int n, boolean isFirst)
             throws TimeoutException, ExecutionException, InterruptedException {
         gameClient[n] = new GameClient();
-        gameClient[n].setupGameClient(n, this, in[n], crypt[n]);
+        gameClient[n].setupGameClient(n, this, in[n]);
         gameClient[n].start();
         int receivedNumber = gameClient[n].receivedNumber.get(2, TimeUnit.SECONDS);
-        Printer.printDebug("Client " + n + " connected. Received number: " + receivedNumber);
         if (isFirst && n != receivedNumber) {
-            Printer.printDebug("TROCOU A CHAVE");
-            AESCryptography aux = new AESCryptography(crypt[0].getKey(), crypt[0].getIv());
-            crypt[0] = new AESCryptography(crypt[1].getKey(), crypt[1].getIv());
+            AESCryptography aux = crypt[0].clone();
+            crypt[0] = crypt[1].clone();
             crypt[1] = aux;
         }
+        gameClient[n].setCryptography(crypt[n]);
+        gameClient[n].numberProcessed.complete(null);
         gameClient[n].ready.get(2, TimeUnit.SECONDS);
-        Printer.printDebug("Client " + n + " is ready.");
     }
 
     /**

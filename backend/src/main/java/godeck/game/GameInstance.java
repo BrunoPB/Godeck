@@ -136,12 +136,15 @@ public class GameInstance extends GodeckThread {
         gameClient[n].setupGameClient(n, this, in[n], crypt[n]);
         gameClient[n].start();
         int receivedNumber = gameClient[n].receivedNumber.get(2, TimeUnit.SECONDS);
+        Printer.printDebug("Client " + n + " connected. Received number: " + receivedNumber);
         if (isFirst && n != receivedNumber) {
+            Printer.printDebug("TROCOU A CHAVE");
             AESCryptography aux = new AESCryptography(crypt[0].getKey(), crypt[0].getIv());
             crypt[0] = new AESCryptography(crypt[1].getKey(), crypt[1].getIv());
             crypt[1] = aux;
         }
         gameClient[n].ready.get(2, TimeUnit.SECONDS);
+        Printer.printDebug("Client " + n + " is ready.");
     }
 
     /**

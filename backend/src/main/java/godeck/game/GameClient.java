@@ -77,6 +77,7 @@ public class GameClient extends GodeckThread {
                 receivedNumber.complete(Integer.parseInt(msg));
                 receivedNumberFlag = true;
             } catch (Exception e) {
+                Printer.printDebug("ERROR WITH CLIENT MESSAGE: " + e.getMessage());
                 receivedNumber.completeExceptionally(e);
             }
         } else if (!readyFlag) {
@@ -86,9 +87,11 @@ public class GameClient extends GodeckThread {
                     ready.complete(null);
                     readyFlag = true;
                 } else {
+                    Printer.printDebug("READY MESSAGE IS NOT VALID: " + msg);
                     ready.completeExceptionally(null);
                 }
             } catch (Exception e) {
+                Printer.printDebug("READY MESSAGE COULD NOT BE DECRYPTED: " + e.getMessage());
                 ready.completeExceptionally(e);
             }
         } else {

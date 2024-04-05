@@ -59,7 +59,13 @@ public class LoginService {
      * @return The response with the user and it's token.
      */
     public synchronized LoginResponse login(String token) {
-        Token tokenObject = tokenService.getByToken(token);
+        Token tokenObject;
+
+        try {
+            tokenObject = tokenService.getByToken(token);
+        } catch (IllegalArgumentException e) {
+            return new LoginResponse(false, null, new ClientUser(), e.getMessage());
+        }
 
         if (!tokenObject.isActive()) {
             return new LoginResponse(false, null, new ClientUser(), "Token expired.");

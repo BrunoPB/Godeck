@@ -41,12 +41,15 @@ public class QueueService {
         CompletableFuture<Void> finished = new CompletableFuture<Void>();
         QueueItem queueItem = new QueueItem(user, finished, 0, 0, null, null);
 
+        if (QueueSingleton.getInstance().isInQueue(user)) {
+            QueueSingleton.getInstance().dequeue(user);
+        }
         QueueSingleton.getInstance().queue(queueItem);
 
         try {
             queueItem.finished.get(QUEUE_TIMEOUT_S, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
-            ErrorHandler.message(new Exception("Queue timeout!"));
+            QueueSingleton.getInstance().dequeue(user);
             return new QueueResponse(false, 0, 0, null, null, "Queue timeout!");
         } catch (Exception e) {
             ErrorHandler.message(e);

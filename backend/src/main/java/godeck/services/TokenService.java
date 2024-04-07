@@ -1,6 +1,6 @@
 package godeck.services;
 
-import java.sql.Date;
+import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.UUID;
 
@@ -75,14 +75,15 @@ public class TokenService {
     // Public Methods
 
     /**
-     * Generates a brand new token.
+     * Generates a brand new secure token.
      * 
      * @return The generated token.
      */
-    public String generateToken() {
-        String value = UUID.randomUUID().toString() + Date.valueOf(java.time.LocalDate.now()).toString();
-        String encodedToken = Base64.getEncoder().encodeToString(value.getBytes());
-        return encodedToken;
+    public Token generateToken() {
+        byte[] randomBytes = new byte[48]; // So the Base64 enconding gets 64 characters
+        new SecureRandom().nextBytes(randomBytes);
+        String base64 = Base64.getEncoder().encodeToString(randomBytes);
+        return new Token(base64);
     }
 
     /**

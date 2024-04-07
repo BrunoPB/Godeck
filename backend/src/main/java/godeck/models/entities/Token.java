@@ -56,6 +56,17 @@ public class Token {
         this.active = true;
     }
 
+    /**
+     * Constructor for creating a token without a user.
+     * 
+     * @param token The token string.
+     */
+    public Token(String token) {
+        this.token = token;
+        this.active = true;
+        this.user = null;
+    }
+
     // Public Methods
 
     /**

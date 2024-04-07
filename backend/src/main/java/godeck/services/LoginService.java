@@ -42,11 +42,11 @@ public class LoginService {
         try {
             User user = userService.generateGhostUser();
             userService.save(user);
-            String token = tokenService.generateToken();
-            Token tokenObject = new Token(token, user);
-            tokenService.save(tokenObject);
+            Token token = tokenService.generateToken();
+            token.setUser(user);
+            tokenService.save(token);
             ClientUser userClient = new ClientUser(user);
-            return new LoginResponse(true, token, userClient, "Ghost User logged in successfully.");
+            return new LoginResponse(true, token.getToken(), userClient, "Ghost User logged in successfully.");
         } catch (Exception e) {
             return new LoginResponse(false, null, new ClientUser(), e.getMessage());
         }

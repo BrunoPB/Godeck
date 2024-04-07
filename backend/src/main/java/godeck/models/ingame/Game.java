@@ -288,7 +288,7 @@ public class Game {
      * @param move   The move to verify.
      * @return True if the move is valid. False otherwise.
      */
-    public boolean verifyMove(int player, GameMove move) {
+    public boolean validateMove(int player, GameMove move) {
         try {
             if (this.turn != player)
                 return false;

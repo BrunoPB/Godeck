@@ -77,7 +77,16 @@ func listen_to_host():
 			if data[0] != OK:
 				print("Error getting data from stream. Error ", data[0])
 			else:
-				decode_host_message(data[1])
+				var end : bool = false
+				for byte in data[1]:
+					var char_s : String = char(byte)
+					if char_s == "\n":
+						end = true
+						break
+					msg += char_s
+				if end:
+					decode_host_message()
+					msg = ""
 			tcp_stream.poll()
 
 func preprocess_message():
@@ -91,47 +100,38 @@ func preprocess_message():
 	regex.compile(commandRegex + "[:]" + parameterRegex)
 	msg = regex.search(msg).get_string()
 
-func decode_host_message(from_host : Array):
-	var end : bool = false
-	for byte in from_host:
-		var char_s : String = char(byte)
-		if char_s == "\n":
-			end = true
-			break
-		msg += char_s
-	if end:
-		preprocess_message()
-		var index = msg.find(":")
-		var command = msg.substr(0,index)
-		var parameter = msg.substr(index+1,msg.length())
-		match command:
-			"GameStart":
-				game_confirmation.emit(parameter == "true")
-			"UserNumber":
-				game.number = int(parameter)
-			"GameTurn":
-				game.turn = (parameter == "true")
-			"OpponentInfo":
-				game.set_opponent(parameter)
-			"Deck":
-				game.set_deck(parameter)
-			"Board":
-				game.set_board(parameter)
-			"Timer":
-				game.time_limit = int(parameter)
-				restart_timer.emit()
-			"Update":
-				should_update_gui.emit()
-			"GameEnd":
-				disconnect_from_server()
-				var info = EndGameInfo.new()
-				info.set_from_string(parameter)
-				game_end.emit(info)
-			"Error":
-				# TODO: Error handling
-				disconnect_from_server()
-				get_tree().change_scene_to_file("res://scenes/main_menu/main_menu.tscn")
-				push_error(parameter)
-			"DebugTest":
-				print("DebugTest: \"" + parameter + "\"")
-		msg = ""
+func decode_host_message():
+	preprocess_message()
+	var index = msg.find(":")
+	var command = msg.substr(0,index)
+	var parameter = msg.substr(index+1,msg.length())
+	match command:
+		"GameStart":
+			game_confirmation.emit(parameter == "true")
+		"UserNumber":
+			game.number = int(parameter)
+		"GameTurn":
+			game.turn = (parameter == "true")
+		"OpponentInfo":
+			game.set_opponent(parameter)
+		"Deck":
+			game.set_deck(parameter)
+		"Board":
+			game.set_board(parameter)
+		"Timer":
+			game.time_limit = int(parameter)
+			restart_timer.emit()
+		"Update":
+			should_update_gui.emit()
+		"GameEnd":
+			disconnect_from_server()
+			var info = EndGameInfo.new()
+			info.set_from_string(parameter)
+			game_end.emit(info)
+		"Error":
+			# TODO: Error handling
+			disconnect_from_server()
+			get_tree().change_scene_to_file("res://scenes/main_menu/main_menu.tscn")
+			push_error(parameter)
+		"DebugTest":
+			print("DebugTest: \"" + parameter + "\"")

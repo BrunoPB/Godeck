@@ -87,9 +87,12 @@ func board_clicked(coords : Vector2i):
 		igm.current_dominator = game.number
 		igm.card = card_data
 		var move : GameMove = GameMove.new(game.number, selected_card_index, coords, igm)
-		ingame_system.send_move(move)
-		s_deck.update_selected(-1, selected_card_index)
-		selected_card_index = -1
+		if ingame_system.game.validate_move(move):
+			ingame_system.send_move(move)
+			ingame_system.game.predict_move(move)
+			update_gui()
+			s_deck.update_selected(-1, selected_card_index)
+			selected_card_index = -1
 
 func end_game(info : EndGameInfo):
 	stop_timer = true

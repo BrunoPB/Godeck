@@ -301,11 +301,9 @@ public class GameInstance extends GodeckThread {
     /**
      * Synchronizes both clients with the current game state.
      * 
-     * @param move The move that was last executed.
-     * 
      * @throws IOException If the clients could not be synchronized.
      */
-    private void synchronizeClients(GameMove move) throws IOException {
+    private void synchronizeClients() throws IOException {
         try {
             sendClientTimer();
             Thread.sleep(100);
@@ -429,11 +427,11 @@ public class GameInstance extends GodeckThread {
     public void tryMove(int player, ClientGameMove move) {
         try {
             GameMove gMove = new GameMove(player, move);
-            if (game.verifyMove(player, gMove)) {
+            if (game.validateMove(player, gMove)) {
                 game.executeMove(gMove);
                 game.resetTimer();
                 updateUsersGameState();
-                synchronizeClients(gMove);
+                synchronizeClients();
                 game.checkEndGame();
             }
         } catch (Exception e) {

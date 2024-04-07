@@ -18,8 +18,11 @@ import godeck.utils.ThreadUtils;
 import lombok.NoArgsConstructor;
 
 /**
- * Represents a client in a game. Receives messages from the server and sends
- * moves to the server.
+ * Represents a client in a game. Receives messages from the client and sends
+ * it to the game instance, where the actions are processed. The client is
+ * responsible for decoding the messages from the client and executing the
+ * corresponding command. This class is a thread that runs in parallel with the
+ * game instance.
  * 
  * @author Bruno Pena Baeta
  */

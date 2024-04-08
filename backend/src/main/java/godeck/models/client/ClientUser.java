@@ -5,10 +5,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Component;
 
+import godeck.models.entities.Card;
 import godeck.models.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -37,10 +37,10 @@ public class ClientUser {
     private Integer gold;
     private Integer crystals;
     private Integer platinum;
-    private List<ClientCard> deck = new ArrayList<ClientCard>();
-    private Set<ClientCard> collection = new HashSet<ClientCard>();
+    private List<ClientCard> deck;
+    private Set<ClientCard> collection;
     private boolean ghost;
-    private List<Friend> friends = new ArrayList<Friend>();
+    private Set<Friend> friends;
 
     // Constructors
 
@@ -57,10 +57,15 @@ public class ClientUser {
         this.gold = user.getGold();
         this.crystals = user.getCrystals();
         this.platinum = user.getPlatinum();
-        this.deck = user.getDeck().stream().map(card -> new ClientCard(card)).toList();
-        this.collection = user.getCollection().stream().map(card -> new ClientCard(card)).collect(Collectors.toSet());
+        for (Card card : user.getDeck()) {
+            this.deck.add(new ClientCard(card));
+        }
+        this.collection = new HashSet<ClientCard>();
+        for (Card card : user.getCollection()) {
+            this.collection.add(new ClientCard(card));
+        }
         this.ghost = user.isGhost();
-        this.friends = new ArrayList<Friend>();
+        this.friends = new HashSet<Friend>();
     }
 
     /**
@@ -77,9 +82,18 @@ public class ClientUser {
         this.gold = user.getGold();
         this.crystals = user.getCrystals();
         this.platinum = user.getPlatinum();
-        this.deck = user.getDeck().stream().map(card -> new ClientCard(card)).toList();
-        this.collection = user.getCollection().stream().map(card -> new ClientCard(card)).collect(Collectors.toSet());
+        this.deck = new ArrayList<ClientCard>();
+        for (Card card : user.getDeck()) {
+            this.deck.add(new ClientCard(card));
+        }
+        this.collection = new HashSet<ClientCard>();
+        for (Card card : user.getCollection()) {
+            this.collection.add(new ClientCard(card));
+        }
         this.ghost = user.isGhost();
-        this.friends = friends.stream().map(friend -> new Friend(friend)).toList();
+        this.friends = new HashSet<Friend>();
+        for (User uf : friends) {
+            this.friends.add(new Friend(uf));
+        }
     }
 }

@@ -6,6 +6,7 @@ var display_name : String
 var email : String
 var gold : int
 var crystals : int
+var platinum : int
 var deck : Array
 var collection : Array
 var ghost : bool
@@ -20,6 +21,7 @@ func start_user(dict : Dictionary):
 		email = dict.email
 	gold = dict.gold
 	crystals = dict.crystals
+	platinum = dict.platinum
 	for card in dict.collection:
 		collection.append(Card_Utils.convert_dictionary_to_card(card))
 	for card in dict.deck:

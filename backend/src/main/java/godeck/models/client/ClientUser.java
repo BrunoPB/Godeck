@@ -36,6 +36,7 @@ public class ClientUser {
     private String email;
     private Integer gold;
     private Integer crystals;
+    private Integer platinum;
     private List<ClientCard> deck = new ArrayList<ClientCard>();
     private Set<ClientCard> collection = new HashSet<ClientCard>();
     private boolean ghost;
@@ -55,6 +56,7 @@ public class ClientUser {
         this.email = user.getEmail();
         this.gold = user.getGold();
         this.crystals = user.getCrystals();
+        this.platinum = user.getPlatinum();
         this.deck = user.getDeck().stream().map(card -> new ClientCard(card)).toList();
         this.collection = user.getCollection().stream().map(card -> new ClientCard(card)).collect(Collectors.toSet());
         this.ghost = user.isGhost();
@@ -74,6 +76,7 @@ public class ClientUser {
         this.email = user.getEmail();
         this.gold = user.getGold();
         this.crystals = user.getCrystals();
+        this.platinum = user.getPlatinum();
         this.deck = user.getDeck().stream().map(card -> new ClientCard(card)).toList();
         this.collection = user.getCollection().stream().map(card -> new ClientCard(card)).collect(Collectors.toSet());
         this.ghost = user.isGhost();

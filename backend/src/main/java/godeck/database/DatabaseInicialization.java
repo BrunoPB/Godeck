@@ -156,6 +156,7 @@ public class DatabaseInicialization {
             UUID id = UUID.randomUUID();
             Integer gold = random.nextInt(10000);
             Integer crystals = random.nextInt(100);
+            Integer platinum = random.nextInt(5);
             Set<Card> collection = new HashSet<Card>();
             ArrayList<Card> deck = new ArrayList<Card>(7);
             for (Card character : chars) {
@@ -163,7 +164,7 @@ public class DatabaseInicialization {
             }
             deck.addAll(pickRandomCards(collection, 7));
             user = new User(id, email.substring(0, email.indexOf("@")), email.substring(0, email.indexOf("@")),
-                    email, gold, crystals, deck, collection, false);
+                    email, gold, crystals, platinum, deck, collection, false);
             userRepository.save(user);
         }
     }

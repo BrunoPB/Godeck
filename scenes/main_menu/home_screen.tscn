@@ -45,13 +45,24 @@ alignment = 1
 [node name="Gold" type="Label" parent="VerticalLayout/Infos/InfosLayout/SecondRow"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
 text = "???"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Crystals" type="Label" parent="VerticalLayout/Infos/InfosLayout/SecondRow"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 text = "???"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Platinum" type="Label" parent="VerticalLayout/Infos/InfosLayout/SecondRow"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "???"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="DeckArea" type="PanelContainer" parent="VerticalLayout"]
 layout_mode = 2

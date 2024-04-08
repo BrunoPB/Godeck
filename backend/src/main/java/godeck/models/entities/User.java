@@ -50,6 +50,8 @@ public class User {
     private Integer gold;
     @Column(name = "crystals", nullable = false)
     private Integer crystals;
+    @Column(name = "platinum", nullable = false)
+    private Integer platinum;
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinTable(name = "user_deck", joinColumns = @JoinColumn(name = "game_character_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
     private List<Card> deck = new ArrayList<Card>();
@@ -69,17 +71,19 @@ public class User {
      * @param email       User's email
      * @param gold        User's gold
      * @param crystals    User's crystals
+     * @param platinum    User's platinum
      * @param deck        User's deck
      * @param collection  User's collection
      * @param ghost       User's ghost status
      */
     public User(String username, String displayName, String email, Integer gold, Integer crystals,
-            List<Card> deck, Set<Card> collection, boolean ghost) {
+            Integer platinum, List<Card> deck, Set<Card> collection, boolean ghost) {
         this.username = username;
         this.displayName = displayName;
         this.email = email;
         this.gold = gold;
         this.crystals = crystals;
+        this.platinum = platinum;
         this.deck = deck;
         this.collection = collection;
         this.ghost = ghost;
@@ -99,6 +103,7 @@ public class User {
         this.email = null;
         this.gold = 0;
         this.crystals = 0;
+        this.platinum = 0;
         this.ghost = true;
     }
 

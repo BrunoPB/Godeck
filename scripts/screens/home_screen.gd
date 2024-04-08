@@ -6,6 +6,7 @@ extends PanelContainer
 @onready var s_elo = %EloPic
 @onready var s_gold = %Gold
 @onready var s_crystals = %Crystals
+@onready var s_platinum = %Platinum
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
@@ -19,6 +20,7 @@ func start_user_data():
 	s_display_name.text = user.display_name
 	s_gold.text = str(user.gold)
 	s_crystals.text = str(user.crystals)
+	s_platinum.text = str(user.platinum)	
 
 func _on_play_button_pressed():
 	get_tree().change_scene_to_file("res://scenes/queue_screen.tscn")

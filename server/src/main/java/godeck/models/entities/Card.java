@@ -30,7 +30,7 @@ public class Card {
     private UUID id;
     @Column(name = "number", nullable = false, unique = false)
     private int number;
-    @Column(name = "name", nullable = false, length = 15, unique = false)
+    @Column(name = "name", nullable = false, length = 20, unique = false)
     private String name;
     @Column(name = "tier", nullable = false)
     private int tier;

@@ -1,10 +1,11 @@
 package godeck.database;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.UUID;
@@ -13,12 +14,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.opencsv.CSVReaderHeaderAware;
+
+import godeck.enums.Mythology;
 import godeck.models.entities.Card;
 import godeck.models.entities.User;
 import godeck.repositories.UserRepository;
 import godeck.services.CardService;
 import godeck.utils.ErrorHandler;
-import godeck.utils.JSON;
 
 /**
  * Static class to initialize all the pre-defined data in the database.
@@ -61,12 +64,13 @@ public class DatabaseInicialization {
      * @throws RuntimeException
      */
     private static String getCardsDataFilePath() throws RuntimeException {
+        final String EXT = ".csv";
         if (environment.equals("production")) {
             return "";
         } else if (environment.equals("docker")) {
-            return "../data/CardsData.json";
+            return "../data/CardsData" + EXT;
         } else if (environment.equals("dev")) {
-            return "src/data/CardsData.json";
+            return "src/data/CardsData" + EXT;
         } else {
             throw new RuntimeException(
                     "\u001B[31mERROR!\u001B[0m Environment not recognized. Please check the environment variable. Environment: "
@@ -75,7 +79,7 @@ public class DatabaseInicialization {
     }
 
     /**
-     * Reads the cards data from a JSON file and returns a list of game
+     * Reads the cards data from a CSV file and returns a list of game
      * characters.
      * 
      * @param fileName The file name.
@@ -83,11 +87,30 @@ public class DatabaseInicialization {
      * @throws Exception If the file is not found or if there is an error reading
      *                   the file.
      */
-    @SuppressWarnings("unchecked")
     private static List<Card> readCardsDataFromFile(String fileName) throws Exception {
-        String data = Files.readString(Path.of(fileName));
-        List<Card> cards = (List<Card>) JSON.construct(data, Card.class, true);
-        return cards;
+        try (CSVReaderHeaderAware csvReader = new CSVReaderHeaderAware(new BufferedReader(new FileReader(fileName)))) {
+            List<Card> cards = new ArrayList<Card>();
+            Map<String, String> data;
+            while ((data = csvReader.readMap()) != null) {
+                Card card = new Card();
+                card.setId(UUID.fromString(data.get("id")));
+                card.setName(data.get("name"));
+                card.setNumber(Integer.parseInt(data.get("number")));
+                card.setTier(Integer.parseInt(data.get("tier")));
+                card.setMythology(Mythology.TO_INT.get(data.get("mythology")));
+                card.setFileName(data.get("fileName"));
+                card.setPrice(Integer.parseInt(data.get("price")));
+                card.setStars(Integer.parseInt(data.get("stars")));
+                card.setNorth(Integer.parseInt(data.get("north")));
+                card.setNorthEast(Integer.parseInt(data.get("northEast")));
+                card.setSouthEast(Integer.parseInt(data.get("southEast")));
+                card.setSouth(Integer.parseInt(data.get("south")));
+                card.setSouthWest(Integer.parseInt(data.get("southWest")));
+                card.setNorthWest(Integer.parseInt(data.get("northWest")));
+                cards.add(card);
+            }
+            return cards;
+        }
     }
 
     /**

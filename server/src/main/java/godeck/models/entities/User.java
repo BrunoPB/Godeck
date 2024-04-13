@@ -40,9 +40,9 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
-    @Column(name = "username", nullable = false, length = 15, unique = true)
+    @Column(name = "username", nullable = false, length = 20, unique = true)
     private String username;
-    @Column(name = "displayName", nullable = false, length = 15)
+    @Column(name = "displayName", nullable = false, length = 20)
     private String displayName;
     @Column(name = "email", nullable = true, length = 30, unique = true)
     private String email;

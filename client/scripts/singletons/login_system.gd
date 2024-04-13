@@ -71,6 +71,6 @@ func start_user(result, response_code, headers, body):
 		store_new_token(login_response.token)
 	else:
 		delete_token()
-		push_error(login_response.message)
-		print(login_response.message)
+		push_error("Server error: " + login_response.message)
+		print("Server error: " + login_response.message)
 	login_status.emit(login_response.status)

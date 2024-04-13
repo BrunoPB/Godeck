@@ -12,6 +12,8 @@ func _ready():
 	s_progress_bar.value = 100
 	if login_status:
 		get_tree().change_scene_to_file("res://scenes/main_menu/main_menu.tscn")
+	else:
+		push_error("Login failed")
 
 func _process(_delta):
 	pass

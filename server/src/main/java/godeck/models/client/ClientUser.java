@@ -57,6 +57,7 @@ public class ClientUser {
         this.gold = user.getGold();
         this.crystals = user.getCrystals();
         this.platinum = user.getPlatinum();
+        this.deck = new ArrayList<ClientCard>();
         for (Card card : user.getDeck()) {
             this.deck.add(new ClientCard(card));
         }

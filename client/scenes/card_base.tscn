@@ -1,0 +1,97 @@
+[gd_scene load_steps=5 format=3 uid="uid://dluf4iwodo23l"]
+
+[ext_resource type="Texture2D" uid="uid://b4rqph1ne81en" path="res://assets/placeholders/Boitata.jpg" id="1_6w30m"]
+[ext_resource type="Script" path="res://scripts/screens/card_base.gd" id="1_lsxs2"]
+[ext_resource type="Theme" uid="uid://b4hxxtkojagog" path="res://themes/deck_builder_themes/card_numbers_theme.tres" id="2_ys4vj"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6f5ra"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[node name="CardBase" type="Node2D"]
+script = ExtResource("1_lsxs2")
+
+[node name="Layout" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_right = 80.0
+offset_bottom = 70.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_6f5ra")
+
+[node name="CardHex" type="Polygon2D" parent="Layout"]
+unique_name_in_owner = true
+texture = ExtResource("1_6w30m")
+texture_offset = Vector2(44, 6)
+texture_scale = Vector2(7, 7)
+polygon = PackedVector2Array(20, 0, 60, 0, 80, 34, 60, 69, 20, 69, 0, 34)
+
+[node name="Area2D" type="Area2D" parent="Layout/CardHex"]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="Layout/CardHex/Area2D"]
+build_mode = 1
+polygon = PackedVector2Array(20, 0, 60, 0, 80, 34, 60, 69, 20, 69, 0, 34)
+
+[node name="Border" type="Line2D" parent="Layout/CardHex"]
+unique_name_in_owner = true
+points = PackedVector2Array(20, 0, 60, 0, 80, 34, 60, 69, 20, 69, 0, 34)
+closed = true
+width = 3.0
+joint_mode = 2
+
+[node name="Stats" type="VBoxContainer" parent="Layout"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="North" type="Label" parent="Layout/Stats"]
+layout_mode = 2
+theme = ExtResource("2_ys4vj")
+text = "5"
+horizontal_alignment = 1
+
+[node name="NorthSide" type="HBoxContainer" parent="Layout/Stats"]
+custom_minimum_size = Vector2(0, 21)
+layout_mode = 2
+theme_override_constants/separation = 46
+alignment = 1
+
+[node name="NorthWest" type="Label" parent="Layout/Stats/NorthSide"]
+layout_mode = 2
+theme = ExtResource("2_ys4vj")
+text = "5"
+horizontal_alignment = 1
+
+[node name="NorthEast" type="Label" parent="Layout/Stats/NorthSide"]
+layout_mode = 2
+theme = ExtResource("2_ys4vj")
+text = "5"
+horizontal_alignment = 1
+
+[node name="SouthSide" type="HBoxContainer" parent="Layout/Stats"]
+custom_minimum_size = Vector2(0, 21)
+layout_mode = 2
+theme_override_constants/separation = 46
+alignment = 1
+
+[node name="SouthWest" type="Label" parent="Layout/Stats/SouthSide"]
+layout_mode = 2
+theme = ExtResource("2_ys4vj")
+text = "5"
+horizontal_alignment = 1
+
+[node name="SouthEast" type="Label" parent="Layout/Stats/SouthSide"]
+layout_mode = 2
+theme = ExtResource("2_ys4vj")
+text = "5"
+horizontal_alignment = 1
+
+[node name="South" type="Label" parent="Layout/Stats"]
+layout_mode = 2
+theme = ExtResource("2_ys4vj")
+text = "5"
+horizontal_alignment = 1

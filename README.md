@@ -20,8 +20,8 @@ Download Docker Desktop [here](https://www.docker.com/products/docker-desktop/).
 
 After installing and signing up, run:
 
--   [start-docker-windows.bat](backend/start-docker-windows.bat) (Windows)
--   [rebuild-all.sh](backend/rebuild-all.sh) (Linux)
+-   [start-docker-windows.bat](server/start-docker-windows.bat) (Windows)
+-   [rebuild-all.sh](server/rebuild-all.sh) (Linux)
 
 Now the game server is running.
 

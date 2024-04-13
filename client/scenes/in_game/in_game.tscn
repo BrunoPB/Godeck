@@ -1,0 +1,167 @@
+[gd_scene load_steps=6 format=3 uid="uid://bbad5njb8qd5"]
+
+[ext_resource type="Script" path="res://scripts/screens/in_game.gd" id="1_bfebq"]
+[ext_resource type="PackedScene" uid="uid://4siccd2gogu7" path="res://scenes/in_game/game_board.tscn" id="2_bqyl3"]
+[ext_resource type="PackedScene" uid="uid://bs063djicrilu" path="res://scenes/in_game/game_deck.tscn" id="3_roj0i"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vx7h6"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_x5xpp"]
+
+[node name="InGameScene" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_bfebq")
+
+[node name="GameContents" type="VBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Turn" type="Label" parent="GameContents"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = "TURN"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Header" type="HBoxContainer" parent="GameContents"]
+layout_mode = 2
+size_flags_stretch_ratio = 0.2
+alignment = 1
+
+[node name="EnemyInfo" type="VBoxContainer" parent="GameContents/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+size_flags_stretch_ratio = 1.43
+alignment = 1
+
+[node name="Opponent" type="Label" parent="GameContents/Header/EnemyInfo"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 1
+text = "Enemy Name"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Rank" type="Label" parent="GameContents/Header/EnemyInfo"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 10
+text = "Rank"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Surrender" type="Button" parent="GameContents/Header"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+text = "Surrender"
+
+[node name="Timer" type="Label" parent="GameContents/Header"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 30
+text = "0:00"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="MainArea" type="HBoxContainer" parent="GameContents"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 26
+
+[node name="Score" type="Control" parent="GameContents/MainArea"]
+custom_minimum_size = Vector2(28, 0)
+layout_mode = 2
+
+[node name="ProgressBar" type="ProgressBar" parent="GameContents/MainArea/Score"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+step = 1.0
+value = 50.0
+fill_mode = 3
+show_percentage = false
+
+[node name="CenterContainer" type="PanelContainer" parent="GameContents/MainArea"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_vx7h6")
+
+[node name="GameBoard" parent="GameContents/MainArea/CenterContainer" instance=ExtResource("2_bqyl3")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Deck" type="PanelContainer" parent="GameContents"]
+layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 0.4
+theme_override_styles/panel = SubResource("StyleBoxEmpty_x5xpp")
+
+[node name="GameDeck" parent="GameContents/Deck" instance=ExtResource("3_roj0i")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="PopUpBackground" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+
+[node name="PopUpLayout" type="VBoxContainer" parent="PopUpBackground"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Title" type="Label" parent="PopUpBackground/PopUpLayout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 20
+theme_override_font_sizes/font_size = 30
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Reason" type="Label" parent="PopUpBackground/PopUpLayout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 20
+theme_override_font_sizes/font_size = 30
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Gold" type="Label" parent="PopUpBackground/PopUpLayout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 20
+theme_override_font_sizes/font_size = 30
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Ranking" type="Label" parent="PopUpBackground/PopUpLayout"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 20
+theme_override_font_sizes/font_size = 30
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Ok" type="Button" parent="PopUpBackground/PopUpLayout"]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+size_flags_vertical = 10
+text = "OK"
+
+[connection signal="pressed" from="GameContents/Header/Surrender" to="." method="_on_surrender_pressed"]
+[connection signal="pressed" from="PopUpBackground/PopUpLayout/Ok" to="." method="_on_endgame_popup_ok_pressed"]

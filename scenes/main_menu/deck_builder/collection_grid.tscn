@@ -1,9 +1,0 @@
-[gd_scene load_steps=2 format=3 uid="uid://dfhua1cguv8m6"]
-
-[ext_resource type="Script" path="res://scripts/screens/collection_grid.gd" id="1_qmwkh"]
-
-[node name="CollectionGrid" type="GridContainer"]
-size_flags_horizontal = 3
-size_flags_vertical = 3
-columns = 3
-script = ExtResource("1_qmwkh")

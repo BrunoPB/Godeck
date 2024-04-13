@@ -1,0 +1,16 @@
+[gd_scene load_steps=4 format=3 uid="uid://bs063djicrilu"]
+
+[ext_resource type="TileSet" uid="uid://c74h3bevk713r" path="res://scenes/in_game/placeholderTM.tres" id="1_wanqc"]
+[ext_resource type="Script" path="res://scripts/screens/game_deck.gd" id="1_x13vl"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2cme8"]
+
+[node name="GameDeck" type="PanelContainer"]
+theme_override_styles/panel = SubResource("StyleBoxEmpty_2cme8")
+script = ExtResource("1_x13vl")
+
+[node name="DeckTiles" type="TileMap" parent="."]
+unique_name_in_owner = true
+tile_set = ExtResource("1_wanqc")
+format = 2
+layer_0/tile_data = PackedInt32Array(0, 1, 0, 1, 1, 0, 2, 1, 0, 3, 1, 0, 4, 1, 0, 65539, 1, 0, 65537, 1, 0)

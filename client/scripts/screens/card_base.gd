@@ -2,7 +2,12 @@ extends Node2D
 
 @onready var s_panel : Node = %Layout
 @onready var s_hex : Node = %CardHex
-@onready var s_stats : Node = %Stats
+@onready var s_north : Node = %North
+@onready var s_north_east : Node = %NorthEast
+@onready var s_south_east : Node = %SouthEast
+@onready var s_south : Node = %South
+@onready var s_south_west : Node = %SouthWest
+@onready var s_north_west : Node = %NorthWest
 @onready var s_border : Node = %Border
 
 var card_data : Card = Card.new()
@@ -32,7 +37,8 @@ func update_size():
 func update_texture():
 	var tex = Texture2D.new()
 	if exists:
-		s_hex.texture = load("res://assets/placeholders/Boitata.jpg")
+		var file_todo = card_data.file_name.substr(0,card_data.file_name.length()-1)
+		s_hex.texture = load(Address.CHARACTERS_IMGS + file_todo + ".png")
 	else:
 		s_hex.texture = tex.create_placeholder()
 
@@ -49,13 +55,12 @@ func update_border():
 	s_border.default_color = color
 
 func update_stats():
-	## FIND BUG HERE!
-	s_stats.get_node("North").text = str(card_data.north) if exists else ""
-	s_stats.get_node("NorthSide/NorthWest").text = str(card_data.north_west) if exists else ""
-	s_stats.get_node("NorthSide/NorthEast").text = str(card_data.north_east) if exists else ""
-	s_stats.get_node("SouthSide/SouthWest").text = str(card_data.south_west) if exists else ""
-	s_stats.get_node("SouthSide/SouthEast").text = str(card_data.south_east) if exists else ""
-	s_stats.get_node("South").text = str(card_data.south) if exists else ""
+	%North.text = str(card_data.north) if exists else ""
+	%NorthWest.text = str(card_data.north_west) if exists else ""
+	%NorthEast.text = str(card_data.north_east) if exists else ""
+	%SouthWest.text = str(card_data.south_west) if exists else ""
+	%SouthEast.text = str(card_data.south_east) if exists else ""
+	%South.text = str(card_data.south) if exists else ""
 
 func set_selection(v : bool = true):
 	selected = v

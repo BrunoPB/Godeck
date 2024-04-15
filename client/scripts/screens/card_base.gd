@@ -2,12 +2,6 @@ extends Node2D
 
 @onready var s_panel : Node = %Layout
 @onready var s_hex : Node = %CardHex
-@onready var s_north : Node = %North
-@onready var s_north_east : Node = %NorthEast
-@onready var s_south_east : Node = %SouthEast
-@onready var s_south : Node = %South
-@onready var s_south_west : Node = %SouthWest
-@onready var s_north_west : Node = %NorthWest
 @onready var s_border : Node = %Border
 
 var card_data : Card = Card.new()

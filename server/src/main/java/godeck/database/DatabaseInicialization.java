@@ -98,7 +98,6 @@ public class DatabaseInicialization {
                 card.setNumber(Integer.parseInt(data.get("number")));
                 card.setTier(Integer.parseInt(data.get("tier")));
                 card.setMythology(Mythology.TO_INT.get(data.get("mythology")));
-                card.setFileName(data.get("fileName"));
                 card.setPrice(Integer.parseInt(data.get("price")));
                 card.setStars(Integer.parseInt(data.get("stars")));
                 card.setNorth(Integer.parseInt(data.get("north")));

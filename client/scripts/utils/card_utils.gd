@@ -16,7 +16,6 @@ static func convert_dictionary_to_card(dictionary : Dictionary) -> Card:
 	card.card_name = dictionary.cardName
 	card.tier = dictionary.tier
 	card.mythology = dictionary.mythology
-	card.file_name = dictionary.fileName
 	card.price = dictionary.price
 	card.stars = dictionary.stars
 	card.north = dictionary.north

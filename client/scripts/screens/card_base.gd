@@ -31,8 +31,8 @@ func update_size():
 func update_texture():
 	var tex = Texture2D.new()
 	if exists:
-		var file_todo = card_data.file_name.substr(0,card_data.file_name.length()-1)
-		s_hex.texture = load(Address.CHARACTERS_IMGS + file_todo + ".png")
+		var lower_case_name = card_data.card_name.to_lower()
+		s_hex.texture = load(Address.CHARACTERS_IMGS + lower_case_name + ".png")
 	else:
 		s_hex.texture = tex.create_placeholder()
 

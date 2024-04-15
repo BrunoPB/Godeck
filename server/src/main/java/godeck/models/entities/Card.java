@@ -36,8 +36,6 @@ public class Card {
     private int tier;
     @Column(name = "mythology", nullable = false)
     private int mythology;
-    @Column(name = "fileName", nullable = false, length = 30, unique = false)
-    private String fileName;
     @Column(name = "price", nullable = false)
     private int price;
     @Column(name = "stars", nullable = false)
@@ -68,7 +66,6 @@ public class Card {
         this.name = cCard.getCardName();
         this.tier = cCard.getTier();
         this.mythology = cCard.getMythology();
-        this.fileName = cCard.getFileName();
         this.price = cCard.getPrice();
         this.stars = cCard.getStars();
         this.north = cCard.getNorth();

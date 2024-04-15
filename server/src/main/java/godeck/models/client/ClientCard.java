@@ -30,7 +30,6 @@ public class ClientCard {
     private String cardName;
     private int tier;
     private int mythology;
-    private String fileName;
     private int price;
     private int stars;
     private int north;
@@ -53,7 +52,6 @@ public class ClientCard {
         this.cardName = card.getName();
         this.tier = card.getTier();
         this.mythology = card.getMythology();
-        this.fileName = card.getFileName();
         this.price = card.getPrice();
         this.stars = card.getStars();
         this.north = card.getNorth();
